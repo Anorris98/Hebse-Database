@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import {Build, Info, Search, Settings, Undo} from "@mui/icons-material";
 
-const StyledToolbar = styled(Toolbar)(({ theme }) => ({
+const StyledToolbar = styled(Toolbar)(({theme}) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -44,8 +44,8 @@ export const NavBar = () => {
         >
             <Container maxWidth="lg">
                 <StyledToolbar variant="dense" disableGutters>
-                    <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center', px: 0, justifyContent: 'left' }}>
-                        <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+                    <Box sx={{flexGrow: 1, display: 'flex', alignItems: 'center', px: 0, justifyContent: 'left'}}>
+                        <Box sx={{display: {xs: 'none', md: 'flex'}}}>
                             <StyledButton variant="contained" size="small" startIcon={<Search/>}>
                                 Query
                             </StyledButton>
@@ -63,7 +63,13 @@ export const NavBar = () => {
                             </StyledButton>
                         </Box>
                     </Box>
-                    <Box component='section' sx={{ p: 1, border: '5px dashed black', fontSize: '20px', fontFamily:'monospace' }}>
+                    <Box component='section' sx={{
+                        p: 1,
+                        border: '5px dashed black',
+                        fontSize: '20px',
+                        fontFamily: 'monospace',
+                        fontWeight: 'bold'
+                    }}>
                         HADES
                     </Box>
                 </StyledToolbar>
