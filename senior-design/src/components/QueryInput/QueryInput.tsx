@@ -1,9 +1,24 @@
 import Box from "@mui/material/Box";
 import {Grid2, IconButton, InputAdornment, TextField} from "@mui/material";
 import {AutoAwesome} from "@mui/icons-material";
+import { useState } from 'react';
 
 
 export const QueryInput = () => {
+    const [inputValue, setInputValue] = useState('');
+    async function getSQLFromNaturalLanguage() {
+        let data = {
+            "string": inputValue
+        }
+        await fetch(`http://localhost:8000/GetData`, {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(response => response.json()).then(body => setInputValue(body.message));
+    }
+
     return (
         <Grid2 display={"grid"} sx={{maxHeight: '1000px'}}>
             <Box component="div" sx={{
@@ -39,10 +54,10 @@ export const QueryInput = () => {
                 marginTop: '200px'
             }}>
                 <Box sx={{display: 'flex'}}>
-                    <TextField id="outlined-basic" label="Query" variant="outlined" fullWidth={true} slotProps={{
+                    <TextField value={inputValue} onChange={(event) => setInputValue(event.target.value)} id="outlined-basic" label="Query" variant="outlined" fullWidth={true} slotProps={{
                         input: {
                             style: {fontFamily: 'monospace', color: 'white'},
-                            startAdornment: <InputAdornment position={"start"}> <IconButton><AutoAwesome
+                            startAdornment: <InputAdornment position={"start"}> <IconButton onClick={() => getSQLFromNaturalLanguage()}><AutoAwesome
                                 sx={{color: 'white'}}/></IconButton></InputAdornment>
                         }, inputLabel: {style: {fontFamily: 'monospace', color: 'white'}}
                     }} sx={{margin: 1}}/>
@@ -52,3 +67,4 @@ export const QueryInput = () => {
 
     )
 }
+
