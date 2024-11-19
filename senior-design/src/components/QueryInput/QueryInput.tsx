@@ -6,10 +6,10 @@ import { useState } from 'react';
 
 export const QueryInput = () => {
     const [inputValue, setInputValue] = useState('');
-    let data = {
-        "string": inputValue
-    }
     async function getSQLFromNaturalLanguage() {
+        let data = {
+            "string": inputValue
+        }
         await fetch(`http://localhost:8000/GetData`, {
             method: "POST",
             body: JSON.stringify(data),
