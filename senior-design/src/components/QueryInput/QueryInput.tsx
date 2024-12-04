@@ -16,9 +16,17 @@ export const QueryInput = ({ onQueryResult }: { onQueryResult: (result: string) 
     }, []);
 
     async function getSQLFromNaturalLanguage() {
+        
+        //debug statement/check
+        if (!inputValue.trim()) {
+            onQueryResult("Query cannot be empty.");
+            return;
+        }
+   
         let data = {
-            string: inputValue
+            query: inputValue //updated it to a query type for the backend, mostly for troubleshooting purposes. 
         };
+
     
         try {
             const response = await fetch(`http://localhost:8000/GetData`, {
@@ -35,7 +43,7 @@ export const QueryInput = ({ onQueryResult }: { onQueryResult: (result: string) 
     
             const body = await response.json();
             setInputValue(body.message); // Update input value
-            onQueryResult(body.result || "No result returned."); // Pass result to parent or state
+            onQueryResult(body.data || "No result returned."); // Pass result to parent or state
         } catch (error) {
             console.error("Error fetching query result:", error);
             onQueryResult("An error occurred while fetching the result."); // Pass error message
