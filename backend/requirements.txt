@@ -1,1 +1,6 @@
 fastapi[standard]
+uvicorn
+pandas
+h5py
+sqlalchemy
+psycopg2

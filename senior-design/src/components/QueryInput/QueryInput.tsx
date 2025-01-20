@@ -4,7 +4,7 @@ import { ArrowDropDown, AutoAwesome, Clear, ContentCopyOutlined, Save } from "@m
 import { useEffect, useState } from 'react';
 
 
-export const QueryInput = () => {
+export const QueryInput = ({ onQueryResult }: { onQueryResult: (result: string) => void }) => {
     const [inputValue, setInputValue] = useState('');
     const [savedQueries, setSavedQueries] = useState<string[]>([]);
     const [displaySavedQueries, setDisplaySavedQueries] = useState<boolean>(false);
@@ -16,16 +16,38 @@ export const QueryInput = () => {
     }, []);
 
     async function getSQLFromNaturalLanguage() {
-        let data = {
-            "string": inputValue
+        
+        //debug statement/check
+        if (!inputValue.trim()) {
+            onQueryResult("Query cannot be empty.");
+            return;
         }
-        await fetch(`http://localhost:8000/GetData`, {
-            method: "POST",
-            body: JSON.stringify(data),
-            headers: {
-                "Content-Type": "application/json"
+   
+        let data = {
+            query: inputValue //updated it to a query type for the backend, mostly for troubleshooting purposes. 
+        };
+
+    
+        try {
+            const response = await fetch(`http://localhost:8000/GetData`, {
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+    
+            if (!response.ok) {
+                throw new Error(`Server error: ${response.status}`);
             }
-        }).then(response => response.json()).then(body => setInputValue(body.message));
+    
+            const body = await response.json();
+            setInputValue(body.message); // Update input value
+            onQueryResult(body.data || "No result returned."); // Pass result to parent or state
+        } catch (error) {
+            console.error("Error fetching query result:", error);
+            onQueryResult("An error occurred while fetching the result."); // Pass error message
+        }
     }
 
     function saveQuery() {
@@ -124,15 +146,31 @@ export const QueryInput = () => {
                 marginTop: '200px'
             }}>
                 <Box sx={{display: 'flex'}}>
-                    <TextField value={inputValue} onChange={(event) => setInputValue(event.target.value)} id="outlined-basic" label="Query" variant="outlined" fullWidth={true} slotProps={{
-                        input: {
-                            style: {fontFamily: 'monospace', color: 'white'},
-                            startAdornment: <InputAdornment position={"start"}> <IconButton onClick={() => getSQLFromNaturalLanguage()}><AutoAwesome
-                                sx={{color: 'white'}}/></IconButton></InputAdornment>,
-                            endAdornment: <InputAdornment position={"end"}> <IconButton onClick={() => saveQuery()}><Save
-                                sx={{color: 'white'}}/></IconButton></InputAdornment>
-                        }, inputLabel: {style: {fontFamily: 'monospace', color: 'white'}}
-                    }} sx={{margin: 1}}/>
+                    <TextField 
+                        value={inputValue} 
+                        onChange={(event) => setInputValue(event.target.value)} 
+                        id="outlined-basic" 
+                        label="Query" 
+                        variant="outlined" 
+                        fullWidth={true} 
+                        slotProps={{
+                            input: {
+                                style: {fontFamily: 'monospace', color: 'white'},
+                                startAdornment: ( 
+                                    <InputAdornment position={"start"}> 
+                                        <IconButton onClick={() => getSQLFromNaturalLanguage()}>
+                                            <AutoAwesome sx={{color: 'white'}}/>
+                                        </IconButton>
+                                    </InputAdornment>
+                                    ),
+                                endAdornment: 
+                                    <InputAdornment position={"end"}> 
+                                        <IconButton onClick={() => saveQuery()}>
+                                            <Save sx={{color: 'white'}}/>
+                                        </IconButton>
+                                    </InputAdornment>
+                            }, inputLabel: {style: {fontFamily: 'monospace', color: 'white'}}
+                        }} sx={{margin: 1}}/>
                 </Box>
             </Box>
         </Grid2>
