@@ -72,30 +72,6 @@ export const QueryInput = ({ onQueryResult }: { onQueryResult: (result: string) 
     return (
         <Grid2 display={"grid"} sx={{maxHeight: '1000px'}}>
             <Box component="div" sx={{
-                backgroundColor: 'gray',
-                flexGrow: 1,
-                borderRadius: '15px',
-                maxWidth: 'lg',
-                fontFamily: 'monospace',
-                marginTop: '200px'
-            }}>
-                <Box sx={{fontSize: '20px', fontWeight: 'bold'}}>
-                    How can I help?
-                </Box>
-                <Box sx={{fontSize: '16px'}}>
-                    Welcome to the Binary Star Query Bot! This interactive assistant is
-                    designed to help you explore and retrieve data on binary star systems
-                    with ease. Whether you're an astronomer, student, or space enthusiast,
-                    you can quickly access detailed information on various binary systems,
-                    including orbital periods, mass, luminosity, and more. Additionally,
-                    you can upload your own binary star data, and the bot will parse and
-                    integrate it for seamless querying. From answering general questions
-                    about binary stars to providing insights into specific systems, this
-                    bot is here to enhance your understanding of the fascinating world of
-                    stellar pairs. Let’s explore the stars together!
-                </Box>
-            </Box>
-            <Box component="div" sx={{
             alignItems: 'center',
             flexGrow: 1,
             maxWidth: 'lg',
@@ -135,7 +111,6 @@ export const QueryInput = ({ onQueryResult }: { onQueryResult: (result: string) 
                         </Box>
                     )) : null
                 }
-
             </Box>
             <Box component="div" sx={{
                 backgroundColor: 'gray',
