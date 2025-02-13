@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine, text
 import os
+import sshtunnel
 
 #init FastAPI
 app = FastAPI()
@@ -11,6 +12,15 @@ origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173"
 ]
+
+tunnel = sshtunnel.SSHTunnelForwarder(
+    ("SDmay25-20.ece.iastate.edu", 22),
+    ssh_username="vm-user",
+    ssh_password="50EgMe$KIE2m",
+    remote_bind_address=("127.0.0.1", 5432)
+)
+
+tunnel.start()
 
 # Add CORS middleware
 origins = ["http://localhost", "http://localhost:5173"]
@@ -26,7 +36,7 @@ DATABASE_CONFIG = {
     "username": "postgres",
     "password": "root",
     "host": "localhost",
-    "port": "5432",
+    "port": tunnel.local_bind_port,
     "database": "hades"
 }
 DB_URL = (
@@ -34,6 +44,7 @@ DB_URL = (
     f"{DATABASE_CONFIG['password']}@{DATABASE_CONFIG['host']}:"
     f"{DATABASE_CONFIG['port']}/{DATABASE_CONFIG['database']}"
 )
+
 engine = create_engine(DB_URL)
 
 @app.post("/GetData")
