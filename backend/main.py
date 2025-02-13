@@ -20,6 +20,8 @@ tunnel = sshtunnel.SSHTunnelForwarder(
     remote_bind_address=("127.0.0.1", 5432)
 )
 
+tunnel.start()
+
 # Add CORS middleware
 origins = ["http://localhost", "http://localhost:5173"]
 app.add_middleware(
@@ -34,7 +36,7 @@ DATABASE_CONFIG = {
     "username": "postgres",
     "password": "root",
     "host": "localhost",
-    "port": tunnel.local_bind_address,
+    "port": tunnel.local_bind_port,
     "database": "hades"
 }
 DB_URL = (
@@ -42,6 +44,7 @@ DB_URL = (
     f"{DATABASE_CONFIG['password']}@{DATABASE_CONFIG['host']}:"
     f"{DATABASE_CONFIG['port']}/{DATABASE_CONFIG['database']}"
 )
+
 engine = create_engine(DB_URL)
 
 @app.post("/GetData")
