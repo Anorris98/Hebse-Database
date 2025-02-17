@@ -2,14 +2,18 @@ import Box from "@mui/material/Box";
 
 export const QueryWelcomeText = () => {
   return (
-      <Box component="div" sx={{
-          backgroundColor: 'gray',
-          flexGrow: 1,
-          borderRadius: '15px',
-          maxWidth: 'lg',
-          fontFamily: 'monospace',
-          marginTop: '200px'
-      }}>
+      <Box
+          sx={{
+              backgroundColor: "gray",
+              borderRadius: "15px",
+              maxWidth: "lg",
+              width: "100%",
+              fontFamily: "monospace",
+              padding: "20px",
+              marginTop:"200px",
+              textAlign: "center",
+          }}
+      >
           <Box sx={{fontSize: '20px', fontWeight: 'bold'}}>
               How can I help?
           </Box>
