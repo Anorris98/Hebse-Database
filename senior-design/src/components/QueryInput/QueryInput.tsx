@@ -4,8 +4,9 @@ import {AutoAwesome, Save} from "@mui/icons-material";
 import {useEffect} from 'react';
 
 
-export const QueryInput = ({onQueryResult, setSavedQueries, inputValue, setInputValue}: {
+export const QueryInput = ({onQueryResult, savedQueries, setSavedQueries, inputValue, setInputValue}: {
     onQueryResult: (result: string) => void,
+    savedQueries: string[]
     setSavedQueries: (value: (((prevState: string[]) => string[]) | string[])) => void,
     inputValue: string,
     setInputValue: (value: (((prevState: string) => string) | string)) => void
@@ -55,6 +56,7 @@ export const QueryInput = ({onQueryResult, setSavedQueries, inputValue, setInput
 
     function saveQuery() {
         if (inputValue != '') {
+            localStorage.saved = JSON.stringify([...savedQueries, inputValue]);
             setSavedQueries((prevState: string[]) => [...prevState, inputValue]);
         }
     }

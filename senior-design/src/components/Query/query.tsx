@@ -17,6 +17,7 @@ export const Query = () => {
             <Grid2 display={"grid"} sx={{maxHeight: '1000px'}}>
                 <QueryWelcomeText/>
                 <QueryInput onQueryResult={setQueryResult}
+                            savedQueries={savedQueries}
                             setSavedQueries={setSavedQueries}
                             inputValue={inputValue}
                             setInputValue={setInputValue}/> {/* Renders input box and updates query result via parent callback.*/}
