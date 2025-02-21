@@ -1,4 +1,5 @@
 import {alpha, styled} from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate from React Router
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -30,6 +31,7 @@ const StyledButton = styled(Button)(() => ({
 
 
 export const NavBar = () => {
+    const navigate = useNavigate(); // React Router navigation hook
 
     return (
         <AppBar
@@ -46,13 +48,15 @@ export const NavBar = () => {
                 <StyledToolbar variant="dense" disableGutters>
                     <Box sx={{flexGrow: 1, display: 'flex', alignItems: 'center', px: 0, justifyContent: 'left'}}>
                         <Box sx={{display: {xs: 'none', md: 'flex'}}}>
-                            <StyledButton variant="contained" size="small" startIcon={<Search/>}>
+                            <StyledButton variant="contained" size="small" startIcon={<Search/>}
+                                onClick={() => navigate("/")}>
                                 Query
                             </StyledButton>
                             <StyledButton variant="contained" size="small" startIcon={<Undo/>}>
                                 History
                             </StyledButton>
-                            <StyledButton variant="contained" size="small" startIcon={<Build/>}>
+                            <StyledButton variant="contained" size="small" startIcon={<Build/>}
+                                onClick={() => navigate("/Utilities")}>
                                 Utilities
                             </StyledButton>
                             <StyledButton variant="contained" size="small" startIcon={<Settings/>}>

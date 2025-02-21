@@ -27,32 +27,29 @@ export const QueryInput = ({onQueryResult, savedQueries, setSavedQueries, inputV
             return;
         }
 
-        const data = {
-            query: inputValue //updated it to a query type for the backend, mostly for troubleshooting purposes. 
-        };
+    const data = { query: inputValue };
 
-
-        try {
-            const response = await fetch(`http://localhost:8000/GetData`, {
-                method: "POST",
-                body: JSON.stringify(data),
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error(`Server error: ${response.status}`);
-            }
-
-            const body = await response.json();
-            setInputValue(body.message); // Update input value
-            onQueryResult(body.data || "No result returned."); // Pass result to parent or state
-        } catch (error) {
-            console.error("Error fetching query result:", error);
-            onQueryResult("An error occurred while fetching the result."); // Pass error message
+    try {
+      const response = await fetch(`http://localhost:8000/GetData`, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json"
         }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
+
+      const body = await response.json();
+      setInputValue(body.message); // Update input value
+      onQueryResult(body.data || "No result returned.");
+    } catch (error) {
+      console.error("Error fetching query result:", error);
+      onQueryResult("An error occurred while fetching the result.");
     }
+  }
 
     function saveQuery() {
         if (inputValue != '') {
@@ -61,50 +58,51 @@ export const QueryInput = ({onQueryResult, savedQueries, setSavedQueries, inputV
         }
     }
 
-    return (
-        <div>
-            <Box
-                component="div"
-                sx={{
-                    backgroundColor: 'gray',
-                    flexGrow: 1,
-                    borderRadius: '15px',
-                    maxWidth: 'lg',
-                    fontFamily: 'monospace',
-                    marginTop: '20px',
-                    padding: '20px',
-                    color: 'white',
-                }}
-            >
-                <Box sx={{display: 'flex'}}>
-                    <TextField
-                        value={inputValue}
-                        onChange={(event) => setInputValue(event.target.value)}
-                        id="outlined-basic"
-                        label="Query"
-                        variant="outlined"
-                        fullWidth={true}
-                        slotProps={{
-                            input: {
-                                style: {fontFamily: 'monospace', color: 'white'},
-                                startAdornment: (
-                                    <InputAdornment position={"start"}>
-                                        <IconButton onClick={() => getSQLFromNaturalLanguage()}>
-                                            <AutoAwesome sx={{color: 'white'}}/>
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
-                                endAdornment:
-                                    <InputAdornment position={"end"}>
-                                        <IconButton onClick={() => saveQuery()}>
-                                            <Save sx={{color: 'white'}}/>
-                                        </IconButton>
-                                    </InputAdornment>
-                            }, inputLabel: {style: {fontFamily: 'monospace', color: 'white'}}
-                        }} sx={{margin: 1}}/>
-                </Box>
-            </Box>
-        </div>
-    )
-}
-
+  return (
+    <Box
+      component="div"
+      sx={{
+        backgroundColor: 'gray',
+        flexGrow: 1,
+        borderRadius: '15px',
+        maxWidth: 'lg',
+        fontFamily: 'monospace',
+        marginTop: '20px',
+        padding: '20px',
+        color: 'white',
+    }}
+    >
+      <Box sx={{ display: 'flex' }}>
+        <TextField
+          value={inputValue}
+          onChange={(event) => setInputValue(event.target.value)}
+          id="outlined-basic"
+          label="Query"
+          variant="outlined"
+          fullWidth
+          slotProps={{
+            input: {
+              style: { fontFamily: 'monospace', color: 'white' },
+              startAdornment: (
+                <InputAdornment position="start">
+                  <IconButton onClick={() => getSQLFromNaturalLanguage()}>
+                    <AutoAwesome sx={{ color: 'white' }} />
+                  </IconButton>
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => saveQuery()}>
+                    <Save sx={{ color: 'white' }} />
+                  </IconButton>
+                </InputAdornment>
+              )
+            },
+            inputLabel: { style: { fontFamily: 'monospace', color: 'white' } }
+          }}
+          sx={{ margin: 1 }}
+        />
+      </Box>
+    </Box>
+  );
+};
