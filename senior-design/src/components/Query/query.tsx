@@ -11,20 +11,18 @@ export const Query = () => {
     const [inputValue, setInputValue] = useState('');
 
     return (
-        <Grid2 display={"grid"} sx={{ maxHeight: '1000px' }}>
-            <QueryWelcomeText />
-            <QueryInput 
-                onQueryResult={setQueryResult}
-                setSavedQueries={setSavedQueries}
-                inputValue={inputValue}
-                setInputValue={setInputValue}
-            />
-            <SavedQueriesComponent 
-                savedQueries={savedQueries} 
-                setSavedQueries={setSavedQueries} 
-                setInputValue={setInputValue}
-            />
-            <QueryResults queryResult={queryResult} />
-        </Grid2>
+        <div>
+            {/* <NavBar/> The navigation bar */}
+            <Grid2 display={"grid"} sx={{maxHeight: '1000px'}}>
+                <QueryWelcomeText/>
+                <QueryInput onQueryResult={setQueryResult}
+                            savedQueries={savedQueries}
+                            setSavedQueries={setSavedQueries}
+                            inputValue={inputValue}
+                            setInputValue={setInputValue}/> {/* Renders input box and updates query result via parent callback.*/}
+                <SavedQueriesComponent savedQueries={savedQueries} setSavedQueries={setSavedQueries} setInputValue={setInputValue}/>
+                <QueryResults queryResult={queryResult}/> {/* Displays the query result passed from the parent state.*/}
+            </Grid2>
+        </div>
     );
 };

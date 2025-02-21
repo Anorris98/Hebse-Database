@@ -13,6 +13,7 @@ export const SavedQueriesComponent = ({savedQueries, setSavedQueries, setInputVa
 
     function deleteQuery(query: string) {
         const updatedQueries = savedQueries.filter((item: string) => item !== query);
+        localStorage.saved = JSON.stringify([...updatedQueries])
         if (updatedQueries.length == 0) {
             setDisplaySavedQueries(false);
         }

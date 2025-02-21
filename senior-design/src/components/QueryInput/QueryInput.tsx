@@ -1,25 +1,31 @@
-import { Box, Grid2, IconButton, InputAdornment, TextField } from "@mui/material";
-import { AutoAwesome, Save } from "@mui/icons-material";
-import { Dispatch, SetStateAction } from "react";
+import Box from "@mui/material/Box";
+import {IconButton, InputAdornment, TextField} from "@mui/material";
+import {AutoAwesome, Save} from "@mui/icons-material";
+import {useEffect} from 'react';
 
-interface QueryInputProps {
-  onQueryResult: Dispatch<SetStateAction<string>>;
-  setSavedQueries: Dispatch<SetStateAction<string[]>>;
-  inputValue: string;
-  setInputValue: Dispatch<SetStateAction<string>>;
-}
 
-export const QueryInput: React.FC<QueryInputProps> = ({
-  onQueryResult,
-  setSavedQueries,
-  inputValue,
-  setInputValue
-}) => {
-  async function getSQLFromNaturalLanguage() {
-    if (!inputValue.trim()) {
-      onQueryResult("Query cannot be empty.");
-      return;
-    }
+export const QueryInput = ({onQueryResult, savedQueries, setSavedQueries, inputValue, setInputValue}: {
+    onQueryResult: (result: string) => void,
+    savedQueries: string[]
+    setSavedQueries: (value: (((prevState: string[]) => string[]) | string[])) => void,
+    inputValue: string,
+    setInputValue: (value: (((prevState: string) => string) | string)) => void
+},) => {
+
+
+    useEffect(() => {
+        if ("saved" in localStorage) {
+            setSavedQueries(JSON.parse(localStorage.saved));
+        }
+    }, []);
+
+    async function getSQLFromNaturalLanguage() {
+
+        //debug statement/check
+        if (!inputValue.trim()) {
+            onQueryResult("Query cannot be empty.");
+            return;
+        }
 
     const data = { query: inputValue };
 
@@ -45,19 +51,12 @@ export const QueryInput: React.FC<QueryInputProps> = ({
     }
   }
 
-  function saveQuery() {
-    // Save the query if it's not empty and not already saved
-    if (inputValue !== '') {
-      setSavedQueries(prev => {
-        if (!prev.includes(inputValue)) {
-          const newSaved = [...prev, inputValue];
-          localStorage.saved = JSON.stringify(newSaved);
-          return newSaved;
+    function saveQuery() {
+        if (inputValue != '') {
+            localStorage.saved = JSON.stringify([...savedQueries, inputValue]);
+            setSavedQueries((prevState: string[]) => [...prevState, inputValue]);
         }
-        return prev;
-      });
     }
-  }
 
   return (
     <Box
