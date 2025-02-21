@@ -93,6 +93,7 @@ export const QueryResults = ({ queryResult }: { queryResult: any }) => {
                 marginTop: '20px',
                 padding: '20px',
                 color: 'white',
+                textAlign: "center",
             }}
         >
             <Box sx={{ fontSize: '20px', fontWeight: 'bold' }}>Query Results</Box>
