@@ -67,8 +67,10 @@ export const QueryInput = ({onQueryResult, savedQueries, setSavedQueries, inputV
         borderRadius: '15px',
         maxWidth: 'lg',
         fontFamily: 'monospace',
-        marginTop: '200px'
-      }}
+        marginTop: '20px',
+        padding: '20px',
+        color: 'white',
+    }}
     >
       <Box sx={{ display: 'flex' }}>
         <TextField
