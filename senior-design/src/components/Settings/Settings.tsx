@@ -1,5 +1,5 @@
 import { Grid2 } from "@mui/material";
-import GPTQueryForm from "../GPTSetup/GPTSetup.tsx";
+import GPTSetup from "./GPTSetup/GPTSetup.tsx";
 
 export const Settings = () => {
     return (
@@ -8,7 +8,7 @@ export const Settings = () => {
                 {/* Existing Settings Components Can Be Added Here */}
                 
                 {/* GPT Query Form Component */}
-                <GPTQueryForm />
+                <GPTSetup />
             </Grid2>
         </div>
     );

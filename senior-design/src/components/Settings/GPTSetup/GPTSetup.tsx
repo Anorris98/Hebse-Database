@@ -1,13 +1,32 @@
-import { useState } from "react";
-import { Box, TextField, Button, Typography, FormControlLabel, Switch, Container, Paper } from "@mui/material";
+import { useState, useEffect } from "react";
+import { Box, TextField, Button, Typography, Container, Paper, IconButton } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const GPTSetup = () => {
+    // State variables
     const [apiKey, setApiKey] = useState("");
     const [model, setModel] = useState("gpt-4");
     const [maxTokens, setMaxTokens] = useState("100");
     const [temperature, setTemperature] = useState("0.7");
-    const [saveSettings, setSaveSettings] = useState(false);
+    const [showApiKey, setShowApiKey] = useState(false); // New state for toggling visibility
 
+    // Load settings from localStorage when the component mounts
+    useEffect(() => {
+        const savedSettings = localStorage.getItem("gpt_settings");
+        if (savedSettings) {
+            try {
+                const parsedSettings = JSON.parse(savedSettings);
+                setApiKey(parsedSettings.apiKey || "");
+                setModel(parsedSettings.model || "gpt-4");
+                setMaxTokens(parsedSettings.max_tokens?.toString() || "100");
+                setTemperature(parsedSettings.temperature?.toString() || "0.7");
+            } catch (error) {
+                console.error("Error loading settings:", error);
+            }
+        }
+    }, []);
+
+    // Function to save settings to localStorage
     const handleSave = () => {
         const settings = {
             apiKey,
@@ -24,30 +43,39 @@ const GPTSetup = () => {
     return (
         <Container maxWidth="lg" sx={{ mt: 10 }}>
             <Paper
-                elevation={6} 
+                elevation={6}
                 sx={{
                     padding: "30px",
                     borderRadius: "12px",
-                    backgroundColor: 'gray', // Matches Queryinput.tsx theme
+                    backgroundColor: "gray",
                     color: "white",
                     fontFamily: "monospace",
-                    boxShadow: "0px 4px 20px rgba(0,0,0,0.3)", 
+                    boxShadow: "0px 4px 20px rgba(0,0,0,0.3)",
                 }}
             >
                 <Typography variant="h4" sx={{ marginBottom: "20px", textAlign: "center" }}>
                     GPT API Settings
                 </Typography>
 
-                <TextField
-                    fullWidth
-                    label="API Key"
-                    type="password"
-                    variant="outlined"
-                    value={apiKey}
-                    onChange={(e) => setApiKey(e.target.value)}
-                    sx={{ marginBottom: "15px", backgroundColor: "#616161", borderRadius: "5px" }}
-                    InputProps={{ style: { color: "white" } }}
-                />
+                <Box sx={{ display: "flex", alignItems: "center", marginBottom: "15px" }}>
+                    <TextField
+                        fullWidth
+                        label="API Key"
+                        type={showApiKey ? "text" : "password"}
+                        variant="outlined"
+                        value={apiKey}
+                        onChange={(e) => setApiKey(e.target.value)}
+                        sx={{ backgroundColor: "#616161", borderRadius: "5px" }}
+                        InputProps={{
+                            style: { color: "white" },
+                            endAdornment: (
+                                <IconButton onClick={() => setShowApiKey(!showApiKey)}>
+                                    {showApiKey ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                            ),
+                        }}
+                    />
+                </Box>
 
                 <TextField
                     fullWidth
@@ -82,18 +110,6 @@ const GPTSetup = () => {
                         InputProps={{ style: { color: "white" } }}
                     />
                 </Box>
-
-                <FormControlLabel
-                    control={
-                        <Switch
-                            checked={saveSettings}
-                            onChange={(e) => setSaveSettings(e.target.checked)}
-                            color="primary"
-                        />
-                    }
-                    label="Save settings for later?"
-                    sx={{ marginTop: "15px", color: "white" }}
-                />
 
                 <Button
                     variant="contained"
