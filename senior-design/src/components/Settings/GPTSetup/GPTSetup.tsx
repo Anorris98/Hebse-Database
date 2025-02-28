@@ -1,16 +1,15 @@
 import { useState, useEffect } from "react";
-import { Box, TextField, Button, Typography, Container, Paper, IconButton } from "@mui/material";
+import { Box, Button, Typography, Container, Paper, IconButton } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import HelpTextField from "../../HelpTextField/HelpTextField.tsx"; 
 
 const GPTSetup = () => {
-    // State variables
     const [apiKey, setApiKey] = useState("");
     const [model, setModel] = useState("gpt-4");
     const [maxTokens, setMaxTokens] = useState("100");
     const [temperature, setTemperature] = useState("0.7");
-    const [showApiKey, setShowApiKey] = useState(false); // New state for toggling visibility
+    const [showApiKey, setShowApiKey] = useState(false);
 
-    // Load settings from localStorage when the component mounts
     useEffect(() => {
         const savedSettings = localStorage.getItem("gpt_settings");
         if (savedSettings) {
@@ -26,7 +25,6 @@ const GPTSetup = () => {
         }
     }, []);
 
-    // Function to save settings to localStorage
     const handleSave = () => {
         const settings = {
             apiKey,
@@ -57,60 +55,51 @@ const GPTSetup = () => {
                     GPT API Settings
                 </Typography>
 
-                <Box sx={{ display: "flex", alignItems: "center", marginBottom: "15px" }}>
-                    <TextField
-                        fullWidth
+                {/* API Key Field with Visibility Toggle */}
+                <Box sx={{ display: "flex", alignItems: "center", marginBottom: "15px", gap: "10px" }}>
+                    <HelpTextField
                         label="API Key"
-                        type={showApiKey ? "text" : "password"}
-                        variant="outlined"
                         value={apiKey}
                         onChange={(e) => setApiKey(e.target.value)}
-                        sx={{ backgroundColor: "#616161", borderRadius: "5px" }}
-                        InputProps={{
-                            style: { color: "white" },
-                            endAdornment: (
-                                <IconButton onClick={() => setShowApiKey(!showApiKey)}>
-                                    {showApiKey ? <VisibilityOff /> : <Visibility />}
-                                </IconButton>
-                            ),
-                        }}
+                        type={showApiKey ? "text" : "password"}
+                        tooltipText="Enter your OpenAI API Key. This key is required to access GPT models."
+                        fullWidth
                     />
+                    <IconButton onClick={() => setShowApiKey(!showApiKey)}>
+                        {showApiKey ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
                 </Box>
 
-                <TextField
-                    fullWidth
+                {/* Model Selection Field */}
+                <HelpTextField
                     label="Model (e.g., gpt-4, gpt-3.5-turbo)"
-                    variant="outlined"
                     value={model}
                     onChange={(e) => setModel(e.target.value)}
-                    sx={{ marginBottom: "15px", backgroundColor: "#616161", borderRadius: "5px" }}
-                    InputProps={{ style: { color: "white" } }}
+                    tooltipText="Specify which GPT model you want to use. Example: 'gpt-4' or 'gpt-3.5-turbo'."
+                    fullWidth
                 />
 
+                {/* Max Tokens and Temperature Fields */}
                 <Box sx={{ display: "flex", gap: "15px" }}>
-                    <TextField
-                        fullWidth
+                    <HelpTextField
                         label="Max Tokens"
                         type="number"
-                        variant="outlined"
                         value={maxTokens}
                         onChange={(e) => setMaxTokens(e.target.value)}
-                        sx={{ backgroundColor: "#616161", borderRadius: "5px" }}
-                        InputProps={{ style: { color: "white" } }}
-                    />
-
-                    <TextField
+                        tooltipText="Maximum number of tokens the model can generate. A higher value means longer responses."
                         fullWidth
+                    />
+                    <HelpTextField
                         label="Temperature (0-1)"
                         type="number"
-                        variant="outlined"
                         value={temperature}
                         onChange={(e) => setTemperature(e.target.value)}
-                        sx={{ backgroundColor: "#616161", borderRadius: "5px" }}
-                        InputProps={{ style: { color: "white" } }}
+                        tooltipText="Controls randomness. A lower value (e.g., 0.2) makes responses more focused, while a higher value (e.g., 0.9) makes them more creative."
+                        fullWidth
                     />
                 </Box>
 
+                {/* Save Button */}
                 <Button
                     variant="contained"
                     fullWidth
