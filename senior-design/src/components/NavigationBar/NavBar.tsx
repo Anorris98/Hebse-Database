@@ -59,7 +59,8 @@ export const NavBar = () => {
                                 onClick={() => navigate("/Utilities")}>
                                 Utilities
                             </StyledButton>
-                            <StyledButton variant="contained" size="small" startIcon={<Settings/>}>
+                            <StyledButton variant="contained" size="small" startIcon={<Settings/>}
+                                onClick={() => navigate("/Settings")}>
                                 Settings
                             </StyledButton>
                             <StyledButton variant="contained" size="small" startIcon={<Info/>}
