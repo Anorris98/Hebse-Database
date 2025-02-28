@@ -28,7 +28,7 @@ const GPTSetup = () => {
                 sx={{
                     padding: "30px",
                     borderRadius: "12px",
-                    backgroundColor: "#424242", // Matches Query.tsx theme
+                    backgroundColor: 'gray', // Matches Queryinput.tsx theme
                     color: "white",
                     fontFamily: "monospace",
                     boxShadow: "0px 4px 20px rgba(0,0,0,0.3)", 
