@@ -24,7 +24,7 @@ const HelpTextField: React.FC<HelpTextFieldProps> = ({ label, value, onChange, t
                 type={type}
                 value={value}
                 onChange={onChange}
-                sx={{ backgroundColor: "#616161", borderRadius: "5px" }}
+                sx={{ backgroundColor: 'gray', borderRadius: "5px" }}
                 InputProps={{ style: { color: "white" } }}
             />
         </Box>

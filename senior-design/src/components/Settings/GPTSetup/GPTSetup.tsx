@@ -1,7 +1,28 @@
 import { useState, useEffect } from "react";
 import { Box, Button, Typography, Container, Paper, IconButton } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import HelpTextField from "../../HelpTextField/HelpTextField.tsx"; 
+import { alpha, styled } from "@mui/material/styles";
+import HelpTextField from "../../HelpTextField/HelpTextField.tsx";
+
+// Styled components
+const StyledPaper = styled(Paper)(({ theme }) => ({
+    padding: "30px",
+    borderRadius: "12px",
+    backdropFilter: "blur(24px)",
+    border: `1px solid ${theme.palette.divider}`,
+    backgroundColor: alpha(theme.palette.background.default, 0.4),
+    boxShadow: theme.shadows[1],
+    color: theme.palette.text.primary,
+    fontFamily: "monospace",
+}));
+
+const StyledButton = styled(Button)(() => ({
+    backgroundColor: "darkgray",
+    textTransform: "none",
+    fontFamily: "monospace",
+    fontWeight: "bold",
+    "&:hover": { backgroundColor: "#6c757d" },
+}));
 
 const GPTSetup = () => {
     const [apiKey, setApiKey] = useState("");
@@ -40,17 +61,7 @@ const GPTSetup = () => {
 
     return (
         <Container maxWidth="lg" sx={{ mt: 10 }}>
-            <Paper
-                elevation={6}
-                sx={{
-                    padding: "30px",
-                    borderRadius: "12px",
-                    backgroundColor: "gray",
-                    color: "white",
-                    fontFamily: "monospace",
-                    boxShadow: "0px 4px 20px rgba(0,0,0,0.3)",
-                }}
-            >
+            <StyledPaper elevation={6}>
                 <Typography variant="h4" sx={{ marginBottom: "20px", textAlign: "center" }}>
                     GPT API Settings
                 </Typography>
@@ -63,7 +74,6 @@ const GPTSetup = () => {
                         onChange={(e) => setApiKey(e.target.value)}
                         type={showApiKey ? "text" : "password"}
                         tooltipText="Enter your OpenAI API Key. This key is required to access GPT models."
-                        fullWidth
                     />
                     <IconButton onClick={() => setShowApiKey(!showApiKey)}>
                         {showApiKey ? <VisibilityOff /> : <Visibility />}
@@ -76,18 +86,16 @@ const GPTSetup = () => {
                     value={model}
                     onChange={(e) => setModel(e.target.value)}
                     tooltipText="Specify which GPT model you want to use. Example: 'gpt-4' or 'gpt-3.5-turbo'."
-                    fullWidth
                 />
 
                 {/* Max Tokens and Temperature Fields */}
-                <Box sx={{ display: "flex", gap: "15px" }}>
+                <Box sx={{ display: "flex", gap: "15px", marginTop: "15px" }}>
                     <HelpTextField
                         label="Max Tokens"
                         type="number"
                         value={maxTokens}
                         onChange={(e) => setMaxTokens(e.target.value)}
                         tooltipText="Maximum number of tokens the model can generate. A higher value means longer responses."
-                        fullWidth
                     />
                     <HelpTextField
                         label="Temperature (0-1)"
@@ -95,26 +103,19 @@ const GPTSetup = () => {
                         value={temperature}
                         onChange={(e) => setTemperature(e.target.value)}
                         tooltipText="Controls randomness. A lower value (e.g., 0.2) makes responses more focused, while a higher value (e.g., 0.9) makes them more creative."
-                        fullWidth
                     />
                 </Box>
 
                 {/* Save Button */}
-                <Button
+                <StyledButton
                     variant="contained"
                     fullWidth
-                    sx={{
-                        marginTop: "15px",
-                        backgroundColor: "#1976d2",
-                        color: "white",
-                        fontWeight: "bold",
-                        "&:hover": { backgroundColor: "#125ea5" },
-                    }}
+                    sx={{ marginTop: "20px" }}
                     onClick={handleSave}
                 >
                     Save Settings
-                </Button>
-            </Paper>
+                </StyledButton>
+            </StyledPaper>
         </Container>
     );
 };
