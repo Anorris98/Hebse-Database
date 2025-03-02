@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { QueryInput } from "../QueryInput/QueryInput.tsx";
-import { QueryResults } from '../QueryResults/QueryResults';
+import { QueryInput } from "./QueryInput/QueryInput.tsx";
+import { QueryResults } from './QueryResults/QueryResults';
 import { QueryWelcomeText } from "../QueryWelcomeText/QueryWelcomeText.tsx";
 import { SavedQueriesComponent } from "../SavedQueriesComponent/SavedQueriesComponent.tsx";
 import { Grid2 } from "@mui/material";
