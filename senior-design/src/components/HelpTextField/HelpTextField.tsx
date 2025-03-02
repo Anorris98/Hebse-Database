@@ -7,9 +7,10 @@ interface HelpTextFieldProps {
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     type?: string;
     tooltipText: string;
+    inputProps?: object; 
 }
 
-const HelpTextField: React.FC<HelpTextFieldProps> = ({ label, value, onChange, type = "text", tooltipText }) => {
+const HelpTextField: React.FC<HelpTextFieldProps> = ({ label, value, onChange, type = "text", tooltipText, inputProps }) => {
     return (
         <Box sx={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "15px" }}>
             <Tooltip title={tooltipText} arrow>
@@ -25,7 +26,7 @@ const HelpTextField: React.FC<HelpTextFieldProps> = ({ label, value, onChange, t
                 value={value}
                 onChange={onChange}
                 sx={{ backgroundColor: 'gray', borderRadius: "5px" }}
-                InputProps={{ style: { color: "white" } }}
+                InputProps={{ style: { color: "white" }, ...inputProps }} // Merge inputProps here
             />
         </Box>
     );

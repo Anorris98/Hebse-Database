@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Box, Button, Typography, Container, Paper, IconButton } from "@mui/material";
+import { Box, Button, Typography, Container, Paper, IconButton, InputAdornment } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { alpha, styled } from "@mui/material/styles";
 import HelpTextField from "../../HelpTextField/HelpTextField.tsx";
@@ -59,6 +59,74 @@ const GPTSetup = () => {
         alert("Settings saved!");
     };
 
+    const apiKeyInputProps = {
+        endAdornment: (
+            <InputAdornment position="end">
+                <IconButton onClick={() => setShowApiKey(!showApiKey)} edge="end">
+                    {showApiKey ? <VisibilityOff sx={{ color: "white" }} /> : <Visibility sx={{ color: "white" }} />}
+                </IconButton>
+            </InputAdornment>
+        ),
+    };
+
+
+return (
+    <Container maxWidth="lg" sx={{ mt: 10 }}>
+        <StyledPaper elevation={6}>
+            <Typography variant="h4" sx={{ marginBottom: "20px", textAlign: "center" }}>
+                GPT API Settings
+            </Typography>
+
+            {/* API Key Field with Visibility Toggle */}
+            <HelpTextField
+                label="API Key"
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                type={showApiKey ? "text" : "password"}
+                tooltipText="Enter your OpenAI API Key. This key is required to access GPT models."
+                inputProps={apiKeyInputProps} 
+            />
+
+            {/* Model Selection Field */}
+            <HelpTextField
+                label="Model (e.g., gpt-4, gpt-3.5-turbo)"
+                value={model}
+                onChange={(e) => setModel(e.target.value)}
+                tooltipText="Specify which GPT model you want to use. Example: 'gpt-4' or 'gpt-3.5-turbo'."
+            />
+
+            {/* Max Tokens and Temperature Fields */}
+            <Box sx={{ display: "flex", gap: "15px", marginTop: "15px" }}>
+                <HelpTextField
+                    label="Max Tokens"
+                    type="number"
+                    value={maxTokens}
+                    onChange={(e) => setMaxTokens(e.target.value)}
+                    tooltipText="Maximum number of tokens the model can generate. A higher value means longer responses."
+                />
+                <HelpTextField
+                    label="Temperature (0-1)"
+                    type="number"
+                    value={temperature}
+                    onChange={(e) => setTemperature(e.target.value)}
+                    tooltipText="Controls randomness. A lower value (e.g., 0.2) makes responses more focused, while a higher value (e.g., 0.9) makes them more creative."
+                />
+            </Box>
+
+            {/* Save Button */}
+            <StyledButton
+                variant="contained"
+                fullWidth
+                sx={{ marginTop: "20px" }}
+                onClick={handleSave}
+            >
+                Save Settings
+            </StyledButton>
+        </StyledPaper>
+    </Container>
+);
+
+
     return (
         <Container maxWidth="lg" sx={{ mt: 10 }}>
             <StyledPaper elevation={6}>
@@ -67,18 +135,22 @@ const GPTSetup = () => {
                 </Typography>
 
                 {/* API Key Field with Visibility Toggle */}
-                <Box sx={{ display: "flex", alignItems: "center", marginBottom: "15px", gap: "10px" }}>
-                    <HelpTextField
-                        label="API Key"
-                        value={apiKey}
-                        onChange={(e) => setApiKey(e.target.value)}
-                        type={showApiKey ? "text" : "password"}
-                        tooltipText="Enter your OpenAI API Key. This key is required to access GPT models."
-                    />
-                    <IconButton onClick={() => setShowApiKey(!showApiKey)}>
-                        {showApiKey ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                </Box>
+                <HelpTextField
+                    label="API Key"
+                    value={apiKey}
+                    onChange={(e) => setApiKey(e.target.value)}
+                    type={showApiKey ? "text" : "password"}
+                    tooltipText="Enter your OpenAI API Key. This key is required to access GPT models."
+                    inputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <IconButton onClick={() => setShowApiKey(!showApiKey)} edge="end">
+                                    {/* {showApiKey ? <VisibilityOff /> : <Visibility />} */}
+                                </IconButton>
+                            </InputAdornment>
+                        ),
+                    }}
+                />
 
                 {/* Model Selection Field */}
                 <HelpTextField
