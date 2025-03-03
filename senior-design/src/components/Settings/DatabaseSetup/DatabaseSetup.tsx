@@ -1,7 +1,24 @@
 import { useState, useEffect } from "react";
-import {Box, Button,Typography, Container, IconButton, InputAdornment, MenuItem, Paper} from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  Container,
+  IconButton,
+  InputAdornment,
+  MenuItem,
+  Paper,
+  Switch,
+  FormControlLabel
+} from "@mui/material";
 import { alpha, styled } from "@mui/material/styles";
-import { Visibility, VisibilityOff, Save, AddCircleOutline } from "@mui/icons-material";
+import {
+  Visibility,
+  VisibilityOff,
+  Save,
+  AddCircleOutline,
+  DeleteForever
+} from "@mui/icons-material";
 import HelpTextField from "../../HelpTextField/HelpTextField.tsx";
 
 // Styled container matching your styling guide
@@ -54,6 +71,14 @@ const DatabaseSetup = () => {
   const [database, setDatabase] = useState("");
   // For toggling password visibility
   const [showPassword, setShowPassword] = useState(false);
+  // Whether this DB uses a remote connection
+  const [isRemote, setIsRemote] = useState(false);
+
+  // Additional SSH fields for remote connection
+  const [sshHost, setSshHost] = useState("");
+  const [sshPort, setSshPort] = useState("22");
+  const [sshUser, setSshUser] = useState("");
+  const [sshKey, setSshKey] = useState("");
 
   // --------------------------------------------------
   // Helper: Load the entire db_list from localStorage
@@ -89,6 +114,13 @@ const DatabaseSetup = () => {
         setUsername(parsedSettings.username || "");
         setDatabase(parsedSettings.database || "");
         setPassword(parsedSettings.password || "");
+        setIsRemote(!!parsedSettings.isRemote);
+
+        // If remote info was saved, load it
+        setSshHost(parsedSettings.sshHost || "");
+        setSshPort(parsedSettings.sshPort || "22");
+        setSshUser(parsedSettings.sshUser || "");
+        setSshKey(parsedSettings.sshKey || "");
       } catch (error) {
         console.error("Error loading last-used settings:", error);
       }
@@ -103,25 +135,49 @@ const DatabaseSetup = () => {
     setSelectedDatabase(selectedDb);
 
     if (selectedDb === "new") {
-      // Clear fields for brand new DB
+      // Clear fields for a brand-new DB
       setHost("");
       setPort("5432");
       setUsername("");
       setDatabase("");
       setPassword("");
+      setIsRemote(false);
+
+      // Clear out SSH fields
+      setSshHost("");
+      setSshPort("22");
+      setSshUser("");
+      setSshKey("");
       return;
     }
 
     // If an existing DB name is chosen, load its fields
     const allDbConfigs = loadAllDbConfigs();
     if (allDbConfigs[selectedDb]) {
-      const { host, port, username, password } = allDbConfigs[selectedDb];
-      // The DB name is the key (i.e. selectedDb)
+      const {
+        host,
+        port,
+        username,
+        password,
+        isRemote,
+        sshHost,
+        sshPort,
+        sshUser,
+        sshKey,
+      } = allDbConfigs[selectedDb];
+
       setHost(host);
       setPort(port);
       setUsername(username);
       setDatabase(selectedDb);
       setPassword(password);
+      setIsRemote(!!isRemote);
+
+      // Populate SSH fields if they exist
+      setSshHost(sshHost || "");
+      setSshPort(sshPort || "22");
+      setSshUser(sshUser || "");
+      setSshKey(sshKey || "");
     }
   };
 
@@ -136,9 +192,21 @@ const DatabaseSetup = () => {
     }
 
     // Read the entire DB config object
-    let allDbConfigs = loadAllDbConfigs();
+    const allDbConfigs = loadAllDbConfigs();
+
     // Overwrite or create the entry
-    allDbConfigs[database] = { host, port, username, password };
+    allDbConfigs[database] = {
+      host,
+      port,
+      username,
+      password,
+      isRemote,
+      // SSH data
+      sshHost,
+      sshPort,
+      sshUser,
+      sshKey
+    };
 
     // Write it back to localStorage
     localStorage.setItem("db_list", JSON.stringify(allDbConfigs));
@@ -146,7 +214,18 @@ const DatabaseSetup = () => {
     // Also set the last-used config
     localStorage.setItem(
       "db_settings",
-      JSON.stringify({ host, port, username, password, database })
+      JSON.stringify({
+        host,
+        port,
+        username,
+        password,
+        database,
+        isRemote,
+        sshHost,
+        sshPort,
+        sshUser,
+        sshKey
+      })
     );
 
     // Refresh the dropdown list
@@ -155,6 +234,51 @@ const DatabaseSetup = () => {
     setSelectedDatabase(database);
 
     alert("Database settings saved!");
+  };
+
+  // --------------------------------------------------
+  // Handle removing an existing database config
+  // --------------------------------------------------
+  const handleRemove = () => {
+    if (!selectedDatabase || selectedDatabase === "new") {
+      return;
+    }
+    const allDbConfigs = loadAllDbConfigs();
+    // Remove the currently selected DB config
+    delete allDbConfigs[selectedDatabase];
+    // Persist the updated object
+    localStorage.setItem("db_list", JSON.stringify(allDbConfigs));
+
+    // If the removed config was also the "last-used", clear it
+    const lastUsed = localStorage.getItem("db_settings");
+    if (lastUsed) {
+      try {
+        const parsed = JSON.parse(lastUsed);
+        if (parsed.database === selectedDatabase) {
+          localStorage.removeItem("db_settings");
+        }
+      } catch (err) {
+        console.error("Error clearing last-used database:", err);
+      }
+    }
+
+    // Update state to reflect removal
+    setDatabaseNames(Object.keys(allDbConfigs));
+    setSelectedDatabase("");
+    setHost("");
+    setPort("5432");
+    setUsername("");
+    setPassword("");
+    setDatabase("");
+    setIsRemote(false);
+
+    // Clear remote fields
+    setSshHost("");
+    setSshPort("22");
+    setSshUser("");
+    setSshKey("");
+
+    alert(`Database '${selectedDatabase}' was removed!`);
   };
 
   // Additional props for toggling password visibility
@@ -194,8 +318,21 @@ const DatabaseSetup = () => {
           </MenuItem>
         </StyledSelect>
 
-        {/* These fields are always visible, showing the info for the
-            selected or new DB */}
+        {/* Toggle whether this is a remote DB */}
+        <Box sx={{ marginBottom: "15px" }}>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={isRemote}
+                onChange={(e) => setIsRemote(e.target.checked)}
+              />
+            }
+            label="Remote Database"
+            sx={{ color: "white" }}
+          />
+        </Box>
+
+        {/* Standard DB fields */}
         <HelpTextField
           label="Host"
           value={host}
@@ -230,20 +367,75 @@ const DatabaseSetup = () => {
           tooltipText="Enter the name of the database you want to connect to."
         />
 
-        <Button
-          variant="contained"
-          fullWidth
-          sx={{
-            marginTop: "20px",
-            backgroundColor: "darkgray",
-            fontFamily: "monospace",
-            fontWeight: "bold",
-          }}
-          onClick={handleSave}
-          startIcon={<Save />}
-        >
-          Save Database Settings
-        </Button>
+        {/* SSH/Remote-only fields */}
+        {isRemote && (
+          <>
+            <Typography variant="h6" sx={{ marginTop: "20px", marginBottom: "10px" }}>
+              SSH Connection Details
+            </Typography>
+            <HelpTextField
+              label="SSH Host"
+              value={sshHost}
+              onChange={(e) => setSshHost(e.target.value)}
+              tooltipText="Enter the SSH host for tunneling (e.g., example.com)."
+            />
+            <HelpTextField
+              label="SSH Port"
+              type="number"
+              value={sshPort}
+              onChange={(e) => setSshPort(e.target.value)}
+              tooltipText="SSH port (default 22)."
+            />
+            <HelpTextField
+              label="SSH Username"
+              value={sshUser}
+              onChange={(e) => setSshUser(e.target.value)}
+              tooltipText="Your SSH username on the remote host."
+            />
+            <HelpTextField
+              label="SSH Private Key"
+              value={sshKey}
+              onChange={(e) => setSshKey(e.target.value)}
+              tooltipText="Paste your SSH private key here."
+              // multiline, so the user can paste multi-line key
+              inputProps={{ multiline: true, rows: 4, style: { color: "white" } }}
+            />
+          </>
+        )}
+
+        <Box sx={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+          {/* Save Button */}
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: "darkgray",
+              fontFamily: "monospace",
+              fontWeight: "bold",
+              flex: 1,
+            }}
+            onClick={handleSave}
+            startIcon={<Save />}
+          >
+            Save Database Settings
+          </Button>
+
+          {/* Remove Button (only shown if an existing DB is selected) */}
+          {selectedDatabase && selectedDatabase !== "new" && (
+            <Button
+              variant="contained"
+              color="error"
+              sx={{
+                fontFamily: "monospace",
+                fontWeight: "bold",
+                flex: 1,
+              }}
+              onClick={handleRemove}
+              startIcon={<DeleteForever />}
+            >
+              Remove Database
+            </Button>
+          )}
+        </Box>
       </StyledPaper>
     </Container>
   );
