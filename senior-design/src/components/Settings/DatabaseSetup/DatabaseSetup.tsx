@@ -1,13 +1,7 @@
 import { useState, useEffect } from "react";
 import {Box, Button, Typography, Container, IconButton, InputAdornment, MenuItem, Paper, Switch, FormControlLabel} from "@mui/material";
 import { alpha, styled } from "@mui/material/styles";
-import {
-  Visibility,
-  VisibilityOff,
-  Save,
-  AddCircleOutline,
-  DeleteForever
-} from "@mui/icons-material";
+import {Visibility, VisibilityOff, Save, AddCircleOutline, DeleteForever} from "@mui/icons-material";
 import HelpTextField from "../../HelpTextField/HelpTextField.tsx";
 
 // Styled container matching your styling guide
