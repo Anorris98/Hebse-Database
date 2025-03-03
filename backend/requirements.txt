@@ -5,3 +5,7 @@ h5py
 sqlalchemy
 psycopg2
 sshtunnel
+tox
+pytest
+pytest-cov
+httpx
