@@ -4,6 +4,7 @@ import { QueryResults } from './QueryResults/QueryResults';
 import { QueryWelcomeText } from "../QueryWelcomeText/QueryWelcomeText.tsx";
 import { SavedQueriesComponent } from "../SavedQueriesComponent/SavedQueriesComponent.tsx";
 import { Grid2 } from "@mui/material";
+import NLPInteraction from "./NLPInteraction/NLPInteraction.tsx";
 
 export const Query = () => {
     const [queryResult, setQueryResult] = useState('');
@@ -15,6 +16,7 @@ export const Query = () => {
             {/* <NavBar/> The navigation bar */}
             <Grid2 display={"grid"} sx={{maxHeight: '1000px'}}>
                 <QueryWelcomeText/>
+                <NLPInteraction />{/* Displays the NPLInteraction component*/}
                 <QueryInput onQueryResult={setQueryResult}
                             savedQueries={savedQueries}
                             setSavedQueries={setSavedQueries}
