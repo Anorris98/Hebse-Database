@@ -108,7 +108,7 @@ const NLPInteraction = () => {
       }
 
       const data = await res.json();
-      // The backend returns { response: "...GPT output..." }
+      // The backend returns { response.content: "...GPT output..." }
       setResponse(data.response.content || "No response received from GPT."); //this took forever to figure out, if future updates change the response key, this will need to be updated.
     } catch (error) {
       console.error("Error fetching GPT response:", error);

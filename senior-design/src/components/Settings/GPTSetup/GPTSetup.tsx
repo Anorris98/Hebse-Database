@@ -104,13 +104,7 @@ return (
                     onChange={(e) => setMaxTokens(e.target.value)}
                     tooltipText="Maximum number of tokens the model can generate. A higher value means longer responses."
                 />
-                <HelpTextField
-                    label="Temperature (0-1)"
-                    type="number"
-                    value={temperature}
-                    onChange={(e) => setTemperature(e.target.value)}
-                    tooltipText="Controls randomness. A lower value (e.g., 0.2) makes responses more focused, while a higher value (e.g., 0.9) makes them more creative."
-                />
+            
             </Box>
 
             {/* Save Button */}
