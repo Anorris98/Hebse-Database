@@ -1,28 +1,14 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine, text
-import os
+from openai import OpenAI
 import sshtunnel
+import traceback
 
-#init FastAPI
+# Create one FastAPI instance
 app = FastAPI()
 
-origins = [
-    "http://localhost",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173"
-]
-
-tunnel = sshtunnel.SSHTunnelForwarder(
-    ("SDmay25-20.ece.iastate.edu", 22),
-    ssh_username="vm-user",
-    ssh_password="50EgMe$KIE2m",
-    remote_bind_address=("127.0.0.1", 5432)
-)
-
-tunnel.start()
-
-# Add CORS middleware
+# Configure CORS middleware
 origins = ["http://localhost", "http://localhost:5173"]
 app.add_middleware(
     CORSMiddleware,
@@ -31,7 +17,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-# PostgreSQL connection configuration
+
+# Setup SSH tunnel and database connection
+tunnel = sshtunnel.SSHTunnelForwarder(
+    ("SDmay25-20.ece.iastate.edu", 22),
+    ssh_username="vm-user",
+    ssh_password="50EgMe$KIE2m",
+    remote_bind_address=("127.0.0.1", 5432)
+)
+tunnel.start()
+
 DATABASE_CONFIG = {
     "username": "postgres",
     "password": "root",
@@ -44,39 +39,43 @@ DB_URL = (
     f"{DATABASE_CONFIG['password']}@{DATABASE_CONFIG['host']}:"
     f"{DATABASE_CONFIG['port']}/{DATABASE_CONFIG['database']}"
 )
-
 engine = create_engine(DB_URL)
 
 @app.post("/GetData")
 def get_data(body: dict):
     raw_query = body.get("query")
-    print(f"Received query: {raw_query}")  # Log received query
-
     if not raw_query:
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid request. 'query' key is required in the body."
-        )
+        raise HTTPException(status_code=400, detail="Query key is required.")
 
     try:
         with engine.connect() as connection:
-            print("Executing query...")  # Log query execution start
             result = connection.execute(text(raw_query))
-
-            # Log the raw SQLAlchemy result object
-            #print(f"Raw result: {result}")
-
-            rows = [row._mapping for row in result]  # Convert rows
-            #print(f"Retrieved rows: {rows}")  # Log retrieved rows
-
-            if not rows:
-                return {"message": "Query executed successfully, but no data was returned.", "data": []}
-
+            rows = [row._mapping for row in result]
             return {"message": "Query executed successfully.", "data": rows}
-
     except Exception as e:
-        print(f"Error: {str(e)}")  # Log errors
-        raise HTTPException(
-            status_code=500,
-            detail=f"Error executing query: {str(e)}"
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/ask_gpt")
+def ask_gpt(request: dict):
+    client = OpenAI()
+    user_query = request.get("query")
+    settings = request.get("settings")
+    if not user_query:
+        raise HTTPException(status_code=400, detail="Query is required.")
+    if not settings or "apiKey" not in settings:
+        raise HTTPException(status_code=400, detail="GPT API key is missing.")
+
+    try:
+        client.api_key = settings["apiKey"]
+        response = client.chat.completions.create(
+            model=settings.get("model", "gpt-4o-mini"),
+             messages=[
+                {"role": "system", "content": "You are NLP assistant used for helping to user generate a query and nothing more."},
+                {"role": "user", "content": user_query}
+            ],
+             max_completion_tokens=int(settings.get("max_tokens", 0))
         )
+        return {"response": response.choices[0].message}
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
