@@ -1,8 +1,18 @@
-import { useState } from "react";
-import { Box, Button, TextField, Typography, IconButton, InputAdornment } from "@mui/material";
+import { useState, useEffect } from "react";
+import {
+  Box,
+  Button,
+  Typography,
+  IconButton,
+  InputAdornment,
+  Checkbox,
+  FormControlLabel,
+} from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { AutoAwesome } from "@mui/icons-material";
+import HelpTextField from "../../HelpTextField/HelpTextField"; // Adjust path if needed
 
+// Styled button matching dark-gray theme
 const StyledButton = styled(Button)(() => ({
   backgroundColor: "darkgray",
   textTransform: "none",
@@ -13,15 +23,67 @@ const StyledButton = styled(Button)(() => ({
 }));
 
 const NLPInteraction = () => {
+  // User query and response state
   const [query, setQuery] = useState("");
-  const [response, setResponse] = useState("Enter a query to get assistance.");
+  const [response, setResponse] = useState(
+    "Enter your request or question to GPT. The system is trained on your schema and can help format queries or provide general assistance."
+  );
+  // GPT API key and connection status
+  const [gptConnected, setGptConnected] = useState(false);
+  const [checkingConnection, setCheckingConnection] = useState(true);
 
-  const handleQuery = async () => {
-    if (!query.trim()) {
-      setResponse("Query cannot be empty.");
+  useEffect(() => {
+    // Load GPT API key from localStorage
+    const savedSettings = localStorage.getItem("gpt_settings");
+    if (!savedSettings) {
+      setCheckingConnection(false);
+      setGptConnected(false);
       return;
     }
 
+    try {
+      const parsedSettings = JSON.parse(savedSettings);
+      const apiKey = parsedSettings.apiKey?.trim();
+
+      if (!apiKey) {
+        setCheckingConnection(false);
+        setGptConnected(false);
+        return;
+      }
+
+      // Validate the API key with OpenAI
+      verifyGPTConnection(apiKey);
+    } catch (error) {
+      console.error("Error parsing GPT settings:", error);
+      setCheckingConnection(false);
+      setGptConnected(false);
+    }
+  }, []);
+
+  // Function to verify GPT API key by making a small request
+  const verifyGPTConnection = async (apiKey: string) => {
+    try {
+      const res = await fetch("https://api.openai.com/v1/models", {
+        method: "GET",
+        headers: { Authorization: `Bearer ${apiKey}` },
+      });
+
+      if (res.ok) {
+        setGptConnected(true);
+      } else {
+        console.error("GPT API key is invalid or service is unavailable.");
+        setGptConnected(false);
+      }
+    } catch (error) {
+      console.error("Error checking GPT connection:", error);
+      setGptConnected(false);
+    } finally {
+      setCheckingConnection(false);
+    }
+  };
+
+  // Send user’s query to your backend
+  const handleQuery = async () => {
     try {
       const res = await fetch("http://localhost:8000/GetData", {
         method: "POST",
@@ -59,31 +121,50 @@ const NLPInteraction = () => {
         Query Assistance
       </Typography>
 
-      <Box sx={{ display: "flex" }}>
-        <TextField
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          label="Ask GPT"
-          variant="outlined"
-          fullWidth
-          slotProps={{
-            input: {
-              style: { fontFamily: "monospace", color: "white" },
-              startAdornment: (
-                <InputAdornment position="start">
-                  <IconButton onClick={handleQuery}>
-                    <AutoAwesome sx={{ color: "white" }} />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            },
-            inputLabel: { style: { fontFamily: "monospace", color: "white" } },
-          }}
-          sx={{ margin: 1 }}
+      {/* Connection Status */}
+      <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={gptConnected}
+              disabled
+              sx={{
+                color: "white",
+                "&.Mui-checked": {
+                  color: "white",
+                },
+              }}
+            />
+          }
+          label={
+            checkingConnection
+              ? "Checking GPT connection..."
+              : gptConnected
+              ? "✅ GPT Model is connected!"
+              : "❌ GPT Model is not connected. Please check Settings -> GPT API Settings."
+          }
+          sx={{ color: "white", fontFamily: "monospace" }}
         />
       </Box>
 
-      <StyledButton variant="contained" onClick={handleQuery}>
+      {/* HelpTextField for user to input their GPT query */}
+      <HelpTextField
+        label="Ask GPT"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        tooltipText="Use this field to talk to GPT about how to format queries or for general schema-related assistance."
+        inputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <IconButton onClick={handleQuery}>
+                <AutoAwesome sx={{ color: "white" }} />
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+      />
+
+      <StyledButton variant="contained" onClick={handleQuery} fullWidth disabled={!gptConnected}>
         Get Answer
       </StyledButton>
 
