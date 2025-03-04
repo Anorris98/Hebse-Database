@@ -10,9 +10,8 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { AutoAwesome } from "@mui/icons-material";
-import HelpTextField from "../../HelpTextField/HelpTextField"; // Adjust path if needed
+import HelpTextField from "../../HelpTextField/HelpTextField";
 
-// Styled button matching dark-gray theme
 const StyledButton = styled(Button)(() => ({
   backgroundColor: "darkgray",
   textTransform: "none",
@@ -23,72 +22,85 @@ const StyledButton = styled(Button)(() => ({
 }));
 
 const NLPInteraction = () => {
-  // User query and response state
   const [query, setQuery] = useState("");
   const [response, setResponse] = useState(
-    "Enter your request or question to GPT. The system is trained on your schema and can help format queries or provide general assistance."
+    "Enter your request or question to GPT. The system can help format queries or provide general assistance."
   );
-  // GPT API key and connection status
+
+  // GPT connection checks
   const [gptConnected, setGptConnected] = useState(false);
   const [checkingConnection, setCheckingConnection] = useState(true);
 
+  // -----------------------------------------------------------------
+  // On mount, we attempt a quick "ping" to /ask_gpt with a test query
+  // to confirm GPT settings are valid. If success => connected.
+  // -----------------------------------------------------------------
   useEffect(() => {
-    // Load GPT API key from localStorage
-    const savedSettings = localStorage.getItem("gpt_settings");
-    if (!savedSettings) {
-      setCheckingConnection(false);
-      setGptConnected(false);
-      return;
-    }
+    const testGPTConnection = async () => {
+      try {
+        // Grab GPT settings from localStorage
+        const savedSettings = localStorage.getItem("gpt_settings");
+        if (!savedSettings) {
+          setGptConnected(false);
+          return;
+        }
 
-    try {
-      const parsedSettings = JSON.parse(savedSettings);
-      const apiKey = parsedSettings.apiKey?.trim();
+        const parsedSettings = JSON.parse(savedSettings);
+        // Construct a small test request
+        const payload = {
+          query: "Hello GPT, are you there?",  // a minimal test
+          settings: parsedSettings,
+        };
 
-      if (!apiKey) {
-        setCheckingConnection(false);
+        const res = await fetch("http://localhost:8000/ask_gpt", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) {
+          throw new Error(`Connection test failed: HTTP status ${res.status}`);
+        }
+
+        const data = await res.json();
+        // If we get a response key with text in it, we assume success
+        if (data?.response) {
+          setGptConnected(true);
+        }
+      } catch (error) {
+        console.error("Error checking GPT connection:", error);
         setGptConnected(false);
+      } finally {
+        setCheckingConnection(false);
+      }
+    };
+
+    testGPTConnection();
+  }, []);
+
+  // -----------------------------------------------------------------
+  // Handler that actually calls the /ask_gpt endpoint with the user’s
+  // query + the GPT settings from localStorage
+  // -----------------------------------------------------------------
+  const handleQuery = async () => {
+    setResponse("Awaiting GPT response...");
+    try {
+      const savedSettings = localStorage.getItem("gpt_settings");
+      if (!savedSettings) {
+        setResponse("GPT settings not found. Please set up your API key first.");
         return;
       }
 
-      // Validate the API key with OpenAI
-      verifyGPTConnection(apiKey);
-    } catch (error) {
-      console.error("Error parsing GPT settings:", error);
-      setCheckingConnection(false);
-      setGptConnected(false);
-    }
-  }, []);
+      const parsedSettings = JSON.parse(savedSettings);
+      const payload = {
+        query,
+        settings: parsedSettings,
+      };
 
-  // Function to verify GPT API key by making a small request
-  const verifyGPTConnection = async (apiKey: string) => {
-    try {
-      const res = await fetch("https://api.openai.com/v1/models", {
-        method: "GET",
-        headers: { Authorization: `Bearer ${apiKey}` },
-      });
-
-      if (res.ok) {
-        setGptConnected(true);
-      } else {
-        console.error("GPT API key is invalid or service is unavailable.");
-        setGptConnected(false);
-      }
-    } catch (error) {
-      console.error("Error checking GPT connection:", error);
-      setGptConnected(false);
-    } finally {
-      setCheckingConnection(false);
-    }
-  };
-
-  // Send user’s query to your backend
-  const handleQuery = async () => {
-    try {
-      const res = await fetch("http://localhost:8000/GetData", {
+      const res = await fetch("http://localhost:8000/ask_gpt", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
@@ -96,7 +108,8 @@ const NLPInteraction = () => {
       }
 
       const data = await res.json();
-      setResponse(data.message || "No response received.");
+      // The backend returns { response: "...GPT output..." }
+      setResponse(data.response.content || "No response received from GPT."); //this took forever to figure out, if future updates change the response key, this will need to be updated.
     } catch (error) {
       console.error("Error fetching GPT response:", error);
       setResponse("An error occurred while fetching the response.");
@@ -141,22 +154,22 @@ const NLPInteraction = () => {
               ? "Checking GPT connection..."
               : gptConnected
               ? "✅ GPT Model is connected!"
-              : "❌ GPT Model is not connected. Please check Settings -> GPT API Settings."
+              : "❌ GPT Model is not connected. Check Settings -> GPT API Settings."
           }
           sx={{ color: "white", fontFamily: "monospace" }}
         />
       </Box>
 
-      {/* HelpTextField for user to input their GPT query */}
+      {/* User input field for GPT query */}
       <HelpTextField
         label="Ask GPT"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        tooltipText="Use this field to talk to GPT about how to format queries or for general schema-related assistance."
+        tooltipText="Use this field to talk to GPT about query formatting or get general schema help."
         inputProps={{
           startAdornment: (
             <InputAdornment position="start">
-              <IconButton onClick={handleQuery}>
+              <IconButton onClick={handleQuery} disabled={!gptConnected}>
                 <AutoAwesome sx={{ color: "white" }} />
               </IconButton>
             </InputAdornment>
@@ -164,10 +177,12 @@ const NLPInteraction = () => {
         }}
       />
 
+      {/* Submit button */}
       <StyledButton variant="contained" onClick={handleQuery} fullWidth disabled={!gptConnected}>
         Get Answer
       </StyledButton>
 
+      {/* GPT Response area */}
       <Box
         sx={{
           marginTop: "15px",
