@@ -92,7 +92,7 @@ return (
                 label="Model (e.g., gpt-4, gpt-3.5-turbo)"
                 value={model}
                 onChange={(e) => setModel(e.target.value)}
-                tooltipText="Specify which GPT model you want to use. Example: 'gpt-4' or 'gpt-3.5-turbo'."
+                tooltipText="Specify which GPT model you want to use. Example: 'gpt-4' or 'gpt-3.5-turbo'. A full list of models can be found on the OpenAI API documentation, or at https://platform.openai.com/docs/models."
             />
 
             {/* Max Tokens and Temperature Fields */}
@@ -120,70 +120,6 @@ return (
     </Container>
 );
 
-
-    return (
-        <Container maxWidth="lg" sx={{ mt: 10 }}>
-            <StyledPaper elevation={6}>
-                <Typography variant="h4" sx={{ marginBottom: "20px", textAlign: "center" }}>
-                    GPT API Settings
-                </Typography>
-
-                {/* API Key Field with Visibility Toggle */}
-                <HelpTextField
-                    label="API Key"
-                    value={apiKey}
-                    onChange={(e) => setApiKey(e.target.value)}
-                    type={showApiKey ? "text" : "password"}
-                    tooltipText="Enter your OpenAI API Key. This key is required to access GPT models."
-                    inputProps={{
-                        endAdornment: (
-                            <InputAdornment position="end">
-                                <IconButton onClick={() => setShowApiKey(!showApiKey)} edge="end">
-                                    {/* {showApiKey ? <VisibilityOff /> : <Visibility />} */}
-                                </IconButton>
-                            </InputAdornment>
-                        ),
-                    }}
-                />
-
-                {/* Model Selection Field */}
-                <HelpTextField
-                    label="Model (e.g., gpt-4, gpt-3.5-turbo)"
-                    value={model}
-                    onChange={(e) => setModel(e.target.value)}
-                    tooltipText="Specify which GPT model you want to use. Example: 'gpt-4' or 'gpt-3.5-turbo'."
-                />
-
-                {/* Max Tokens and Temperature Fields */}
-                <Box sx={{ display: "flex", gap: "15px", marginTop: "15px" }}>
-                    <HelpTextField
-                        label="Max Tokens"
-                        type="number"
-                        value={maxTokens}
-                        onChange={(e) => setMaxTokens(e.target.value)}
-                        tooltipText="Maximum number of tokens the model can generate. A higher value means longer responses."
-                    />
-                    <HelpTextField
-                        label="Temperature (0-1)"
-                        type="number"
-                        value={temperature}
-                        onChange={(e) => setTemperature(e.target.value)}
-                        tooltipText="Controls randomness. A lower value (e.g., 0.2) makes responses more focused, while a higher value (e.g., 0.9) makes them more creative."
-                    />
-                </Box>
-
-                {/* Save Button */}
-                <StyledButton
-                    variant="contained"
-                    fullWidth
-                    sx={{ marginTop: "20px" }}
-                    onClick={handleSave}
-                >
-                    Save Settings
-                </StyledButton>
-            </StyledPaper>
-        </Container>
-    );
 };
 
 export default GPTSetup;

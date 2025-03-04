@@ -177,10 +177,10 @@ const NLPInteraction = () => {
         }}
       />
 
-      {/* Submit button */}
+      {/* Submit button
       <StyledButton variant="contained" onClick={handleQuery} fullWidth disabled={!gptConnected}>
         Get Answer
-      </StyledButton>
+      </StyledButton> */}
 
       {/* GPT Response area */}
       <Box
