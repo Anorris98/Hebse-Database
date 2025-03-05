@@ -23,6 +23,9 @@ tunnel = sshtunnel.SSHTunnelForwarder(
     ("SDmay25-20.ece.iastate.edu", 22),
     ssh_username="vm-user",
     ssh_password="50EgMe$KIE2m",
+    allow_agent=False,  # Prevents using SSH agent keys
+    host_pkey_directories=[],  # Ignores default SSH keys
+    ssh_private_key=None,  # Explicitly prevent key authentication
     remote_bind_address=("127.0.0.1", 5432)
 )
 tunnel.start()
@@ -57,25 +60,28 @@ def get_data(body: dict):
 
 @app.post("/ask_gpt")
 def ask_gpt(request: dict):
-    client = OpenAI()
     user_query = request.get("query")
     settings = request.get("settings")
+
     if not user_query:
         raise HTTPException(status_code=400, detail="Query is required.")
     if not settings or "apiKey" not in settings:
         raise HTTPException(status_code=400, detail="GPT API key is missing.")
 
     try:
-        client.api_key = settings["apiKey"]
+        # Create the OpenAI client with the API key from the frontend
+        client = OpenAI(api_key=settings["apiKey"])
+
         response = client.chat.completions.create(
             model=settings.get("model", "gpt-4o-mini"),
-             messages=[
-                {"role": "system", "content": "You are NLP assistant used for helping to user generate a query and nothing more."},
+            messages=[
+                {"role": "system", "content": "You are an NLP assistant used for helping users generate queries and nothing more."},
                 {"role": "user", "content": user_query}
             ],
-             max_completion_tokens=int(settings.get("max_tokens", 0))
+            max_tokens=int(settings.get("max_tokens", 100))  # Default to 100 if not provided
         )
-        return {"response": response.choices[0].message}
+
+        return {"response": response.choices[0].message}  # Correct content extraction
     except Exception as e:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
