@@ -1,0 +1,9 @@
+stages:
+  - tox
+
+backend:
+  stage: tox
+  script:
+    - pip install tox
+    - cd backend
+    - tox
