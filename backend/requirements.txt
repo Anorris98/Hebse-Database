@@ -8,4 +8,5 @@ sshtunnel
 tox
 pytest
 pytest-cov
+pytest-pylint
 httpx
