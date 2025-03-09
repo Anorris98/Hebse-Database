@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import {IconButton, InputAdornment, TextField} from "@mui/material";
-import {AutoAwesome, Save} from "@mui/icons-material";
+import {Save, Search} from "@mui/icons-material";
 import {useEffect} from 'react';
 
 
@@ -86,7 +86,7 @@ export const QueryInput = ({onQueryResult, savedQueries, setSavedQueries, inputV
               startAdornment: (
                 <InputAdornment position="start">
                   <IconButton onClick={() => getSQLFromNaturalLanguage()}>
-                    <AutoAwesome sx={{ color: 'white' }} />
+                    <Search sx={{ color: 'white' }} />
                   </IconButton>
                 </InputAdornment>
               ),
@@ -100,7 +100,7 @@ export const QueryInput = ({onQueryResult, savedQueries, setSavedQueries, inputV
             },
             inputLabel: { style: { fontFamily: 'monospace', color: 'white' } }
           }}
-          sx={{ margin: 1 }}
+          sx={{ backgroundColor: 'gray', borderRadius: "5px", fieldSet: {borderColor: 'white' }}}
         />
       </Box>
     </Box>

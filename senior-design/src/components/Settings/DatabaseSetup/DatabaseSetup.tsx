@@ -1,7 +1,20 @@
-import { useState, useEffect } from "react";
-import {Box, Button, Typography, Container, IconButton, InputAdornment, MenuItem, Paper, Switch, FormControlLabel} from "@mui/material";
-import { alpha, styled } from "@mui/material/styles";
-import {Visibility, VisibilityOff, Save, AddCircleOutline, DeleteForever} from "@mui/icons-material";
+import {useEffect, useState} from "react";
+// Styled Select for a consistent gray/white look
+import {
+  Box,
+  Button,
+  Container,
+  FormControlLabel,
+  IconButton,
+  InputAdornment,
+  MenuItem,
+  Paper,
+  Select,
+  Switch,
+  Typography
+} from "@mui/material";
+import {alpha, styled} from "@mui/material/styles";
+import {DeleteForever, Save, Visibility, VisibilityOff} from "@mui/icons-material";
 import HelpTextField from "../../HelpTextField/HelpTextField.tsx";
 
 // Styled container matching your styling guide
@@ -15,8 +28,6 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   fontFamily: "monospace",
 }));
 
-// Styled Select for a consistent gray/white look
-import { Select } from "@mui/material";
 const StyledSelect = styled(Select)(({ theme }) => ({
   marginBottom: "15px",
   backgroundColor: "gray",
@@ -278,7 +289,7 @@ const DatabaseSetup = () => {
   return (
     <Container maxWidth="lg" sx={{ mt: 4 }}>
       <StyledPaper elevation={6}>
-        <Typography variant="h4" sx={{ marginBottom: "20px", textAlign: "center" }}>
+        <Typography variant="h4" sx={{ marginBottom: "20px", textAlign: "center", fontFamily: "monospace" , color: "white" }}>
           Database Connection Setup
         </Typography>
 
@@ -288,6 +299,12 @@ const DatabaseSetup = () => {
           onChange={handleDatabaseChange}
           fullWidth
           variant="outlined"
+          sx={{
+            backgroundColor: "darkgray",
+            fontFamily: "monospace",
+            fontWeight: "bold",
+            flex: 1,
+          }}
         >
           {databaseNames.map((db) => (
             <MenuItem key={db} value={db}>
@@ -296,7 +313,6 @@ const DatabaseSetup = () => {
           ))}
           {/* 'Add New Database' item */}
           <MenuItem value="new">
-            <AddCircleOutline sx={{ marginRight: "8px" }} />
             Add New Database
           </MenuItem>
         </StyledSelect>
@@ -311,7 +327,7 @@ const DatabaseSetup = () => {
               />
             }
             label="Remote Database"
-            sx={{ color: "white" }}
+            sx={{ '& .MuiFormControlLabel-label': { fontFamily: 'monospace', color: "white" } }}
           />
         </Box>
 
@@ -353,7 +369,7 @@ const DatabaseSetup = () => {
         {/* SSH/Remote-only fields */}
         {isRemote && (
           <>
-            <Typography variant="h6" sx={{ marginTop: "20px", marginBottom: "10px" }}>
+            <Typography variant="h6" sx={{ marginTop: "20px", marginBottom: "10px", fontFamily: "monospace" , color: "white"}}>
               SSH Connection Details
             </Typography>
             <HelpTextField

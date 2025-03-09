@@ -1,25 +1,7 @@
-import { useState, useEffect } from "react";
-import {
-  Box,
-  Button,
-  Typography,
-  IconButton,
-  InputAdornment,
-  Checkbox,
-  FormControlLabel,
-} from "@mui/material";
-import { styled } from "@mui/material/styles";
-import { AutoAwesome } from "@mui/icons-material";
+import {useEffect, useState} from "react";
+import {Box, Checkbox, FormControlLabel, IconButton, InputAdornment, Typography,} from "@mui/material";
+import {AutoAwesome, CheckSharp, ErrorOutline} from "@mui/icons-material";
 import HelpTextField from "../../HelpTextField/HelpTextField";
-
-const StyledButton = styled(Button)(() => ({
-  backgroundColor: "darkgray",
-  textTransform: "none",
-  fontFamily: "monospace",
-  fontWeight: "bold",
-  marginTop: "10px",
-  "&:hover": { backgroundColor: "#6c757d" },
-}));
 
 const NLPInteraction = () => {
   const [query, setQuery] = useState("");
@@ -140,6 +122,8 @@ const NLPInteraction = () => {
           control={
             <Checkbox
               checked={gptConnected}
+              icon={<ErrorOutline/>}
+              checkedIcon={<CheckSharp/>}
               disabled
               sx={{
                 color: "white",
@@ -153,10 +137,10 @@ const NLPInteraction = () => {
             checkingConnection
               ? "Checking GPT connection..."
               : gptConnected
-              ? "✅ GPT Model is connected!"
-              : "❌ GPT Model is not connected. Check Settings -> GPT API Settings."
+              ? "GPT Model is connected!"
+              : "GPT Model is not connected. Check Settings -> GPT API Settings."
           }
-          sx={{ color: "white", fontFamily: "monospace" }}
+          sx={{ color: "white", fontFamily: "monospace", '& .MuiFormControlLabel-label': { fontFamily: 'monospace', color: "white" }}}
         />
       </Box>
 
@@ -177,11 +161,6 @@ const NLPInteraction = () => {
         }}
       />
 
-      {/* Submit button
-      <StyledButton variant="contained" onClick={handleQuery} fullWidth disabled={!gptConnected}>
-        Get Answer
-      </StyledButton> */}
-
       {/* GPT Response area */}
       <Box
         sx={{
@@ -189,6 +168,7 @@ const NLPInteraction = () => {
           backgroundColor: "inherit",
           borderRadius: "5px",
           padding: "10px",
+          border: "solid white",
         }}
       >
         <Typography sx={{ fontFamily: "monospace" }}>{response}</Typography>

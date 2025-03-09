@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import { Box, Button, Typography, Container, Paper, IconButton, InputAdornment } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { alpha, styled } from "@mui/material/styles";
+import {useEffect, useState} from "react";
+import {Box, Button, Container, IconButton, InputAdornment, Paper, Typography} from "@mui/material";
+import {Save, Visibility, VisibilityOff} from "@mui/icons-material";
+import {alpha, styled} from "@mui/material/styles";
 import HelpTextField from "../../HelpTextField/HelpTextField.tsx";
 
 // Styled components
@@ -14,14 +14,6 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
     boxShadow: theme.shadows[1],
     color: theme.palette.text.primary,
     fontFamily: "monospace",
-}));
-
-const StyledButton = styled(Button)(() => ({
-    backgroundColor: "darkgray",
-    textTransform: "none",
-    fontFamily: "monospace",
-    fontWeight: "bold",
-    "&:hover": { backgroundColor: "#6c757d" },
 }));
 
 const GPTSetup = () => {
@@ -71,9 +63,9 @@ const GPTSetup = () => {
 
 
 return (
-    <Container maxWidth="lg" sx={{ mt: 10 }}>
+    <Container maxWidth="lg" sx={{ mt: 10, marginTop:"150px" }}>
         <StyledPaper elevation={6}>
-            <Typography variant="h4" sx={{ marginBottom: "20px", textAlign: "center" }}>
+            <Typography variant="h4" sx={{ marginBottom: "20px", textAlign: "center", fontFamily: "monospace" , color: "white"  }}>
                 GPT API Settings
             </Typography>
 
@@ -108,14 +100,22 @@ return (
             </Box>
 
             {/* Save Button */}
-            <StyledButton
-                variant="contained"
-                fullWidth
-                sx={{ marginTop: "20px" }}
-                onClick={handleSave}
-            >
-                Save Settings
-            </StyledButton>
+            <Box sx={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+                {/* Save Button */}
+                <Button
+                    variant="contained"
+                    sx={{
+                        backgroundColor: "darkgray",
+                        fontFamily: "monospace",
+                        fontWeight: "bold",
+                        flex: 1,
+                    }}
+                    onClick={handleSave}
+                    startIcon={<Save />}
+                >
+                    Save API Settings
+                </Button>
+            </Box>
         </StyledPaper>
     </Container>
 );
