@@ -25,8 +25,12 @@ const HelpTextField: React.FC<HelpTextFieldProps> = ({ label, value, onChange, t
                 type={type}
                 value={value}
                 onChange={onChange}
-                sx={{ backgroundColor: 'gray', borderRadius: "5px" }}
-                InputProps={{ style: { color: "white" }, ...inputProps }} // Merge inputProps here
+                slotProps={{input: {
+                    style: { fontFamily: 'monospace', color: 'white' },
+                        ...inputProps
+                    },
+                    inputLabel: { style: { fontFamily: 'monospace', color: 'white' } }}}
+                sx={{ backgroundColor: 'gray', borderRadius: "5px", fieldSet: {borderColor: 'white' }}}
             />
         </Box>
     );
