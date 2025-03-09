@@ -1,5 +1,5 @@
 import {alpha, styled} from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate from React Router
+import {useNavigate} from 'react-router-dom'; // Import useNavigate from React Router
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -49,32 +49,34 @@ export const NavBar = () => {
                     <Box sx={{flexGrow: 1, display: 'flex', alignItems: 'center', px: 0, justifyContent: 'left'}}>
                         <Box sx={{display: {xs: 'none', md: 'flex'}}}>
                             <StyledButton variant="contained" size="small" startIcon={<Search/>}
-                                onClick={() => navigate("/")}>
+                                          onClick={() => navigate("/")}>
                                 Query
                             </StyledButton>
-                            <StyledButton variant="contained" size="small" startIcon={<Undo/>}>
+                            <StyledButton variant="contained" size="small" startIcon={<Undo/>}
+                                          onClick={() => navigate("/History")}>
                                 History
                             </StyledButton>
                             <StyledButton variant="contained" size="small" startIcon={<Build/>}
-                                onClick={() => navigate("/Utilities")}>
+                                          onClick={() => navigate("/Utilities")}>
                                 Utilities
                             </StyledButton>
                             <StyledButton variant="contained" size="small" startIcon={<Settings/>}
-                                onClick={() => navigate("/Settings")}>
+                                          onClick={() => navigate("/Settings")}>
                                 Settings
                             </StyledButton>
                             <StyledButton variant="contained" size="small" startIcon={<Info/>}
-                                onClick={() => navigate("/About_Us")}>
+                                          onClick={() => navigate("/About_Us")}>
                                 About Us
                             </StyledButton>
                         </Box>
                     </Box>
                     <Box component='section' sx={{
                         p: 1,
-                        border: '5px dashed black',
+                        border: '5px inset black',
                         fontSize: '20px',
                         fontFamily: 'monospace',
-                        fontWeight: 'bold'
+                        fontWeight: 'bold',
+                        borderRadius: '15px'
                     }}>
                         HADES
                     </Box>
