@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import {IconButton} from "@mui/material";
-import {ArrowDropDown, Clear, ContentCopyOutlined} from "@mui/icons-material";
+import {ArrowDropDownCircleRounded, Clear, ContentCopyOutlined} from "@mui/icons-material";
 import {useState} from "react";
 
 export const SavedQueriesComponent = ({savedQueries, setSavedQueries, setInputValue}: {
@@ -36,10 +36,9 @@ export const SavedQueriesComponent = ({savedQueries, setSavedQueries, setInputVa
                 textAlign: "center",
             }}
         >
-            <Box sx={{fontSize: '20px', fontWeight: 'bold', backgroundColor: 'gray',}}>
+            <Box sx={{fontSize: '20px', fontWeight: 'bold', backgroundColor: 'gray'}}>
                 Saved Queries <IconButton sx={{maxHeight: "10px", width: "30px"}}
-                                          onClick={() => setDisplaySavedQueries(!displaySavedQueries)}><ArrowDropDown
-                sx={{color: 'white', backgroundColor: "black"}}/></IconButton>
+                                          onClick={() => setDisplaySavedQueries(!displaySavedQueries)} children={<ArrowDropDownCircleRounded sx={{color:"white"}}/>}/>
             </Box>
             {displaySavedQueries ?
                 savedQueries.map((item: string, index: number) => (
