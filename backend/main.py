@@ -80,7 +80,9 @@ def ask_gpt(request: dict):
                 {"role": "system", "content": "You are an NLP assistant that helps users generate queries "\
                  "for a PostgreSQL database. If a user requests a query, you should respond with the query "\
                  "and the query alone. Do not add any additional formatting or text. Always put quotation "\
-                 f"marks around column names. The schema is as follows: {metadata.tables}"},
+                 "marks around column names. If there is no query that both fits the schema and follows the "\
+                 "request, inform the user and do not send a query. Make sure each column has a unique name "\
+                 f"to be returned. The schema is as follows: {metadata.tables}"},
                 {"role": "user", "content": user_query}
             ],
             max_tokens=int(settings.get("max_tokens", 1000))  # Default to 1000 if not provided
