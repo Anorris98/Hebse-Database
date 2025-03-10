@@ -1,10 +1,13 @@
 import { Grid2 } from "@mui/material";
+import DBParser from "./DatabaseParser/DBParser";
 
-export const Utilities = () => {
+export const Settings = () => {
     return (
         <div>
-            <Grid2 display={"grid"} sx={{ maxHeight: '1000px' }}>
-                {/* Components for utilities will be added here */}
+            <Grid2 display="grid" sx={{ maxHeight: "1000px", gap: "20px", padding: "20px" }}>
+                {/* Posydon Data Selector */}
+                <DBParser />
+
             </Grid2>
         </div>
     );
