@@ -1,7 +1,7 @@
 import traceback
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine, text, MetaData
 from openai import OpenAI
 import sshtunnel
 
@@ -43,6 +43,8 @@ DB_URL = (
     f"{DATABASE_CONFIG['port']}/{DATABASE_CONFIG['database']}"
 )
 engine = create_engine(DB_URL)
+metadata = MetaData()
+metadata.reflect(bind=engine)
 
 @app.post("/GetData")
 def get_data(body: dict):
@@ -75,10 +77,15 @@ def ask_gpt(request: dict):
         response = client.chat.completions.create(
             model=settings.get("model", "gpt-4o-mini"),
             messages=[
-                {"role": "system", "content": "You are an NLP assistant used for helping users generate queries and nothing more."},
+                {"role": "system", "content": "You are an NLP assistant that helps users generate queries "\
+                 "for a PostgreSQL database. If a user requests a query, you should respond with the query "\
+                 "and the query alone. Do not add any additional formatting or text. Always put quotation "\
+                 "marks around column names. If there is no query that both fits the schema and follows the "\
+                 "request, inform the user and do not send a query. Make sure each column has a unique name "\
+                 f"to be returned. The schema is as follows: {metadata.tables}"},
                 {"role": "user", "content": user_query}
             ],
-            max_tokens=int(settings.get("max_tokens", 100))  # Default to 100 if not provided
+            max_tokens=int(settings.get("max_tokens", 1000))  # Default to 1000 if not provided
         )
 
         return {"response": response.choices[0].message}  # Correct content extraction
