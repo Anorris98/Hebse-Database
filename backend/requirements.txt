@@ -2,8 +2,8 @@ fastapi[standard]
 uvicorn
 pandas
 h5py
-sqlalchemy
-psycopg2
+sqlalchemy==2.0.38
+psycopg2==2.9.10
 sshtunnel
 tox
 pytest
