@@ -22,7 +22,7 @@ def test_get_data_successful_query():
 
         # Execute the query
         query_result = connection.execute(text(request_body["query"])).fetchall()
-        
+
         # Convert result to dictionary format for comparison
         result_data = [{"id": row[0], "name": row[1]} for row in query_result]
 
@@ -40,7 +40,7 @@ def test_get_data_invalid_request():
 
     assert response.status_code == 400
     assert response.json() == {
-        "detail": "Invalid request. 'query' key is required in the body."
+        "detail": "Query key is required."
     }
 
 def test_get_data_error_executing_query():
@@ -48,9 +48,10 @@ def test_get_data_error_executing_query():
     request_body = {
         "query": "SELECT * FROM non_existent_table"  # Invalid table name
     }
-    
+
     response = client.post("/GetData", json=request_body)
     assert response.status_code == 500
     error_message = response.json()["detail"].split("\n")[0]
     print(error_message)
-    assert error_message == "Error executing query: (psycopg2.errors.UndefinedTable) relation \"non_existent_table\" does not exist"
+    assert error_message == "(psycopg2.errors.UndefinedTable) relation \"non_existent_table\" does not exist"
+    

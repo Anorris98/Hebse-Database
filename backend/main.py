@@ -1,9 +1,9 @@
+import traceback
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine, text
 from openai import OpenAI
 import sshtunnel
-import traceback
 
 # Create one FastAPI instance
 app = FastAPI()
@@ -56,7 +56,7 @@ def get_data(body: dict):
             rows = [row._mapping for row in result]
             return {"message": "Query executed successfully.", "data": rows}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 @app.post("/ask_gpt")
 def ask_gpt(request: dict):
@@ -84,4 +84,4 @@ def ask_gpt(request: dict):
         return {"response": response.choices[0].message}  # Correct content extraction
     except Exception as e:
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
