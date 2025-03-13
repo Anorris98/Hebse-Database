@@ -10,12 +10,25 @@ import {
   MenuItem,
   Paper,
   Select,
+  SelectChangeEvent,
   Switch,
   Typography
 } from "@mui/material";
 import {alpha, styled} from "@mui/material/styles";
 import {DeleteForever, Save, Visibility, VisibilityOff} from "@mui/icons-material";
-import HelpTextField from "../../HelpTextField/HelpTextField.tsx";
+import HelpTextField from "../../HelpTextField/help-text-field.tsx";
+
+type databaseConfig = {
+  host: string;
+  port: string;
+  username: string;
+  password: string;
+  isRemote: boolean;
+  sshHost: string;
+  sshPort: string;
+  sshUser: string;
+  sshKey: string;
+}
 
 // Styled container matching your styling guide
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -52,6 +65,24 @@ const StyledSelect = styled(Select)(({ theme }) => ({
   },
 }));
 
+// --------------------------------------------------
+// Helper: Load the entire db_list from localStorage
+// as an object keyed by database name
+// --------------------------------------------------
+const loadAllDatabaseConfigs = (): Record<string, databaseConfig> => {
+  const stored = localStorage.getItem("db_list");
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      // If not an object (for example, an old array), convert or reset
+      return typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+    } catch (error) {
+      console.error("Error parsing db_list:", error);
+    }
+  }
+  return {};
+};
+
 const DatabaseSetup = () => {
   // We store the list of known database names in state
   const [databaseNames, setDatabaseNames] = useState<string[]>([]);
@@ -74,29 +105,11 @@ const DatabaseSetup = () => {
   const [sshUser, setSshUser] = useState("");
   const [sshKey, setSshKey] = useState("");
 
-  // --------------------------------------------------
-  // Helper: Load the entire db_list from localStorage
-  // as an object keyed by database name
-  // --------------------------------------------------
-  const loadAllDbConfigs = (): Record<string, any> => {
-    const stored = localStorage.getItem("db_list");
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        // If not an object (for example, an old array), convert or reset
-        return typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
-      } catch (err) {
-        console.error("Error parsing db_list:", err);
-      }
-    }
-    return {};
-  };
-
   // On initial render, populate dropdown from localStorage
   // and load the "last-used" database if present
   useEffect(() => {
-    const allDbConfigs = loadAllDbConfigs();
-    setDatabaseNames(Object.keys(allDbConfigs));
+    const allDatabaseConfigs = loadAllDatabaseConfigs();
+    setDatabaseNames(Object.keys(allDatabaseConfigs));
 
     const lastLoaded = localStorage.getItem("db_settings");
     if (lastLoaded) {
@@ -124,11 +137,11 @@ const DatabaseSetup = () => {
   // --------------------------------------------------
   // Handle user choosing a DB from the dropdown
   // --------------------------------------------------
-  const handleDatabaseChange = (event: any) => {
-    const selectedDb = event.target.value;
-    setSelectedDatabase(selectedDb);
+  const handleDatabaseChange = (event: SelectChangeEvent<unknown>) => {
+    const selectedDatabase = event.target.value as string;
+    setSelectedDatabase(selectedDatabase);
 
-    if (selectedDb === "new") {
+    if (selectedDatabase === "new") {
       // Clear fields for a brand-new DB
       setHost("");
       setPort("5432");
@@ -146,8 +159,8 @@ const DatabaseSetup = () => {
     }
 
     // If an existing DB name is chosen, load its fields
-    const allDbConfigs = loadAllDbConfigs();
-    if (allDbConfigs[selectedDb]) {
+    const allDatabaseConfigs = loadAllDatabaseConfigs();
+    if (allDatabaseConfigs[selectedDatabase]) {
       const {
         host,
         port,
@@ -158,14 +171,14 @@ const DatabaseSetup = () => {
         sshPort,
         sshUser,
         sshKey,
-      } = allDbConfigs[selectedDb];
+      } = allDatabaseConfigs[selectedDatabase];
 
       setHost(host);
       setPort(port);
       setUsername(username);
-      setDatabase(selectedDb);
+      setDatabase(selectedDatabase);
       setPassword(password);
-      setIsRemote(!!isRemote);
+      setIsRemote(isRemote);
 
       // Populate SSH fields if they exist
       setSshHost(sshHost || "");
@@ -186,10 +199,10 @@ const DatabaseSetup = () => {
     }
 
     // Read the entire DB config object
-    const allDbConfigs = loadAllDbConfigs();
+    const allDatabaseConfigs = loadAllDatabaseConfigs();
 
     // Overwrite or create the entry
-    allDbConfigs[database] = {
+    allDatabaseConfigs[database] = {
       host,
       port,
       username,
@@ -203,7 +216,7 @@ const DatabaseSetup = () => {
     };
 
     // Write it back to localStorage
-    localStorage.setItem("db_list", JSON.stringify(allDbConfigs));
+    localStorage.setItem("db_list", JSON.stringify(allDatabaseConfigs));
 
     // Also set the last-used config
     localStorage.setItem(
@@ -223,7 +236,7 @@ const DatabaseSetup = () => {
     );
 
     // Refresh the dropdown list
-    setDatabaseNames(Object.keys(allDbConfigs));
+    setDatabaseNames(Object.keys(allDatabaseConfigs));
     // Mark the DB as selected in the dropdown
     setSelectedDatabase(database);
 
@@ -237,11 +250,11 @@ const DatabaseSetup = () => {
     if (!selectedDatabase || selectedDatabase === "new") {
       return;
     }
-    const allDbConfigs = loadAllDbConfigs();
+    const allDatabaseConfigs = loadAllDatabaseConfigs();
     // Remove the currently selected DB config
-    delete allDbConfigs[selectedDatabase];
+    delete allDatabaseConfigs[selectedDatabase];
     // Persist the updated object
-    localStorage.setItem("db_list", JSON.stringify(allDbConfigs));
+    localStorage.setItem("db_list", JSON.stringify(allDatabaseConfigs));
 
     // If the removed config was also the "last-used", clear it
     const lastUsed = localStorage.getItem("db_settings");
@@ -251,13 +264,13 @@ const DatabaseSetup = () => {
         if (parsed.database === selectedDatabase) {
           localStorage.removeItem("db_settings");
         }
-      } catch (err) {
-        console.error("Error clearing last-used database:", err);
+      } catch (error) {
+        console.error("Error clearing last-used database:", error);
       }
     }
 
     // Update state to reflect removal
-    setDatabaseNames(Object.keys(allDbConfigs));
+    setDatabaseNames(Object.keys(allDatabaseConfigs));
     setSelectedDatabase("");
     setHost("");
     setPort("5432");
@@ -276,7 +289,7 @@ const DatabaseSetup = () => {
   };
 
   // Additional props for toggling password visibility
-  const passwordInputProps = {
+  const passwordInputProperties = {
     endAdornment: (
       <InputAdornment position="end">
         <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
@@ -306,9 +319,9 @@ const DatabaseSetup = () => {
             flex: 1,
           }}
         >
-          {databaseNames.map((db) => (
-            <MenuItem key={db} value={db}>
-              {db}
+          {databaseNames.map((database) => (
+            <MenuItem key={database} value={database}>
+              {database}
             </MenuItem>
           ))}
           {/* 'Add New Database' item */}
@@ -323,7 +336,7 @@ const DatabaseSetup = () => {
             control={
               <Switch
                 checked={isRemote}
-                onChange={(e) => setIsRemote(e.target.checked)}
+                onChange={(input) => setIsRemote(input.target.checked)}
               />
             }
             label="Remote Database"
@@ -335,34 +348,34 @@ const DatabaseSetup = () => {
         <HelpTextField
           label="Host"
           value={host}
-          onChange={(e) => setHost(e.target.value)}
+          onChange={(input) => setHost(input.target.value)}
           tooltipText="Enter the hostname or IP address of the PostgreSQL server."
         />
         <HelpTextField
           label="Port"
           type="number"
           value={port}
-          onChange={(e) => setPort(e.target.value)}
+          onChange={(input) => setPort(input.target.value)}
           tooltipText="Enter the port number for the PostgreSQL server (default: 5432)."
         />
         <HelpTextField
           label="Username"
           value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          onChange={(input) => setUsername(input.target.value)}
           tooltipText="Enter the database username."
         />
         <HelpTextField
           label="Password"
           type={showPassword ? "text" : "password"}
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(input) => setPassword(input.target.value)}
           tooltipText="Enter the database password."
-          inputProps={passwordInputProps}
+          inputProps={passwordInputProperties}
         />
         <HelpTextField
           label="Database Name"
           value={database}
-          onChange={(e) => setDatabase(e.target.value)}
+          onChange={(input) => setDatabase(input.target.value)}
           tooltipText="Enter the name of the database you want to connect to."
         />
 
@@ -375,26 +388,26 @@ const DatabaseSetup = () => {
             <HelpTextField
               label="SSH Host"
               value={sshHost}
-              onChange={(e) => setSshHost(e.target.value)}
+              onChange={(input) => setSshHost(input.target.value)}
               tooltipText="Enter the SSH host for tunneling (e.g., example.com)."
             />
             <HelpTextField
               label="SSH Port"
               type="number"
               value={sshPort}
-              onChange={(e) => setSshPort(e.target.value)}
+              onChange={(input) => setSshPort(input.target.value)}
               tooltipText="SSH port (default 22)."
             />
             <HelpTextField
               label="SSH Username"
               value={sshUser}
-              onChange={(e) => setSshUser(e.target.value)}
+              onChange={(input) => setSshUser(input.target.value)}
               tooltipText="Your SSH username on the remote host."
             />
             <HelpTextField
               label="SSH Private Key"
               value={sshKey}
-              onChange={(e) => setSshKey(e.target.value)}
+              onChange={(input) => setSshKey(input.target.value)}
               tooltipText="Paste your SSH private key here."
               // multiline, so the user can paste multi-line key
               inputProps={{ multiline: true, rows: 4, style: { color: "white" } }}

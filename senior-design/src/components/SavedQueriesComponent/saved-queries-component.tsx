@@ -5,8 +5,8 @@ import {useState} from "react";
 
 export const SavedQueriesComponent = ({savedQueries, setSavedQueries, setInputValue}: {
     savedQueries: string[],
-    setSavedQueries: (value: ((prevState: string[]) => string[]) | string[]) => void,
-    setInputValue: (value: (((prevState: string) => string) | string)) => void
+    setSavedQueries: (value: ((previousState: string[]) => string[]) | string[]) => void,
+    setInputValue: (value: (((previousState: string) => string) | string)) => void
 }) => {
 
     const [displaySavedQueries, setDisplaySavedQueries] = useState<boolean>(false);
@@ -14,7 +14,7 @@ export const SavedQueriesComponent = ({savedQueries, setSavedQueries, setInputVa
     function deleteQuery(query: string) {
         const updatedQueries = savedQueries.filter((item: string) => item !== query);
         localStorage.saved = JSON.stringify([...updatedQueries])
-        if (updatedQueries.length == 0) {
+        if (updatedQueries.length === 0) {
             setDisplaySavedQueries(false);
         }
         setSavedQueries(updatedQueries);
@@ -71,7 +71,7 @@ export const SavedQueriesComponent = ({savedQueries, setSavedQueries, setInputVa
                             width: "calc(100% - 60px)"
                         }}>{item}</Box>
                     </Box>
-                )) : null}
+                )) : undefined}
         </Box>
     )
 }

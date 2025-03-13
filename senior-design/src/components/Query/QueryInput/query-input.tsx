@@ -7,10 +7,10 @@ import {useEffect} from 'react';
 export const QueryInput = ({onQueryResult, savedQueries, setSavedQueries, inputValue, setInputValue, setPageNumber}: {
     onQueryResult: (result: string) => void,
     savedQueries: string[]
-    setSavedQueries: (value: (((prevState: string[]) => string[]) | string[])) => void,
+    setSavedQueries: (value: (((previousState: string[]) => string[]) | string[])) => void,
     inputValue: string,
-    setInputValue: (value: (((prevState: string) => string) | string)) => void
-    setPageNumber: (value: (((prevState: number) => number) | number)) => void
+    setInputValue: (value: (((previousState: string) => string) | string)) => void
+    setPageNumber: (value: (((previousState: number) => number) | number)) => void
 },) => {
 
 
@@ -18,7 +18,7 @@ export const QueryInput = ({onQueryResult, savedQueries, setSavedQueries, inputV
         if ("saved" in localStorage) {
             setSavedQueries(JSON.parse(localStorage.saved));
         }
-    }, []);
+    }, [setSavedQueries]);
 
     async function getSQLFromNaturalLanguage() {
 
@@ -56,7 +56,7 @@ export const QueryInput = ({onQueryResult, savedQueries, setSavedQueries, inputV
     function saveQuery() {
         if (inputValue != '') {
             localStorage.saved = JSON.stringify([...savedQueries, inputValue]);
-            setSavedQueries((prevState: string[]) => [...prevState, inputValue]);
+            setSavedQueries((previousState: string[]) => [...previousState, inputValue]);
         }
     }
 

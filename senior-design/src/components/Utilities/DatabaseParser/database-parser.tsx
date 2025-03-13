@@ -1,9 +1,7 @@
 // https://zenodo.org/records/14205146/files/POSYDON_data.tar.gz?download=1
-import React, { useEffect, useState } from 'react';
-import {Box, Button, Container, IconButton, InputAdornment, Paper, Typography} from "@mui/material";
-import {Save, Visibility, VisibilityOff} from "@mui/icons-material";
+import React, {useEffect, useState} from 'react';
+import {Container, Paper, Typography} from "@mui/material";
 import {alpha, styled} from "@mui/material/styles";
-import HelpTextField from "../../HelpTextField/HelpTextField.tsx";
 
 // Styled components
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -27,7 +25,7 @@ interface Dataset {
 const DatasetList: React.FC = () => {
     const [datasets, setDatasets] = useState<Dataset[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string>('');
     
     useEffect(() => {
         const fetchDatasets = async () => {
@@ -39,8 +37,8 @@ const DatasetList: React.FC = () => {
 
             const data = await response.json();
             setDatasets(data.hits.hits);
-            } catch (err) {
-                setError("Error fetching data");
+            } catch (error) {
+                setError("Error fetching data" + error);
             } finally {
                 setLoading(false);
             }

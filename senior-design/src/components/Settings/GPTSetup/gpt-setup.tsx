@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {Box, Button, Container, IconButton, InputAdornment, Paper, Typography} from "@mui/material";
 import {Save, Visibility, VisibilityOff} from "@mui/icons-material";
 import {alpha, styled} from "@mui/material/styles";
-import HelpTextField from "../../HelpTextField/HelpTextField.tsx";
+import HelpTextField from "../../HelpTextField/help-text-field.tsx";
 
 // Styled components
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -16,7 +16,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
     fontFamily: "monospace",
 }));
 
-const GPTSetup = () => {
+const GptSetup = () => {
     const [apiKey, setApiKey] = useState("");
     const [model, setModel] = useState("gpt-4");
     const [maxTokens, setMaxTokens] = useState("100");
@@ -42,8 +42,8 @@ const GPTSetup = () => {
         const settings = {
             apiKey,
             model,
-            max_tokens: parseInt(maxTokens, 10),
-            temperature: parseFloat(temperature),
+            max_tokens: Number.parseInt(maxTokens, 10),
+            temperature: Number.parseFloat(temperature),
         };
 
         console.log("Saving settings:", settings);
@@ -51,7 +51,7 @@ const GPTSetup = () => {
         alert("Settings saved!");
     };
 
-    const apiKeyInputProps = {
+    const apiKeyInputProperties = {
         endAdornment: (
             <InputAdornment position="end">
                 <IconButton onClick={() => setShowApiKey(!showApiKey)} edge="end">
@@ -73,17 +73,17 @@ return (
             <HelpTextField
                 label="API Key"
                 value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
+                onChange={(input) => setApiKey(input.target.value)}
                 type={showApiKey ? "text" : "password"}
                 tooltipText="Enter your OpenAI API Key. This key is required to access GPT models."
-                inputProps={apiKeyInputProps} 
+                inputProps={apiKeyInputProperties}
             />
 
             {/* Model Selection Field */}
             <HelpTextField
                 label="Model (e.g., gpt-4, gpt-3.5-turbo)"
                 value={model}
-                onChange={(e) => setModel(e.target.value)}
+                onChange={(input) => setModel(input.target.value)}
                 tooltipText="Specify which GPT model you want to use. Example: 'gpt-4' or 'gpt-3.5-turbo'. A full list of models can be found on the OpenAI API documentation, or at https://platform.openai.com/docs/models."
             />
 
@@ -93,7 +93,7 @@ return (
                     label="Max Tokens"
                     type="number"
                     value={maxTokens}
-                    onChange={(e) => setMaxTokens(e.target.value)}
+                    onChange={(input) => setMaxTokens(input.target.value)}
                     tooltipText="Maximum number of tokens the model can generate. A higher value means longer responses."
                 />
             
@@ -122,4 +122,4 @@ return (
 
 };
 
-export default GPTSetup;
+export default GptSetup;
