@@ -7,9 +7,6 @@ from sqlalchemy import create_engine, text, MetaData
 from openai import OpenAI
 import sshtunnel
 
-#Global Variable for data
-returned_data = 0
-
 # Create one FastAPI instance
 app = FastAPI()
 
@@ -61,8 +58,7 @@ def get_data(body: dict):
         with engine.connect() as connection:
             result = connection.execute(text(raw_query))
             rows = [row._mapping for row in result]
-            global returned_data #pylint: disable = global-statement
-            returned_data = rows
+            create_csv(rows)
             return {"message": "Query executed successfully.", "data": rows}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e)) from e
@@ -100,7 +96,7 @@ def ask_gpt(request: dict):
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e)) from e
     
-def create_csv():
+def create_csv(returned_data):
     with open("query_results.csv", mode='w', newline='', encoding='utf=8') as file:
         writer = csv.writer(file)
         writer.writerow(returned_data[0].keys())
@@ -110,6 +106,6 @@ def create_csv():
 @app.get("/exportData")
 def exportData():
     file_name = "query_results.csv"
-    create_csv()
+    #create_csv()
     return FileResponse(file_name, media_type='text/csv', filename="query_results.csv")
     
