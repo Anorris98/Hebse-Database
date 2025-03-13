@@ -23,44 +23,46 @@ export const QueryResults = ({ queryResult }: { queryResult: any }) => {
             }
 
             return (
-                <table style={{ borderCollapse: 'collapse', width: '100%' }}>
-                    <thead>
-                        <tr>
-                            {Object.keys(queryResult[0]).map((key) => (
-                                <th
-                                    key={key}
-                                    style={{
-                                        border: '1px solid white',
-                                        padding: '8px',
-                                        textAlign: 'left',
-                                        backgroundColor: 'darkgray',
-                                        color: 'white',
-                                    }}
-                                >
-                                    {key}
-                                </th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {queryResult.map((row: any, index: number) => (
-                            <tr key={index}>
-                                {Object.values(row).map((value, i) => (
-                                    <td
-                                        key={i}
+                <Box sx={{ overflow: "auto", borderColor: "black", borderStyle: "solid", borderWidth: "2px"}}>
+                    <table style={{ borderCollapse: 'collapse', width: '100%', margin: "5px" }}>
+                        <thead>
+                            <tr>
+                                {Object.keys(queryResult[0]).map((key) => (
+                                    <th
+                                        key={key}
                                         style={{
                                             border: '1px solid white',
                                             padding: '8px',
                                             textAlign: 'left',
+                                            backgroundColor: 'darkgray',
+                                            color: 'white',
                                         }}
                                     >
-                                        {value !== null && value !== undefined ? value.toString() : "N/A"}
-                                    </td>
+                                        {key}
+                                    </th>
                                 ))}
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {queryResult.map((row: any, index: number) => (
+                                <tr key={index}>
+                                    {Object.values(row).map((value, i) => (
+                                        <td
+                                            key={i}
+                                            style={{
+                                                border: '1px solid white',
+                                                padding: '8px',
+                                                textAlign: 'left',
+                                            }}
+                                        >
+                                            {value !== null && value !== undefined ? value.toString() : "N/A"}
+                                        </td>
+                                    ))}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </Box>
             );
         }
 

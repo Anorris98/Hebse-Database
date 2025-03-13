@@ -4,12 +4,13 @@ import {Save, Search} from "@mui/icons-material";
 import {useEffect} from 'react';
 
 
-export const QueryInput = ({onQueryResult, savedQueries, setSavedQueries, inputValue, setInputValue}: {
+export const QueryInput = ({onQueryResult, savedQueries, setSavedQueries, inputValue, setInputValue, setPageNumber}: {
     onQueryResult: (result: string) => void,
     savedQueries: string[]
     setSavedQueries: (value: (((prevState: string[]) => string[]) | string[])) => void,
     inputValue: string,
     setInputValue: (value: (((prevState: string) => string) | string)) => void
+    setPageNumber: (value: (((prevState: number) => number) | number)) => void
 },) => {
 
 
@@ -45,6 +46,7 @@ export const QueryInput = ({onQueryResult, savedQueries, setSavedQueries, inputV
       const body = await response.json();
       setInputValue(body.message); // Update input value
       onQueryResult(body.data || "No result returned.");
+      setPageNumber(0)
     } catch (error) {
       console.error("Error fetching query result:", error);
       onQueryResult("An error occurred while fetching the result.");
