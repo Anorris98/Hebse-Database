@@ -1,8 +1,9 @@
 import { Box } from "@mui/material";
+import { PageSelect } from "./PageSelect/page-select";
 
 /* eslint-disable  @typescript-eslint/no-explicit-any*/
 
-export const QueryResult = ({ queryResult }: { queryResult: any }) => {
+export const QueryResult = ({ queryResult, setPageNumber, pageNumber, totalEntries, rowsPerPage, setRowsPerPage }: { queryResult: any, setPageNumber: any, pageNumber: any, totalEntries: any, rowsPerPage: any, setRowsPerPage: any }) => {
     const renderResults = () => {
         if (!queryResult) {
             return "No results available.";
@@ -100,7 +101,16 @@ export const QueryResult = ({ queryResult }: { queryResult: any }) => {
                 textAlign: "center",
             }}
         >
-            <Box sx={{ fontSize: '20px', fontWeight: 'bold' }}>Query Results</Box>
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative'}}>
+                <Box sx={{ fontSize: '20px', fontWeight: 'bold', position: 'absolute', left: '50%', transform: 'translateX(-50%)'}}>Query Results</Box>
+                <Box sx={{ marginLeft: 'auto'}}>
+                    <PageSelect setPageNumber={setPageNumber}
+                        pageNumber={pageNumber}
+                        rows={totalEntries}
+                        rowsPerPage={rowsPerPage}
+                        setRowsPerPage={setRowsPerPage}/>
+                </Box>
+            </Box>
             <Box sx={{ fontSize: '16px', marginTop: '10px' }}>
                 {renderResults()}
             </Box>

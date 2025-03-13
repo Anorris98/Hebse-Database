@@ -1,26 +1,22 @@
 import {Box, TablePagination} from "@mui/material";
 import { styled } from "@mui/material/styles";
 
-const StyledPaginator = styled(TablePagination)(({}) => ({
+const StyledPaginator = styled(TablePagination)(() => ({
   fontFamily: "monospace",
   color: "white",
   backgroundColor: "gray",
-  border: "white 1px solid",
+  border: "black 2px solid",
   borderRadius: "15px",
   "& .MuiTablePagination-select": {
-    fontSize: "16px",
+    fontSize: "14px",
     fontFamily: "monospace",
   },
   "& .MuiTablePagination-selectLabel": {
-    fontSize: "16px",
-    fontFamily: "monospace"
-  },
-  "& .MuiTablePagination-menuItem": {
-    fontSize: "100px",
+    fontSize: "14px",
     fontFamily: "monospace"
   },
   "& .MuiTablePagination-displayedRows": {
-    fontSize: "16px",
+    fontSize: "14px",
     fontFamily: "monospace"
   }
 }));
@@ -45,7 +41,6 @@ export const PageSelect = ({ setPageNumber, pageNumber, rows, rowsPerPage, setRo
     sx={{
       maxWidth: "lg",
       fontFamily: "monospace",
-      marginTop: "20px",
       display: "flex",
       justifyContent: "flex-end"}}>
       <StyledPaginator rowsPerPage={rowsPerPage} labelRowsPerPage="Records Per Page" count={rows} page={pageNumber} onPageChange={handleChangePage} onRowsPerPageChange={handleChangeRowsPerPage} slotProps={{
@@ -62,6 +57,7 @@ export const PageSelect = ({ setPageNumber, pageNumber, rows, rowsPerPage, setRo
         menuItem: {
           sx: {
             fontFamily: "monospace",
+            fontSize: "14px"
           }
         }
       }}/>

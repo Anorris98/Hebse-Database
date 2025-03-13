@@ -3,7 +3,6 @@ import { QueryInput } from "./QueryInput/query-input.tsx";
 import { QueryResult } from './QueryResults/query-result.tsx';
 import { QueryWelcomeText } from "../QueryWelcomeText/query-welcome-text.tsx";
 import { SavedQueriesComponent } from "../SavedQueriesComponent/saved-queries-component.tsx";
-import { PageSelect } from "./PageSelect/page-select.tsx";
 import { Grid2 } from "@mui/material";
 import NlpInteractions from "./NLPInteraction/nlp-interactions.tsx";
 
@@ -27,12 +26,12 @@ export const Query = () => {
                             setInputValue={setInputValue}
                             setPageNumber={setPageNumber}/> {/* Renders input box and updates query result via parent callback.*/}
                 <SavedQueriesComponent savedQueries={savedQueries} setSavedQueries={setSavedQueries} setInputValue={setInputValue}/>
-                <PageSelect setPageNumber={setPageNumber}
-                            pageNumber={pageNumber}
-                            rows={queryResult.length}
-                            rowsPerPage={rowsPerPage}
-                            setRowsPerPage={setRowsPerPage}/>
-                <QueryResult queryResult={queryResult.slice(pageNumber * rowsPerPage, pageNumber * rowsPerPage + rowsPerPage)}/> {/* Displays the query result passed from the parent state.*/}
+                <QueryResult queryResult={queryResult.slice(pageNumber * rowsPerPage, pageNumber * rowsPerPage + rowsPerPage)}
+                             setPageNumber={setPageNumber}
+                             pageNumber={pageNumber}
+                             totalEntries={queryResult.length}
+                             rowsPerPage={rowsPerPage}
+                             setRowsPerPage={setRowsPerPage}/> {/* Displays the query result passed from the parent state.*/}
             </Grid2>
         </div>
     );
