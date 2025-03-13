@@ -3,27 +3,27 @@ import DownloadIcon from '@mui/icons-material/Download';
 
 /* eslint-disable  @typescript-eslint/no-explicit-any*/
 
-export const QueryResult = ({ queryResult }: { queryResult: any }) => {
-    /* eslint-disable no-alert, no-console*/
-    async function downloadData() {
-        try{
-            const response = await fetch('http://localhost:8000/exportData')
-            if (!response.ok) throw new Error(`Server error: ${response.status}`);
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = "query_results.csv";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(url);
-        }
-        catch(error){
-            console.error("Error downloading data: ", error);
-        }
+async function downloadData() {  
+    try{
+        const response = await fetch('http://localhost:8000/exportData')  
+        if (!response.ok) throw new Error(`Server error: ${response.status}`);  
+        const blob = await response.blob();  
+        const url = globalThis.URL.createObjectURL(blob);  
+        const link = document.createElement('a');  
+        link.href = url;  
+        link.download = "query_results.csv";  
+        document.body.append(link);  
+        link.click();  
+        link.remove();  
+        globalThis.URL.revokeObjectURL(url);  
     }
-    /* eslint-enable no-alert, no-console*/
+    catch(error){  
+        console.error("Error downloading data:", error);  
+    }
+}
+
+export const QueryResult = ({ queryResult }: { queryResult: any }) => {
+
 
     const renderResults = () => {
         if (!queryResult) {
@@ -68,7 +68,7 @@ export const QueryResult = ({ queryResult }: { queryResult: any }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {queryResult.map((row: any, index: number) => ( //eslint-disable-line
+                            {queryResult.map((row: any, index: number) => (  
                                 <tr key={index}>
                                     {Object.values(row).map((value, innerIndex) => (
                                         <td
