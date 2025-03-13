@@ -1,8 +1,29 @@
-import { Box } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
+import DownloadIcon from '@mui/icons-material/Download';
 
 /* eslint-disable  @typescript-eslint/no-explicit-any*/
 
 export const QueryResult = ({ queryResult }: { queryResult: any }) => {
+
+    async function downloadData() {
+        try{
+            const response = await fetch('http://localhost:8000/exportData')
+            if (!response.ok) throw new Error(`Server error: ${response.status}`);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = "query_results.csv";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        }
+        catch(error){
+            console.error("Error downloading data: ", error);
+        }
+    }
+
     const renderResults = () => {
         if (!queryResult) {
             return "No results available.";
@@ -100,6 +121,8 @@ export const QueryResult = ({ queryResult }: { queryResult: any }) => {
                 textAlign: "center",
             }}
         >
+            <Box sx={{ fontSize: '20px', fontWeight: 'bold' }}>Query Results
+                    <IconButton children = {<DownloadIcon/>} sx={{color: 'white' }} onClick={() => downloadData()}/></Box>
             <Box sx={{ fontSize: '20px', fontWeight: 'bold' }}>Query Results</Box>
             <Box sx={{ fontSize: '16px', marginTop: '10px' }}>
                 {renderResults()}
