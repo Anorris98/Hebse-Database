@@ -4,7 +4,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 /* eslint-disable  @typescript-eslint/no-explicit-any*/
 
 export const QueryResult = ({ queryResult }: { queryResult: any }) => {
-
+    /* eslint-disable */
     async function downloadData() {
         try{
             const response = await fetch('http://localhost:8000/exportData')
@@ -23,6 +23,7 @@ export const QueryResult = ({ queryResult }: { queryResult: any }) => {
             console.error("Error downloading data: ", error);
         }
     }
+    /* eslint-enable */
 
     const renderResults = () => {
         if (!queryResult) {
