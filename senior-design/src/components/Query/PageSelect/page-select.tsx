@@ -1,9 +1,8 @@
-import { useState } from 'react';
-import { TablePagination, Box } from "@mui/material";
+import {Box, TablePagination} from "@mui/material";
 
-export const PageSelect = ({ setPageNumber, pageNumber, rows, rowsPerPage, setRowsPerPage }: { setPageNumber: (value: (((prevState: number) => number) | number)) => void, pageNumber: number, rows: number, rowsPerPage: number, setRowsPerPage: (value: (((prevState: number) => number) | number)) => void}) => {
+export const PageSelect = ({ setPageNumber, pageNumber, rows, rowsPerPage, setRowsPerPage }: { setPageNumber: (value: (((previousState: number) => number) | number)) => void, pageNumber: number, rows: number, rowsPerPage: number, setRowsPerPage: (value: (((previousState: number) => number) | number)) => void}) => {
     const handleChangePage = (
-        event: React.MouseEvent<HTMLButtonElement> | null,
+        _: React.MouseEvent<HTMLButtonElement> | null,
         newPage: number,
       ) => {
         setPageNumber(newPage);
@@ -12,7 +11,7 @@ export const PageSelect = ({ setPageNumber, pageNumber, rows, rowsPerPage, setRo
     const handleChangeRowsPerPage = (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
       ) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
+        setRowsPerPage(Number.parseInt(event.target.value, 10));
         setPageNumber(0);
       };
     

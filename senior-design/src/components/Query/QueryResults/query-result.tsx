@@ -1,6 +1,8 @@
 import { Box } from "@mui/material";
 
-export const QueryResults = ({ queryResult }: { queryResult: any }) => {
+/* eslint-disable  @typescript-eslint/no-explicit-any*/
+
+export const QueryResult = ({ queryResult }: { queryResult: any }) => {
     const renderResults = () => {
         if (!queryResult) {
             return "No results available.";
@@ -46,9 +48,9 @@ export const QueryResults = ({ queryResult }: { queryResult: any }) => {
                         <tbody>
                             {queryResult.map((row: any, index: number) => (
                                 <tr key={index}>
-                                    {Object.values(row).map((value, i) => (
+                                    {Object.values(row).map((value, innerIndex) => (
                                         <td
-                                            key={i}
+                                            key={innerIndex}
                                             style={{
                                                 border: '1px solid white',
                                                 padding: '8px',

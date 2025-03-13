@@ -14,8 +14,8 @@ export const History = () => {
         { id: 2, name: 'Lannister', datetime: 'Cersei', status: 42, download: "here" },
         { id: 3, name: 'Lannister', datetime: 'Jaime', status: 45, download: "here" },
         { id: 4, name: 'Stark', datetime: 'Arya', status: 16, download: "here" },
-        { id: 5, name: 'Targaryen', datetime: 'Daenerys', status: null, download: "here" },
-        { id: 6, name: 'Melisandre', datetime: null, status: 150, download: "here" },
+        { id: 5, name: 'Targaryen', datetime: 'Daenerys', status: 16, download: "here" },
+        { id: 6, name: 'Melisandre', datetime: 16, status: 150, download: "here" },
         { id: 7, name: 'Clifford', datetime: 'Ferrara', status: 44 , download: "here"},
         { id: 8, name: 'Frances', datetime: 'Rossini', status: 36, download: "here" },
         { id: 9, name: 'Roxie', datetime: 'Harvey', status: 65, download: "here" },
@@ -25,7 +25,7 @@ export const History = () => {
 
     return (
         <div>
-        {/* Add history components here*/}
+            {/* Add history components here*/}
             <DataGrid
                 rows={rows}
                 columns={columns}

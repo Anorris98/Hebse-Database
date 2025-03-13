@@ -1,5 +1,6 @@
 stages:
   - tox
+  - lint
 
 backend:
   stage: tox
@@ -7,3 +8,13 @@ backend:
     - pip install tox
     - cd backend
     - tox
+
+eslint:
+  stage: lint
+  image: node:latest
+  before_script:
+    - cd senior-design
+    - npm install
+  script:
+    - npx eslint .
+

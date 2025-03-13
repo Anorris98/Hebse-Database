@@ -1,9 +1,9 @@
 import {useEffect, useState} from "react";
 import {Box, Checkbox, FormControlLabel, IconButton, InputAdornment, Typography,} from "@mui/material";
 import {AutoAwesome, CheckSharp, ErrorOutline} from "@mui/icons-material";
-import HelpTextField from "../../HelpTextField/HelpTextField";
+import HelpTextField from "../../HelpTextField/help-text-field.tsx";
 
-const NLPInteraction = () => {
+const NlpInteractions = () => {
   const [query, setQuery] = useState("");
   const [response, setResponse] = useState(
     "Enter your request or question to GPT. The system can help format queries or provide general assistance."
@@ -34,17 +34,17 @@ const NLPInteraction = () => {
           settings: parsedSettings,
         };
 
-        const res = await fetch("http://localhost:8000/ask_gpt", {
+        const result = await fetch("http://localhost:8000/ask_gpt", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
 
-        if (!res.ok) {
-          throw new Error(`Connection test failed: HTTP status ${res.status}`);
+        if (!result.ok) {
+          throw new Error(`Connection test failed: HTTP status ${result.status}`);
         }
 
-        const data = await res.json();
+        const data = await result.json();
         // If we get a response key with text in it, we assume success
         if (data?.response) {
           setGptConnected(true);
@@ -79,17 +79,17 @@ const NLPInteraction = () => {
         settings: parsedSettings,
       };
 
-      const res = await fetch("http://localhost:8000/ask_gpt", {
+      const result = await fetch("http://localhost:8000/ask_gpt", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok) {
-        throw new Error(`Server error: ${res.status}`);
+      if (!result.ok) {
+        throw new Error(`Server error: ${result.status}`);
       }
 
-      const data = await res.json();
+      const data = await result.json();
       // The backend returns { response.content: "...GPT output..." }
       setResponse(data.response.content || "No response received from GPT."); //this took forever to figure out, if future updates change the response key, this will need to be updated.
     } catch (error) {
@@ -136,9 +136,9 @@ const NLPInteraction = () => {
           label={
             checkingConnection
               ? "Checking GPT connection..."
-              : gptConnected
+              : (gptConnected
               ? "GPT Model is connected!"
-              : "GPT Model is not connected. Check Settings -> GPT API Settings."
+              : "GPT Model is not connected. Check Settings -> GPT API Settings.")
           }
           sx={{ color: "white", fontFamily: "monospace", '& .MuiFormControlLabel-label': { fontFamily: 'monospace', color: "white" }}}
         />
@@ -148,7 +148,7 @@ const NLPInteraction = () => {
       <HelpTextField
         label="Ask GPT"
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={(input) => setQuery(input.target.value)}
         tooltipText="Use this field to talk to GPT about query formatting or get general schema help."
         inputProps={{
           startAdornment: (
@@ -177,4 +177,4 @@ const NLPInteraction = () => {
   );
 };
 
-export default NLPInteraction;
+export default NlpInteractions;

@@ -1,6 +1,6 @@
 import { Grid2 } from "@mui/material";
-import GPTSetup from "./GPTSetup/GPTSetup.tsx";
-import DatabaseSetup from "./DatabaseSetup/DatabaseSetup.tsx";
+import GPTSetup from "./GPTSetup/gpt-setup.tsx";
+import DatabaseSetup from "./DatabaseSetup/database-setup.tsx";
 
 export const Settings = () => {
     return (

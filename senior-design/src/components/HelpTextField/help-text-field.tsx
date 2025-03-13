@@ -1,7 +1,7 @@
 import { TextField, IconButton, Tooltip, Box } from "@mui/material";
 import { InfoOutlined } from "@mui/icons-material";
 
-interface HelpTextFieldProps {
+interface HelpTextFieldProperties {
     label: string;
     value: string;
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -10,7 +10,7 @@ interface HelpTextFieldProps {
     inputProps?: object; 
 }
 
-const HelpTextField: React.FC<HelpTextFieldProps> = ({ label, value, onChange, type = "text", tooltipText, inputProps }) => {
+const HelpTextField: React.FC<HelpTextFieldProperties> = ({ label, value, onChange, type = "text", tooltipText, inputProps }) => {
     return (
         <Box sx={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "15px" }}>
             <Tooltip title={tooltipText} arrow>

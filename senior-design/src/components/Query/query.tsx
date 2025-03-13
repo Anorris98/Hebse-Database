@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { QueryInput } from "./QueryInput/QueryInput.tsx";
-import { QueryResults } from './QueryResults/QueryResults';
-import { QueryWelcomeText } from "../QueryWelcomeText/QueryWelcomeText.tsx";
-import { SavedQueriesComponent } from "../SavedQueriesComponent/SavedQueriesComponent.tsx";
-import { PageSelect } from "./PageSelect/PageSelect.tsx";
+import { QueryInput } from "./QueryInput/query-input.tsx";
+import { QueryResult } from './QueryResults/query-result.tsx';
+import { QueryWelcomeText } from "../QueryWelcomeText/query-welcome-text.tsx";
+import { SavedQueriesComponent } from "../SavedQueriesComponent/saved-queries-component.tsx";
+import { PageSelect } from "./PageSelect/page-select.tsx";
 import { Grid2 } from "@mui/material";
-import NLPInteraction from "./NLPInteraction/NLPInteraction.tsx";
+import NlpInteractions from "./NLPInteraction/nlp-interactions.tsx";
 
 export const Query = () => {
     const [pageNumber, setPageNumber] = useState(0);
@@ -19,7 +19,7 @@ export const Query = () => {
             {/* <NavBar/> The navigation bar */}
             <Grid2 display={"grid"} sx={{maxHeight: '1000px'}}>
                 <QueryWelcomeText/>
-                <NLPInteraction />{/* Displays the NPLInteraction component*/}
+                <NlpInteractions />{/* Displays the NPLInteraction component*/}
                 <QueryInput onQueryResult={setQueryResult}
                             savedQueries={savedQueries}
                             setSavedQueries={setSavedQueries}
@@ -32,7 +32,7 @@ export const Query = () => {
                             rows={queryResult.length}
                             rowsPerPage={rowsPerPage}
                             setRowsPerPage={setRowsPerPage}/>
-                <QueryResults queryResult={queryResult.slice(pageNumber * rowsPerPage, pageNumber * rowsPerPage + rowsPerPage)}/> {/* Displays the query result passed from the parent state.*/}
+                <QueryResult queryResult={queryResult.slice(pageNumber * rowsPerPage, pageNumber * rowsPerPage + rowsPerPage)}/> {/* Displays the query result passed from the parent state.*/}
             </Grid2>
         </div>
     );

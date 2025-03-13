@@ -1,5 +1,5 @@
 import { Grid2 } from "@mui/material";
-import DBParser from "./DatabaseParser/DBParser";
+import DBParser from "./DatabaseParser/database-parser.tsx";
 
 export const Utilities = () => {
     return (

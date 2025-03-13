@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 
-export const About_Us = () => {
+export const AboutUs = () => {
     return (
         <Box
             sx={{
