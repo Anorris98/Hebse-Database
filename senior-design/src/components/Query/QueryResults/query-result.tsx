@@ -1,6 +1,9 @@
 import { Box, IconButton } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import { PageSelect } from "./PageSelect/page-select";
+
+/* eslint-disable  @typescript-eslint/no-explicit-any*/
+
 async function downloadData() {  
     try{
         const response = await fetch('http://localhost:8000/exportData')  
@@ -20,7 +23,7 @@ async function downloadData() {
     }
 }
 
-export const QueryResult = ({ queryResult, setPageNumber, pageNumber, totalEntries, rowsPerPage, setRowsPerPage }: { queryResult: any, setPageNumber: any, pageNumber: any, totalEntries: any, rowsPerPage: any, setRowsPerPage: any }) => {
+export const QueryResult = ({ queryResult, setPageNumber, pageNumber, totalEntries, rowsPerPage, setRowsPerPage }: { queryResult: any, setPageNumber: (value: (((previousState: number) => number) | number)) => void, pageNumber: number, totalEntries: number, rowsPerPage: number, setRowsPerPage: (value: (((previousState: number) => number) | number)) => void }) => {
     const renderResults = () => {
         if (!queryResult) {
             return "No results available.";
