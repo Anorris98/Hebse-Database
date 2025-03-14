@@ -1,6 +1,7 @@
 import { Box, IconButton } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import { PageSelect } from "./PageSelect/page-select";
+import "./query-result.css"
 
 /* eslint-disable  @typescript-eslint/no-explicit-any*/
 
@@ -46,8 +47,8 @@ export const QueryResult = ({ queryResult, setPageNumber, pageNumber, totalEntri
             }
 
             return (
-                <Box sx={{ overflow: "auto", borderColor: "black", borderStyle: "solid", borderWidth: "2px"}}>
-                    <table style={{ borderCollapse: 'collapse', width: '100%', margin: "5px" }}>
+                <Box sx={{ overflow: "auto", borderColor: "black", borderStyle: "solid", borderWidth: "2px", borderRadius:"10px"}}>
+                    <table style={{width: '100%', padding: "5px"}}>
                         <thead>
                             <tr>
                                 {Object.keys(queryResult[0]).map((key) => (
