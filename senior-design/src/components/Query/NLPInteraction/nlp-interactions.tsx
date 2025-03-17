@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
-import {Box, Checkbox, FormControlLabel, IconButton, InputAdornment, Typography,} from "@mui/material";
-import {AutoAwesome, CheckSharp, ErrorOutline} from "@mui/icons-material";
-import HelpTextField from "../../HelpTextField/help-text-field.tsx";
+import {Box, Checkbox, FormControlLabel, IconButton, InputAdornment, Typography, TextField, Tooltip, Button,} from "@mui/material";
+import {AutoAwesome, CheckSharp, ErrorOutline, InfoOutlined} from "@mui/icons-material";
+
 
 const NlpInteractions = () => {
   const [query, setQuery] = useState("");
@@ -14,7 +14,7 @@ const NlpInteractions = () => {
   const [checkingConnection, setCheckingConnection] = useState(true);
 
   // -----------------------------------------------------------------
-  // On mount, we attempt a quick "ping" to /ask_gpt with a test query
+  // On mount, attempt a "ping" to /ask_gpt with a test query
   // to confirm GPT settings are valid. If success => connected.
   // -----------------------------------------------------------------
   useEffect(() => {
@@ -28,9 +28,8 @@ const NlpInteractions = () => {
         }
 
         const parsedSettings = JSON.parse(savedSettings);
-        // Construct a small test request
         const payload = {
-          query: "Hello GPT, are you there?",  // a minimal test
+          query: "Hello GPT, are you there?", // Minimal test query
           settings: parsedSettings,
         };
 
@@ -45,7 +44,7 @@ const NlpInteractions = () => {
         }
 
         const data = await result.json();
-        // If we get a response key with text in it, we assume success
+        // If response exists, assume success
         if (data?.response) {
           setGptConnected(true);
         }
@@ -61,8 +60,7 @@ const NlpInteractions = () => {
   }, []);
 
   // -----------------------------------------------------------------
-  // Handler that actually calls the /ask_gpt endpoint with the user’s
-  // query + the GPT settings from localStorage
+  // Handler to call the /ask_gpt endpoint with the user’s query
   // -----------------------------------------------------------------
   const handleQuery = async () => {
     setResponse("Awaiting GPT response...");
@@ -90,8 +88,8 @@ const NlpInteractions = () => {
       }
 
       const data = await result.json();
-      // The backend returns { response.content: "...GPT output..." }
-      setResponse(data.response.content || "No response received from GPT."); //this took forever to figure out, if future updates change the response key, this will need to be updated.
+      // Backend response format: { response.content: "...GPT output..." }
+      setResponse(data.response.content || "No response received from GPT.");
     } catch (error) {
       console.error("Error fetching GPT response:", error);
       setResponse("An error occurred while fetching the response.");
@@ -100,21 +98,31 @@ const NlpInteractions = () => {
 
   return (
     <Box
-      component="div"
       sx={{
         backgroundColor: "gray",
         flexGrow: 1,
         borderRadius: "15px",
-        maxWidth: "lg",
         fontFamily: "monospace",
-        marginTop: "20px",
         padding: "20px",
         color: "white",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "top",
+        alignItems: "center",
+        height: "100%",
       }}
     >
-      <Typography variant="h5" sx={{ marginBottom: "15px", fontFamily: "monospace" }}>
-        Query Assistance
-      </Typography>
+
+      <Box sx={{ display: "flex", alignItems: "center", mb: 2, marginBottom: "15px", }}>
+        <Typography variant="h5" sx={{ fontFamily: "monospace" }}>
+          Query Assistance
+        </Typography>
+        <Tooltip title={"Use this field to talk to GPT about query formatting or get general schema help."} arrow>
+            <IconButton>
+              <InfoOutlined style={{ color: "white" }} />
+            </IconButton>
+        </Tooltip>
+      </Box>
 
       {/* Connection Status */}
       <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
@@ -122,8 +130,8 @@ const NlpInteractions = () => {
           control={
             <Checkbox
               checked={gptConnected}
-              icon={<ErrorOutline/>}
-              checkedIcon={<CheckSharp/>}
+              icon={<ErrorOutline />}
+              checkedIcon={<CheckSharp />}
               disabled
               sx={{
                 color: "white",
@@ -145,30 +153,82 @@ const NlpInteractions = () => {
       </Box>
 
       {/* User input field for GPT query */}
-      <HelpTextField
-        label="Ask GPT"
-        value={query}
-        onChange={(input) => setQuery(input.target.value)}
-        tooltipText="Use this field to talk to GPT about query formatting or get general schema help."
-        inputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <IconButton onClick={handleQuery} disabled={!gptConnected}>
-                <AutoAwesome sx={{ color: "white" }} />
-              </IconButton>
-            </InputAdornment>
-          ),
+      <Box sx={{ padding: "10px", width: "100%", marginBottom: "0px" }}>
+        <TextField
+          label="Ask GPT"
+          value={query}
+          onChange={(event_) => setQuery(event_.target.value)}
+          id="outlined-basic"
+          variant="outlined"
+          fullWidth
+          multiline
+          minRows={6}
+          maxRows={6}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                <IconButton sx={{ width: 0, height: 0, opacity: 0, padding: 0, margin: 0 }}>
+                    <AutoAwesome />
+                </IconButton>
+                </InputAdornment>
+            ),
+            },
+            inputLabel: {
+              style: { fontFamily: "monospace", color: "white" },
+            },
+          }}
+          sx={{
+            width: "100%", 
+            '& .MuiInputBase-root': {
+              height: "auto",
+              alignItems: "flex-start",
+            },
+            "& .MuiOutlinedInput-root": {
+              padding: "8px", // Reduced padding
+              "& fieldset": { borderColor: "white" },
+              "&:hover fieldset": { borderColor: "white" },
+              "&.Mui-focused fieldset": { borderColor: "white" },
+            },
+            "& .MuiInputBase-input": {
+                color: "white",
+                fontFamily: "monospace",
+            },
+          }}
+        />
+      </Box>
+      <Box
+        sx={{
+            display: "flex",
+            width: "100%", // Make sure buttons stay inside the parent box
+            gap: "0px",
+            marginTop: "0px",
+            padding: "10px", // Ensure buttons don’t touch the edges
         }}
-      />
-
+      >
+        <Button
+            variant="contained"
+            sx={{
+                backgroundColor: "darkgray",
+                fontFamily: "monospace",
+                fontWeight: "bold",
+                flex: 1,
+            }}
+            onClick={handleQuery}
+            startIcon={<AutoAwesome />}
+        >
+          Query
+        </Button>
+      </Box>
       {/* GPT Response area */}
       <Box
         sx={{
-          marginTop: "15px",
+          marginTop: "5px",
           backgroundColor: "inherit",
           borderRadius: "5px",
-          padding: "10px",
+          padding: "5px",
           border: "solid white",
+          width: "100%",
         }}
       >
         <Typography sx={{ fontFamily: "monospace" }}>{response}</Typography>
@@ -178,3 +238,4 @@ const NlpInteractions = () => {
 };
 
 export default NlpInteractions;
+

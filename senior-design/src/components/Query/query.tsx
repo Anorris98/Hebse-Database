@@ -4,7 +4,7 @@ import { QueryResult } from './QueryResults/query-result.tsx';
 import { QueryWelcomeText } from "../QueryWelcomeText/query-welcome-text.tsx";
 import { SavedQueriesComponent } from "../SavedQueriesComponent/saved-queries-component.tsx";
 import { PageSelect } from "./PageSelect/page-select.tsx";
-import { Grid2 } from "@mui/material";
+import { Box } from "@mui/material";
 import NlpInteractions from "./NLPInteraction/nlp-interactions.tsx";
 
 export const Query = () => {
@@ -15,25 +15,54 @@ export const Query = () => {
     const [rowsPerPage, setRowsPerPage] = useState(50);
 
     return (
-        <div>
-            {/* <NavBar/> The navigation bar */}
-            <Grid2 display={"grid"} sx={{maxHeight: '1000px'}}>
-                <QueryWelcomeText/>
-                <NlpInteractions />{/* Displays the NPLInteraction component*/}
-                <QueryInput onQueryResult={setQueryResult}
+        <Box sx={{ display: "flex", justifyContent: "center", padding: "20px" }}>
+            <Box sx={{ 
+                maxWidth: "1000px", 
+                width: "100%", 
+                display: "flex", 
+                flexDirection: "column", 
+                gap: "16px"
+            }}>
+                {/* Centered Welcome Text */}
+                <Box sx={{ display: "flex", justifyContent: "center", textAlign: "center" }}>
+                    <QueryWelcomeText />
+                </Box>
+
+                {/* NlpInteractions (Left) and QueryInput (Right) with Equal Sizes */}
+                <Box sx={{ display: "flex", gap: "16px", alignItems: "stretch" }}>
+                    <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+                        <NlpInteractions />
+                    </Box>
+                    <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+                        <QueryInput 
+                            onQueryResult={setQueryResult}
                             savedQueries={savedQueries}
                             setSavedQueries={setSavedQueries}
                             inputValue={inputValue}
-                            setInputValue={setInputValue}
-                            setPageNumber={setPageNumber}/> {/* Renders input box and updates query result via parent callback.*/}
-                <SavedQueriesComponent savedQueries={savedQueries} setSavedQueries={setSavedQueries} setInputValue={setInputValue}/>
+                            setInputValue={setInputValue} 
+                        />
+                    </Box>
+                </Box>
+
+                {/* QueryResults Spanning Full Width */}
+                <Box>
                 <PageSelect setPageNumber={setPageNumber}
-                            pageNumber={pageNumber}
-                            rows={queryResult.length}
-                            rowsPerPage={rowsPerPage}
-                            setRowsPerPage={setRowsPerPage}/>
+                                pageNumber={pageNumber}
+                                rows={queryResult.length}
+                                rowsPerPage={rowsPerPage}
+                                setRowsPerPage={setRowsPerPage}/>
                 <QueryResult queryResult={queryResult.slice(pageNumber * rowsPerPage, pageNumber * rowsPerPage + rowsPerPage)}/> {/* Displays the query result passed from the parent state.*/}
-            </Grid2>
-        </div>
+                </Box>
+
+                {/* SavedQueriesComponent at the very bottom */}
+                <Box>
+                    <SavedQueriesComponent 
+                        savedQueries={savedQueries} 
+                        setSavedQueries={setSavedQueries} 
+                        setInputValue={setInputValue} 
+                    />
+                </Box>
+            </Box>
+        </Box>
     );
 };

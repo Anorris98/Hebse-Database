@@ -124,7 +124,6 @@ export const QueryResult = ({ queryResult }: { queryResult: any }) => {
         >
             <Box sx={{ fontSize: '20px', fontWeight: 'bold' }}>Query Results
                     <IconButton children = {<DownloadIcon/>} sx={{color: 'white' }} onClick={() => downloadData()}/></Box>
-            <Box sx={{ fontSize: '20px', fontWeight: 'bold' }}>Query Results</Box>
             <Box sx={{ fontSize: '16px', marginTop: '10px' }}>
                 {renderResults()}
             </Box>
