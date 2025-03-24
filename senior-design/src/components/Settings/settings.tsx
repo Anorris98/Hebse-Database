@@ -1,17 +1,22 @@
-import { Grid2 } from "@mui/material";
+import { Box } from "@mui/material";
 import GPTSetup from "./GPTSetup/gpt-setup.tsx";
 import DatabaseSetup from "./DatabaseSetup/database-setup.tsx";
 
 export const Settings = () => {
     return (
-        <div>
-            <Grid2 display="grid" sx={{ maxHeight: "1000px", gap: "20px", padding: "20px" }}>
+        <Box sx={{ display: "flex", justifyContent: "center", padding: "20px" }}>
+            <Box sx={{ 
+                maxWidth: "1000px", 
+                width: "100%", 
+                display: "flex", 
+                flexDirection: "column", 
+                gap: "16px"
+            }}>
                 {/* GPT Query Form Component */}
                 <GPTSetup />
-
-                {/* Database Setup Component */}
+                 {/* Database Setup Component */}
                 <DatabaseSetup />
-            </Grid2>
-        </div>
+            </Box>
+        </Box>
     );
 };
