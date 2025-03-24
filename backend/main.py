@@ -19,6 +19,30 @@ metadata = MetaData()
 app = FastAPI()
 
 # -------------------------------------------------
+# Old Settings for refrence when setting up the database in the application
+# -------------------------------------------------
+# # Setup SSH tunnel and database connection
+# tunnel = sshtunnel.SSHTunnelForwarder(
+#     ("SDmay25-20.ece.iastate.edu", 22),
+#     ssh_username="vm-user",
+#     ssh_password="50EgMe$KIE2m",
+#     allow_agent=False,  # Prevents using SSH agent keys
+#     host_pkey_directories=[],  # Ignores default SSH keys
+#     ssh_private_key=None,  # Explicitly prevent key authentication
+#     remote_bind_address=("127.0.0.1", 5432)
+# )
+# tunnel.start()
+
+# DATABASE_CONFIG = {
+#     "username": "postgres",
+#     "password": "root",
+#     "host": "localhost",
+#     "port": tunnel.local_bind_port,
+#     "database": "hades"
+# }
+
+
+# -------------------------------------------------
 # CORS
 # -------------------------------------------------
 origins = ["http://localhost", "http://localhost:5173"]
