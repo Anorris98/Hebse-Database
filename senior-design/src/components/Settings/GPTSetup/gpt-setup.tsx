@@ -63,7 +63,7 @@ const GptSetup = () => {
 
 
 return (
-    <Container maxWidth="lg" sx={{ mt: 10, marginTop:"150px" }}>
+    <Box sx={{ width: "100%" }}>
         <StyledPaper elevation={6}>
             <Typography variant="h4" sx={{ marginBottom: "20px", textAlign: "center", fontFamily: "monospace" , color: "white"  }}>
                 GPT API Settings
@@ -117,7 +117,7 @@ return (
                 </Button>
             </Box>
         </StyledPaper>
-    </Container>
+    </Box>
 );
 
 };

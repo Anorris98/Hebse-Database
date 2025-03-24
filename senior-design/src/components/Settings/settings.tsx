@@ -1,6 +1,7 @@
 import { Box } from "@mui/material";
 import GPTSetup from "./GPTSetup/gpt-setup.tsx";
 import DatabaseSetup from "./DatabaseSetup/database-setup.tsx";
+import { SettingsWelcomeText } from "./SettingsWelcomeText/SettingsWelcomeText.tsx";
 
 export const Settings = () => {
     return (
@@ -12,11 +13,25 @@ export const Settings = () => {
                 flexDirection: "column", 
                 gap: "16px"
             }}>
+                {/* Centered Welcome Text */}
+                <Box sx={{ display: "flex", justifyContent: "center", textAlign: "center" }}>
+                    <SettingsWelcomeText />
+                </Box>                
+            <Box
+                sx={{
+                    maxWidth: "1000px",
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "16px",
+                }}
+            >
                 {/* GPT Query Form Component */}
                 <GPTSetup />
-                 {/* Database Setup Component */}
+                {/* Database Setup Component */}
                 <DatabaseSetup />
             </Box>
+        </Box>
         </Box>
     );
 };

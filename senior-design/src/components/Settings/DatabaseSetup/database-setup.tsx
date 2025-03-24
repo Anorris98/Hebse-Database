@@ -300,7 +300,7 @@ const DatabaseSetup = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4 }}>
+    <Box sx={{ width: "100%" }}>
       <StyledPaper elevation={6}>
         <Typography variant="h4" sx={{ marginBottom: "20px", textAlign: "center", fontFamily: "monospace" , color: "white" }}>
           Database Connection Setup
@@ -449,7 +449,7 @@ const DatabaseSetup = () => {
           )}
         </Box>
       </StyledPaper>
-    </Container>
+    </Box>
   );
 };
 
