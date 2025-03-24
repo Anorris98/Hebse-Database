@@ -15,7 +15,7 @@ export const SettingsWelcomeText = () => {
         width: "100%",
         fontFamily: "monospace",
         padding: "20px",
-        marginTop: "200px",
+        marginTop: "100px",
         textAlign: "center",
         color: "white",
       }}
