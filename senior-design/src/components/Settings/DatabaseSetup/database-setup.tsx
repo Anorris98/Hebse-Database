@@ -432,10 +432,11 @@ const DatabaseSetup = () => {
             />
             <HelpTextField
               label="SSH Private Key (or Password)"
+              type={showPassword ? "text" : "password"}
               value={sshKey}
               onChange={(input) => setSshKey(input.target.value)}
               tooltipText="Paste your SSH private key here, or an SSH password if not using keys."
-              inputProps={{ multiline: true, rows: 4, style: { color: "white" } }}
+              inputProps={{ multiline: true, rows: 4, style: { color: "white" }, passwordInputProperties }}
             />
           </>
         )}
