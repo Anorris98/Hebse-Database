@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 // Styled Select for a consistent gray/white look
 import {
   Box,
@@ -13,23 +13,23 @@ import {
   Switch,
   Typography
 } from "@mui/material";
-import {alpha, styled} from "@mui/material/styles";
-import {DeleteForever, Save, Visibility, VisibilityOff} from "@mui/icons-material";
+import { alpha, styled } from "@mui/material/styles";
+import { DeleteForever, Save, Visibility, VisibilityOff } from "@mui/icons-material";
 import HelpTextField from "../../HelpTextField/help-text-field.tsx";
 
-type databaseConfig = {
-  host: string;
-  port: string;
-  username: string;
-  password: string;
+type DatabaseConfig = {
+  dbHost: string;
+  dbPort: string;
+  dbUsername: string;
+  dbPassword: string;
+  dbName: string;
   isRemote: boolean;
   sshHost: string;
   sshPort: string;
   sshUser: string;
   sshKey: string;
-}
+};
 
-// Styled container matching your styling guide
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: "30px",
   borderRadius: "12px",
@@ -65,15 +65,14 @@ const StyledSelect = styled(Select)(({ theme }) => ({
 }));
 
 // --------------------------------------------------
-// Helper: Load the entire db_list from localStorage
-// as an object keyed by database name
+// Helper: Load all DB configs from localStorage
 // --------------------------------------------------
-const loadAllDatabaseConfigs = (): Record<string, databaseConfig> => {
+const loadAllDatabaseConfigs = (): Record<string, DatabaseConfig> => {
   const stored = localStorage.getItem("db_list");
   if (stored) {
     try {
       const parsed = JSON.parse(stored);
-      // If not an object (for example, an old array), convert or reset
+      // If it's not an object (e.g., an old array), reset
       return typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
     } catch (error) {
       console.error("Error parsing db_list:", error);
@@ -83,50 +82,64 @@ const loadAllDatabaseConfigs = (): Record<string, databaseConfig> => {
 };
 
 const DatabaseSetup = () => {
-  // We store the list of known database names in state
-  const [databaseNames, setDatabaseNames] = useState<string[]>([]);
-  // Currently chosen DB from dropdown
-  const [selectedDatabase, setSelectedDatabase] = useState("");
-  // Database connection fields
-  const [host, setHost] = useState("");
-  const [port, setPort] = useState("5432");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [database, setDatabase] = useState("");
-  // For toggling password visibility
-  const [showPassword, setShowPassword] = useState(false);
-  // Whether this DB uses a remote connection
+  // List of saved profile names for the dropdown
+  const [profileNames, setProfileNames] = useState<string[]>([]);
+
+  // The currently loaded/selected profile from the dropdown
+  const [selectedProfileKey, setSelectedProfileKey] = useState("");
+
+  // A separate text field to name/rename the profile
+  const [profileName, setProfileName] = useState("");
+
+  // DB connection fields
+  const [dbHost, setDbHost] = useState("");
+  const [dbPort, setDbPort] = useState("5432");
+  const [dbUsername, setDbUsername] = useState("");
+  const [dbPassword, setDbPassword] = useState("");
+  const [dbName, setDbName] = useState("");
+
+  // Whether this DB uses a remote (SSH) connection
   const [isRemote, setIsRemote] = useState(false);
 
-  // Additional SSH fields for remote connection
+  // SSH fields (for remote mode)
   const [sshHost, setSshHost] = useState("");
   const [sshPort, setSshPort] = useState("22");
   const [sshUser, setSshUser] = useState("");
   const [sshKey, setSshKey] = useState("");
 
-  // On initial render, populate dropdown from localStorage
-  // and load the "last-used" database if present
+  // Toggle DB password visibility
+  const [showPassword, setShowPassword] = useState(false);
+
+  // --------------------------------------------------
+  // Load profiles on mount + last-used config
+  // --------------------------------------------------
   useEffect(() => {
-    const allDatabaseConfigs = loadAllDatabaseConfigs();
-    setDatabaseNames(Object.keys(allDatabaseConfigs));
+    const allProfiles = loadAllDatabaseConfigs();
+    setProfileNames(Object.keys(allProfiles));
 
     const lastLoaded = localStorage.getItem("db_settings");
     if (lastLoaded) {
       try {
-        const parsedSettings = JSON.parse(lastLoaded);
-        setSelectedDatabase(parsedSettings.database || "");
-        setHost(parsedSettings.host || "");
-        setPort(parsedSettings.port || "5432");
-        setUsername(parsedSettings.username || "");
-        setDatabase(parsedSettings.database || "");
-        setPassword(parsedSettings.password || "");
-        setIsRemote(!!parsedSettings.isRemote);
+        const parsed = JSON.parse(lastLoaded);
 
-        // If remote info was saved, load it
-        setSshHost(parsedSettings.sshHost || "");
-        setSshPort(parsedSettings.sshPort || "22");
-        setSshUser(parsedSettings.sshUser || "");
-        setSshKey(parsedSettings.sshKey || "");
+        // The key that was last used
+        const lastProfileKey = parsed.profileName || "";
+        setSelectedProfileKey(lastProfileKey);
+        setProfileName(lastProfileKey);
+
+        // Fill in DB fields
+        setDbHost(parsed.dbHost || "");
+        setDbPort(parsed.dbPort || "5432");
+        setDbUsername(parsed.dbUsername || "");
+        setDbPassword(parsed.dbPassword || "");
+        setDbName(parsed.dbName || "");
+        setIsRemote(!!parsed.isRemote);
+
+        // Fill in SSH if remote
+        setSshHost(parsed.sshHost || "");
+        setSshPort(parsed.sshPort || "22");
+        setSshUser(parsed.sshUser || "");
+        setSshKey(parsed.sshKey || "");
       } catch (error) {
         console.error("Error loading last-used settings:", error);
       }
@@ -134,22 +147,21 @@ const DatabaseSetup = () => {
   }, []);
 
   // --------------------------------------------------
-  // Handle user choosing a DB from the dropdown
+  // When user picks an existing profile from the dropdown
   // --------------------------------------------------
-  const handleDatabaseChange = (event: SelectChangeEvent<unknown>) => {
-    const selectedDatabase = event.target.value as string;
-    setSelectedDatabase(selectedDatabase);
+  const handleProfileSelect = (event: SelectChangeEvent<unknown>) => {
+    const chosenKey = event.target.value as string;
+    setSelectedProfileKey(chosenKey);
 
-    if (selectedDatabase === "new") {
-      // Clear fields for a brand-new DB
-      setHost("");
-      setPort("5432");
-      setUsername("");
-      setDatabase("");
-      setPassword("");
+    if (chosenKey === "new") {
+      // Clear fields for brand-new
+      setProfileName("");
+      setDbHost("");
+      setDbPort("5432");
+      setDbUsername("");
+      setDbPassword("");
+      setDbName("");
       setIsRemote(false);
-
-      // Clear out SSH fields
       setSshHost("");
       setSshPort("22");
       setSshUser("");
@@ -157,110 +169,104 @@ const DatabaseSetup = () => {
       return;
     }
 
-    // If an existing DB name is chosen, load its fields
-    const allDatabaseConfigs = loadAllDatabaseConfigs();
-    if (allDatabaseConfigs[selectedDatabase]) {
-      const {
-        host,
-        port,
-        username,
-        password,
+    const allProfiles = loadAllDatabaseConfigs();
+    const cfg = allProfiles[chosenKey];
+    if (cfg) {
+      // Put the chosenKey in the Profile Name text field so the user can rename if they want
+      setProfileName(chosenKey);
+
+      setDbHost(cfg.dbHost);
+      setDbPort(cfg.dbPort);
+      setDbUsername(cfg.dbUsername);
+      setDbPassword(cfg.dbPassword);
+      setDbName(cfg.dbName);
+      setIsRemote(cfg.isRemote);
+
+      setSshHost(cfg.sshHost || "");
+      setSshPort(cfg.sshPort || "22");
+      setSshUser(cfg.sshUser || "");
+      setSshKey(cfg.sshKey || "");
+    }
+  };
+
+  // --------------------------------------------------
+  // Save the current config
+  // --------------------------------------------------
+  const handleSave = () => {
+    // 1) Must have a profileName
+    if (!profileName.trim()) {
+      alert("Please enter a Profile Name before saving.");
+      return;
+    }
+    // 2) Must have a DB name
+    if (!dbName.trim()) {
+      alert("Please enter a valid DB Name before saving.");
+      return;
+    }
+
+    // Load + update localStorage
+    const allProfiles = loadAllDatabaseConfigs();
+
+    // Overwrite/create the profile
+    allProfiles[profileName] = {
+      dbHost,
+      dbPort,
+      dbUsername,
+      dbPassword,
+      dbName,
+      isRemote,
+      sshHost,
+      sshPort,
+      sshUser,
+      sshKey,
+    };
+
+    localStorage.setItem("db_list", JSON.stringify(allProfiles));
+
+    // Also store this as last-used in db_settings
+    localStorage.setItem(
+      "db_settings",
+      JSON.stringify({
+        profileName,
+        dbHost,
+        dbPort,
+        dbUsername,
+        dbPassword,
+        dbName,
         isRemote,
         sshHost,
         sshPort,
         sshUser,
         sshKey,
-      } = allDatabaseConfigs[selectedDatabase];
-
-      setHost(host);
-      setPort(port);
-      setUsername(username);
-      setDatabase(selectedDatabase);
-      setPassword(password);
-      setIsRemote(isRemote);
-
-      // Populate SSH fields if they exist
-      setSshHost(sshHost || "");
-      setSshPort(sshPort || "22");
-      setSshUser(sshUser || "");
-      setSshKey(sshKey || "");
-    }
-  };
-
-  // --------------------------------------------------
-  // Handle saving (storing/updating) DB config
-  // --------------------------------------------------
-  const handleSave = () => {
-    // If the user hasn't provided a database name, stop
-    if (!database.trim()) {
-      alert("Please enter a Database Name before saving.");
-      return;
-    }
-
-    // Read the entire DB config object
-    const allDatabaseConfigs = loadAllDatabaseConfigs();
-
-    // Overwrite or create the entry
-    allDatabaseConfigs[database] = {
-      host,
-      port,
-      username,
-      password,
-      isRemote,
-      // SSH data
-      sshHost,
-      sshPort,
-      sshUser,
-      sshKey
-    };
-
-    // Write it back to localStorage
-    localStorage.setItem("db_list", JSON.stringify(allDatabaseConfigs));
-
-    // Also set the last-used config
-    localStorage.setItem(
-      "db_settings",
-      JSON.stringify({
-        host,
-        port,
-        username,
-        password,
-        database,
-        isRemote,
-        sshHost,
-        sshPort,
-        sshUser,
-        sshKey
       })
     );
 
-    // Refresh the dropdown list
-    setDatabaseNames(Object.keys(allDatabaseConfigs));
-    // Mark the DB as selected in the dropdown
-    setSelectedDatabase(database);
+    // Refresh
+    setProfileNames(Object.keys(allProfiles));
+    setSelectedProfileKey(profileName);
 
     alert("Database settings saved!");
   };
 
   // --------------------------------------------------
-  // Handle removing an existing database config
+  // Remove current profile
   // --------------------------------------------------
   const handleRemove = () => {
-    if (!selectedDatabase || selectedDatabase === "new") {
+    if (!selectedProfileKey || selectedProfileKey === "new") {
       return;
     }
-    const allDatabaseConfigs = loadAllDatabaseConfigs();
-    // Remove the currently selected DB config
-    delete allDatabaseConfigs[selectedDatabase];
-    // Persist the updated object
-    localStorage.setItem("db_list", JSON.stringify(allDatabaseConfigs));
+    const allProfiles = loadAllDatabaseConfigs();
 
-    // If the removed config was also the "last-used", clear it
+    // Remove it
+    delete allProfiles[selectedProfileKey];
+    localStorage.setItem("db_list", JSON.stringify(allProfiles));
+
+    // If that was lastUsed, clear
     const lastUsed = localStorage.getItem("db_settings");
     if (lastUsed) {
       try {
         const parsed = JSON.parse(lastUsed);
-        if (parsed.database === selectedDatabase) {
+        if (parsed.profileName === selectedProfileKey) {
           localStorage.removeItem("db_settings");
         }
       } catch (error) {
@@ -268,26 +274,25 @@ const DatabaseSetup = () => {
       }
     }
 
-    // Update state to reflect removal
-    setDatabaseNames(Object.keys(allDatabaseConfigs));
-    setSelectedDatabase("");
-    setHost("");
-    setPort("5432");
-    setUsername("");
-    setPassword("");
-    setDatabase("");
+    // Clear out local
+    setProfileNames(Object.keys(allProfiles));
+    setSelectedProfileKey("");
+    setProfileName("");
+    setDbHost("");
+    setDbPort("5432");
+    setDbUsername("");
+    setDbPassword("");
+    setDbName("");
     setIsRemote(false);
-
-    // Clear remote fields
     setSshHost("");
     setSshPort("22");
     setSshUser("");
     setSshKey("");
 
-    alert(`Database '${selectedDatabase}' was removed!`);
+    alert(`Database profile '${selectedProfileKey}' was removed!`);
   };
 
-  // Additional props for toggling password visibility
+  // For toggling DB password visibility
   const passwordInputProperties = {
     endAdornment: (
       <InputAdornment position="end">
@@ -301,14 +306,22 @@ const DatabaseSetup = () => {
   return (
     <Box sx={{ width: "100%" }}>
       <StyledPaper elevation={6}>
-        <Typography variant="h4" sx={{ marginBottom: "20px", textAlign: "center", fontFamily: "monospace" , color: "white" }}>
+        <Typography
+          variant="h4"
+          sx={{
+            marginBottom: "20px",
+            textAlign: "center",
+            fontFamily: "monospace",
+            color: "white",
+          }}
+        >
           Database Connection Setup
         </Typography>
 
-        {/* Dropdown for picking an existing database OR add new */}
+        {/* Load Existing Profile (Dropdown) */}
         <StyledSelect
-          value={selectedDatabase}
-          onChange={handleDatabaseChange}
+          value={selectedProfileKey}
+          onChange={handleProfileSelect}
           fullWidth
           variant="outlined"
           sx={{
@@ -316,21 +329,27 @@ const DatabaseSetup = () => {
             fontFamily: "monospace",
             fontWeight: "bold",
             flex: 1,
+            marginBottom: "20px", // extra space
           }}
         >
-          {databaseNames.map((database) => (
-            <MenuItem key={database} value={database}>
-              {database}
+          {profileNames.map((pName) => (
+            <MenuItem key={pName} value={pName}>
+              {pName}
             </MenuItem>
           ))}
-          {/* 'Add New Database' item */}
-          <MenuItem value="new">
-            Add New Database
-          </MenuItem>
+          <MenuItem value="new">Add New Database</MenuItem>
         </StyledSelect>
 
-        {/* Toggle whether this is a remote DB */}
-        <Box sx={{ marginBottom: "15px" }}>
+        {/* Text Field: Profile Name */}
+        <HelpTextField
+          label="Profile Name"
+          value={profileName}
+          onChange={(input) => setProfileName(input.target.value)}
+          tooltipText="A unique label for this DB configuration."
+        />
+
+        {/* Remote Toggle */}
+        <Box sx={{ marginBottom: "15px", marginTop: "15px" }}>
           <FormControlLabel
             control={
               <Switch
@@ -338,57 +357,65 @@ const DatabaseSetup = () => {
                 onChange={(input) => setIsRemote(input.target.checked)}
               />
             }
-            label="Remote Database"
-            sx={{ '& .MuiFormControlLabel-label': { fontFamily: 'monospace', color: "white" } }}
+            label="Remote Database (SSH)"
+            sx={{ "& .MuiFormControlLabel-label": { fontFamily: "monospace", color: "white" } }}
           />
         </Box>
 
-        {/* Standard DB fields */}
+        {/* Local DB Fields */}
         <HelpTextField
-          label="Host"
-          value={host}
-          onChange={(input) => setHost(input.target.value)}
-          tooltipText="Enter the hostname or IP address of the PostgreSQL server."
+          label="Database Host"
+          value={dbHost}
+          onChange={(input) => setDbHost(input.target.value)}
+          tooltipText="Enter the DB server hostname or IP (e.g. localhost)."
         />
         <HelpTextField
-          label="Port"
+          label="Database Port"
           type="number"
-          value={port}
-          onChange={(input) => setPort(input.target.value)}
-          tooltipText="Enter the port number for the PostgreSQL server (default: 5432)."
+          value={dbPort}
+          onChange={(input) => setDbPort(input.target.value)}
+          tooltipText="Enter the port number for the DB server (default: 5432)."
         />
         <HelpTextField
-          label="Username"
-          value={username}
-          onChange={(input) => setUsername(input.target.value)}
-          tooltipText="Enter the database username."
+          label="Database Username"
+          value={dbUsername}
+          onChange={(input) => setDbUsername(input.target.value)}
+          tooltipText="Enter the database username/account name."
         />
         <HelpTextField
-          label="Password"
+          label="Database Password"
           type={showPassword ? "text" : "password"}
-          value={password}
-          onChange={(input) => setPassword(input.target.value)}
-          tooltipText="Enter the database password."
+          value={dbPassword}
+          onChange={(input) => setDbPassword(input.target.value)}
+          tooltipText="Enter the database user’s password."
           inputProps={passwordInputProperties}
         />
         <HelpTextField
           label="Database Name"
-          value={database}
-          onChange={(input) => setDatabase(input.target.value)}
+          value={dbName}
+          onChange={(input) => setDbName(input.target.value)}
           tooltipText="Enter the name of the database you want to connect to."
         />
 
-        {/* SSH/Remote-only fields */}
+        {/* SSH Fields if Remote */}
         {isRemote && (
           <>
-            <Typography variant="h6" sx={{ marginTop: "20px", marginBottom: "10px", fontFamily: "monospace" , color: "white"}}>
+            <Typography
+              variant="h6"
+              sx={{
+                marginTop: "20px",
+                marginBottom: "10px",
+                fontFamily: "monospace",
+                color: "white",
+              }}
+            >
               SSH Connection Details
             </Typography>
             <HelpTextField
               label="SSH Host"
               value={sshHost}
               onChange={(input) => setSshHost(input.target.value)}
-              tooltipText="Enter the SSH host for tunneling (e.g., example.com)."
+              tooltipText="Enter the SSH server host (e.g., example.com)."
             />
             <HelpTextField
               label="SSH Port"
@@ -404,18 +431,17 @@ const DatabaseSetup = () => {
               tooltipText="Your SSH username on the remote host."
             />
             <HelpTextField
-              label="SSH Private Key"
+              label="SSH Private Key (or Password)"
               value={sshKey}
               onChange={(input) => setSshKey(input.target.value)}
-              tooltipText="Paste your SSH private key here."
-              // multiline, so the user can paste multi-line key
+              tooltipText="Paste your SSH private key here, or an SSH password if not using keys."
               inputProps={{ multiline: true, rows: 4, style: { color: "white" } }}
             />
           </>
         )}
 
+        {/* Save / Remove Buttons */}
         <Box sx={{ display: "flex", gap: "10px", marginTop: "20px" }}>
-          {/* Save Button */}
           <Button
             variant="contained"
             sx={{
@@ -430,8 +456,7 @@ const DatabaseSetup = () => {
             Save Database Settings
           </Button>
 
-          {/* Remove Button (only shown if an existing DB is selected) */}
-          {selectedDatabase && selectedDatabase !== "new" && (
+          {selectedProfileKey && selectedProfileKey !== "new" && (
             <Button
               variant="contained"
               color="error"

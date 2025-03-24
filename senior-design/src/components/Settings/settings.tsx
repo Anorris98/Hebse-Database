@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import GPTSetup from "./GPTSetup/gpt-setup.tsx";
 import DatabaseSetup from "./DatabaseSetup/database-setup.tsx";
-import { SettingsWelcomeText } from "./SettingsWelcomeText/SettingsWelcomeText.tsx";
+import { SettingsWelcomeText } from "./SettingsWelcomeText/settings-welcome-text.tsx";
 
 export const Settings = () => {
     return (
