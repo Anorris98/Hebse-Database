@@ -1,21 +1,14 @@
-import { Box } from "@mui/material";
-import Downloader from "./DataDownload/data-download.tsx";
+import { Grid2 } from "@mui/material";
+import DBParser from "./DatabaseParser/database-parser.tsx";
 
 export const Utilities = () => {
     return (
         <div>
-            <Box
-                sx={{
-                    maxWidth: "1000px",
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "16px",
-                }}
-            >
+            <Grid2 display="grid" sx={{ maxHeight: '1000px' , gap: '20px', padding: '20px' }}>
                 {/* Posydon Data Selector */}
-                <Downloader />
-            </Box>
+                <DBParser />
+
+            </Grid2>
         </div>
     );
 };
