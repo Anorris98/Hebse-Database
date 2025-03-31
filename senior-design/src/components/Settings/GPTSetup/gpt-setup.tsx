@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {Box, Button, Container, IconButton, InputAdornment, Paper, Typography} from "@mui/material";
+import {Box, Button, IconButton, InputAdornment, Paper, Typography} from "@mui/material";
 import {Save, Visibility, VisibilityOff} from "@mui/icons-material";
 import {alpha, styled} from "@mui/material/styles";
 import HelpTextField from "../../HelpTextField/help-text-field.tsx";
@@ -63,7 +63,7 @@ const GptSetup = () => {
 
 
 return (
-    <Container maxWidth="lg" sx={{ mt: 10, marginTop:"150px" }}>
+    <Box sx={{ width: "100%" }}>
         <StyledPaper elevation={6}>
             <Typography variant="h4" sx={{ marginBottom: "20px", textAlign: "center", fontFamily: "monospace" , color: "white"  }}>
                 GPT API Settings
@@ -117,7 +117,7 @@ return (
                 </Button>
             </Box>
         </StyledPaper>
-    </Container>
+    </Box>
 );
 
 };

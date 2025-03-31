@@ -122,9 +122,9 @@ export const QueryResult = ({ queryResult, setPageNumber, pageNumber, totalEntri
                 textAlign: "center",
             }}
         >
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative'}}>
-                <Box sx={{ fontSize: '20px', fontWeight: 'bold', position: 'absolute', left: '50%', transform: 'translateX(-50%)'}}>Query Results <IconButton children = {<DownloadIcon/>} sx={{color: 'white' }} onClick={() => downloadData()}/></Box>
-                <Box sx={{ marginLeft: 'auto'}}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', flexWrap: { xs: 'wrap', sm: 'nowrap' }}}>
+                <Box sx={{ marginTop: '10px', fontSize: '20px', fontWeight: 'bold', position: 'absolute', left: '50%', transform: 'translateX(-50%)'}}>Query Results <IconButton children = {<DownloadIcon/>} sx={{color: 'white' }} onClick={() => downloadData()}/></Box>
+                <Box sx={{ marginLeft: 'auto', marginTop: { xs: '50px', lg: '0' }}}>
                     <PageSelect setPageNumber={setPageNumber}
                         pageNumber={pageNumber}
                         rows={totalEntries}
