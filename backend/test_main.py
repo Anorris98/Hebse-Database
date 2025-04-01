@@ -4,6 +4,7 @@ from main import app
 
 client = TestClient(app)
 
+#This updated version configures a live test to the database via the test_Configure Dictionary(hasmap)).
 @pytest.fixture(scope="session", autouse=True)
 def init_engine_once():
     """
@@ -11,7 +12,7 @@ def init_engine_once():
     needed config for your test DB environment. This ensures the 
     engine is actually created in main.py BEFORE other tests run.
     """
-    # Example config (adjust to match your real local/remote DB scenario).
+    # config (adjust to match local/remote DB scenario).
     # If you're using a tunnel or remote, set "isRemote"=True, etc.
     test_config = {
         "sshHost": "SDmay25-20.ece.iastate.edu",
@@ -31,7 +32,7 @@ def init_engine_once():
     assert response.status_code == 200, f"Config failed: {response.json()}"
     print("Engine configured response:", response.json())
 
-    yield  # After all tests, no teardown necessary here
+    yield 
 
 def test_get_data_invalid_request():
     # Define a request body without the 'query' key
