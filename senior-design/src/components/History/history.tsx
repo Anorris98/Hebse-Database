@@ -4,7 +4,7 @@ import DownloadIcon from "@mui/icons-material/Download";
 import {useEffect, useState} from "react";
 
 
-async function downloadCSVFromHistory(inputValue) {
+async function downloadCSVFromHistory(inputValue: { name: string; id: string; }) {
     const data = { query: inputValue.name, history: true};
 
     try {
@@ -44,13 +44,14 @@ async function downloadCSVFromHistory(inputValue) {
 }
 
 
-const renderDetailsButton = (params) => {
+const renderDetailsButton = (parameters: { row: { name: string; id: string; }; }) => {
     return (
         <strong>
-            <IconButton children = {<DownloadIcon/>} sx={{color: 'white' }} onClick={() => downloadCSVFromHistory(params.row)}/>
+            <IconButton children = {<DownloadIcon/>} sx={{color: 'white' }} onClick={() => downloadCSVFromHistory(parameters.row)}/>
         </strong>
     )
 }
+
 
 export const History = () => {
     const [queries, setQueries] = useState([]);
@@ -64,24 +65,22 @@ export const History = () => {
                 return response.json();
             })
             .then((data) => {
-                const rows = data.recent_queries.map((query) => ({
+                const rows = data.recent_queries.map((query: { id: string; query_sql: string; time: string | number | Date; }) => ({
                     id: query.id, // Generate a unique ID
                     name: query.query_sql,
-                    status: query.status,
                     datetime: new Date(query.time).toLocaleString(),
                 }));
                 setQueries(rows);
             })
-            .catch((err) => {
-                console.error(err);
+            .catch((error) => {
+                console.error(error);
             });
     }, []);
 
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'Query ID', width: 100, headerClassName: 'header' },
-        { field: 'name', headerName: 'Query', width: 500, headerClassName: 'header' },
+        { field: 'name', headerName: 'Query', flex: 1, headerClassName: 'header' },
         { field: 'datetime', headerName: 'Queried', width: 200, headerClassName: 'header' },
-        { field: 'status', headerName: 'Status', width: 200, headerClassName: 'header' },
         { field: 'download', headerName: 'Download', width: 100, renderCell: renderDetailsButton, headerClassName: 'header'}
     ];
 
@@ -110,7 +109,7 @@ export const History = () => {
                 sx={{ border: 2, fontFamily:'monospace', borderColor:'white', color:'white', '& .header': {
                         backgroundColor: 'darkgray',
                         fontWeight: 'bold',
-                    }, }}
+                    }}}
             />
         </Box>
     )
