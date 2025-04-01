@@ -52,7 +52,7 @@ app.add_middleware(
 
 # -------------------------------------------------
 # Decide how to open an SSH tunnel or connect local
-#   - dbHost, dbPort, dbUsername, dbPassword, dbName
+#   - databaseHost, databasePort, databaseUsername, databasePassword, databaseName
 #   - isRemote, sshHost, sshPort, sshUser, sshKey
 #
 # If "isRemote" is true, we attempt an SSH tunnel:
@@ -73,8 +73,8 @@ def configure_engine_from_settings(config: dict):
         ssh_host = config["sshHost"]
         ssh_port = int(config["sshPort"])
         ssh_user = config["sshUser"]
-        # The DB is hosted on remote side, so "dbPort" is the remote DB port
-        remote_db_port = int(config["dbPort"])
+        # The DB is hosted on remote side, so "databasePort" is the remote DB port
+        remote_db_port = int(config["databasePort"])
 
         # "sshKey" might be a private key OR a password
         ssh_key_text = config.get("sshKey", "")
@@ -106,12 +106,12 @@ def configure_engine_from_settings(config: dict):
         db_port = tunnel.local_bind_port
     else:
         # Local / direct DB
-        db_host = config["dbHost"]
-        db_port = config["dbPort"]
+        db_host = config["databaseHost"]
+        db_port = config["databasePort"]
 
-    db_username = config["dbUsername"]
-    db_password = config["dbPassword"]
-    db_name = config["dbName"]
+    db_username = config["databaseUsername"]
+    db_password = config["databasePassword"]
+    db_name = config["databaseName"]
 
     # Build SQLAlchemy connection URL
     db_url = (
