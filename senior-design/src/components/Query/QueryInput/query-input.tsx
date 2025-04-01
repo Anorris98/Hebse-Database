@@ -22,7 +22,7 @@ export const QueryInput = ({
     inputValue,
     setInputValue}: QueryInputProperties) => {
 
-        const [dbConnected, setDbConnected] = useState(false);
+        const [databaseConnected, setdatabaseConnected] = useState(false);
         const [checkingConnection, setCheckingConnection] = useState(true);
 
         // 1) Load "saved" queries from localStorage
@@ -38,7 +38,7 @@ export const QueryInput = ({
             try {
             const savedSettings = localStorage.getItem("db_settings");
             if (!savedSettings) {
-                setDbConnected(false);
+                setdatabaseConnected(false);
                 return;
             }
 
@@ -53,10 +53,10 @@ export const QueryInput = ({
             });
 
             if (!result.ok) throw new Error("Connection failed");
-            setDbConnected(true);
+            setdatabaseConnected(true);
             } catch (error) {
             console.error("DB connection check failed:", error);
-            setDbConnected(false);
+            setdatabaseConnected(false);
             } finally {
             setCheckingConnection(false);
             }
@@ -67,12 +67,12 @@ export const QueryInput = ({
 
         // Called on SEARCH
         async function getSQLFromNaturalLanguage() {
-            const savedDbSettings = localStorage.getItem("db_settings");
-            if (!savedDbSettings) {
+            const savedDatabaseSettings = localStorage.getItem("db_settings");
+            if (!savedDatabaseSettings) {
                 onQueryResult("Database settings not found.");
                 return;
             }
-            const parsedDbSettings = JSON.parse(savedDbSettings);
+            const parsedDatabaseSettings = JSON.parse(savedDatabaseSettings);
 
             // Empty query check
             if (!inputValue.trim()) {
@@ -80,13 +80,13 @@ export const QueryInput = ({
                 return;
             }
 
-            if (!dbConnected) {
+            if (!databaseConnected) {
                 onQueryResult("Cannot query: database is not connected.");
                 return;
             }
 
             const data ={ query: inputValue,
-                        db_settings: parsedDbSettings,
+                        db_settings: parsedDatabaseSettings,
                         };
 
             try {
@@ -142,7 +142,7 @@ export const QueryInput = ({
                 <FormControlLabel
                     control={
                         <Checkbox
-                            checked={dbConnected}
+                            checked={databaseConnected}
                             icon={<ErrorOutline />}
                             checkedIcon={<CheckSharp />}
                             disabled
@@ -157,7 +157,7 @@ export const QueryInput = ({
                     label={
                         checkingConnection
                             ? "Checking DB connection..."
-                            : dbConnected
+                            : databaseConnected
                                 ? "Database is connected!"
                                 : "Database not connected. Check Settings -> Database."
                     }

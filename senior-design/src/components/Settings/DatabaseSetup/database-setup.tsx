@@ -18,11 +18,11 @@ import { DeleteForever, Save, Visibility, VisibilityOff } from "@mui/icons-mater
 import HelpTextField from "../../HelpTextField/help-text-field.tsx";
 
 type DatabaseConfig = {
-  dbHost: string;
-  dbPort: string;
-  dbUsername: string;
-  dbPassword: string;
-  dbName: string;
+  databaseHost: string;
+  databasePort: string;
+  databaseUsername: string;
+  databasePassword: string;
+  databaseName: string;
   isRemote: boolean;
   sshHost: string;
   sshPort: string;
@@ -92,11 +92,11 @@ const DatabaseSetup = () => {
   const [profileName, setProfileName] = useState("");
 
   // DB connection fields
-  const [dbHost, setDbHost] = useState("");
-  const [dbPort, setDbPort] = useState("5432");
-  const [dbUsername, setDbUsername] = useState("");
-  const [dbPassword, setDbPassword] = useState("");
-  const [dbName, setDbName] = useState("");
+  const [databaseHost, setDatabaseHost] = useState("");
+  const [databasePort, setDatabasePort] = useState("5432");
+  const [databaseUsername, setDatabaseUsername] = useState("");
+  const [databasePassword, setDatabasePassword] = useState("");
+  const [databaseName, setDatabaseName] = useState("");
 
   // Whether this DB uses a remote (SSH) connection
   const [isRemote, setIsRemote] = useState(false);
@@ -128,11 +128,11 @@ const DatabaseSetup = () => {
         setProfileName(lastProfileKey);
 
         // Fill in DB fields
-        setDbHost(parsed.dbHost || "");
-        setDbPort(parsed.dbPort || "5432");
-        setDbUsername(parsed.dbUsername || "");
-        setDbPassword(parsed.dbPassword || "");
-        setDbName(parsed.dbName || "");
+        setDatabaseHost(parsed.databaseHost || "");
+        setDatabasePort(parsed.databasePort || "5432");
+        setDatabaseUsername(parsed.databaseUsername || "");
+        setDatabasePassword(parsed.databasePassword || "");
+        setDatabaseName(parsed.databaseName || "");
         setIsRemote(!!parsed.isRemote);
 
         // Fill in SSH if remote
@@ -156,11 +156,11 @@ const DatabaseSetup = () => {
     if (chosenKey === "new") {
       // Clear fields for brand-new
       setProfileName("");
-      setDbHost("");
-      setDbPort("5432");
-      setDbUsername("");
-      setDbPassword("");
-      setDbName("");
+      setDatabaseHost("");
+      setDatabasePort("5432");
+      setDatabaseUsername("");
+      setDatabasePassword("");
+      setDatabaseName("");
       setIsRemote(false);
       setSshHost("");
       setSshPort("22");
@@ -175,11 +175,11 @@ const DatabaseSetup = () => {
       // Put the chosenKey in the Profile Name text field so the user can rename if they want
       setProfileName(chosenKey);
 
-      setDbHost(cfg.dbHost);
-      setDbPort(cfg.dbPort);
-      setDbUsername(cfg.dbUsername);
-      setDbPassword(cfg.dbPassword);
-      setDbName(cfg.dbName);
+      setDatabaseHost(cfg.databaseHost);
+      setDatabasePort(cfg.databasePort);
+      setDatabaseUsername(cfg.databaseUsername);
+      setDatabasePassword(cfg.databasePassword);
+      setDatabaseName(cfg.databaseName);
       setIsRemote(cfg.isRemote);
 
       setSshHost(cfg.sshHost || "");
@@ -199,7 +199,7 @@ const DatabaseSetup = () => {
       return;
     }
     // 2) Must have a DB name
-    if (!dbName.trim()) {
+    if (!databaseName.trim()) {
       alert("Please enter a valid DB Name before saving.");
       return;
     }
@@ -209,11 +209,11 @@ const DatabaseSetup = () => {
 
     // Overwrite/create the profile
     allProfiles[profileName] = {
-      dbHost,
-      dbPort,
-      dbUsername,
-      dbPassword,
-      dbName,
+      databaseHost,
+      databasePort,
+      databaseUsername,
+      databasePassword,
+      databaseName,
       isRemote,
       sshHost,
       sshPort,
@@ -228,11 +228,11 @@ const DatabaseSetup = () => {
       "db_settings",
       JSON.stringify({
         profileName,
-        dbHost,
-        dbPort,
-        dbUsername,
-        dbPassword,
-        dbName,
+        databaseHost,
+        databasePort,
+        databaseUsername,
+        databasePassword,
+        databaseName,
         isRemote,
         sshHost,
         sshPort,
@@ -278,11 +278,11 @@ const DatabaseSetup = () => {
     setProfileNames(Object.keys(allProfiles));
     setSelectedProfileKey("");
     setProfileName("");
-    setDbHost("");
-    setDbPort("5432");
-    setDbUsername("");
-    setDbPassword("");
-    setDbName("");
+    setDatabaseHost("");
+    setDatabasePort("5432");
+    setDatabaseUsername("");
+    setDatabasePassword("");
+    setDatabaseName("");
     setIsRemote(false);
     setSshHost("");
     setSshPort("22");
@@ -365,35 +365,35 @@ const DatabaseSetup = () => {
         {/* Local DB Fields */}
         <HelpTextField
           label="Database Host"
-          value={dbHost}
-          onChange={(input) => setDbHost(input.target.value)}
+          value={databaseHost}
+          onChange={(input) => setDatabaseHost(input.target.value)}
           tooltipText="Enter the DB server hostname or IP (e.g. localhost)."
         />
         <HelpTextField
           label="Database Port"
           type="number"
-          value={dbPort}
-          onChange={(input) => setDbPort(input.target.value)}
+          value={databasePort}
+          onChange={(input) => setDatabasePort(input.target.value)}
           tooltipText="Enter the port number for the DB server (default: 5432)."
         />
         <HelpTextField
           label="Database Username"
-          value={dbUsername}
-          onChange={(input) => setDbUsername(input.target.value)}
+          value={databaseUsername}
+          onChange={(input) => setDatabaseUsername(input.target.value)}
           tooltipText="Enter the database username/account name."
         />
         <HelpTextField
           label="Database Password"
           type={showPassword ? "text" : "password"}
-          value={dbPassword}
-          onChange={(input) => setDbPassword(input.target.value)}
+          value={databasePassword}
+          onChange={(input) => setDatabasePassword(input.target.value)}
           tooltipText="Enter the database user’s password."
           inputProps={passwordInputProperties}
         />
         <HelpTextField
           label="Database Name"
-          value={dbName}
-          onChange={(input) => setDbName(input.target.value)}
+          value={databaseName}
+          onChange={(input) => setDatabaseName(input.target.value)}
           tooltipText="Enter the name of the database you want to connect to."
         />
 
