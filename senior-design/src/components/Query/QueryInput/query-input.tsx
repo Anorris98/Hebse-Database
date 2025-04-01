@@ -157,9 +157,9 @@ export const QueryInput = ({
                     label={
                         checkingConnection
                             ? "Checking DB connection..."
-                            : databaseConnected
+                            : (databaseConnected
                                 ? "Database is connected!"
-                                : "Database not connected. Check Settings -> Database."
+                                : "Database not connected. Check Settings -> Database.")
                     }
                     sx={{ color: "white", fontFamily: "monospace", '& .MuiFormControlLabel-label': { fontFamily: 'monospace', color: "white" } }}
                 />
