@@ -1,15 +1,14 @@
 import traceback
 import csv
+from io import StringIO
+import sshtunnel
+import paramiko
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from sqlalchemy import create_engine, text, MetaData
 from openai import OpenAI
-import sshtunnel
 
-# For parsing private key text (if used)
-import paramiko
-from io import StringIO
 
 # Engine / SSH tunnel / schema metadata
 engine = None
@@ -65,7 +64,7 @@ app.add_middleware(
 #   2) Otherwise, treat sshKey as a password
 # -------------------------------------------------
 def configure_engine_from_settings(config: dict):
-    global engine, tunnel, metadata
+    global engine, tunnel # pylint: disable=global-statement
 
     # If we already have a tunnel, stop it before reconfiguring
     if tunnel is not None and tunnel.is_active:
@@ -141,7 +140,7 @@ def init_db(body: dict):
         return {"message": "Database engine initialized."}
     except Exception as e:
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"Failed to initialize DB: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to initialize DB: {e}") from e
 
 # -------------------------------------------------
 # Run a query
@@ -205,6 +204,17 @@ def ask_gpt(request: dict):
     except Exception as e:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e)) from e
+
+# -------------------------------------------------
+# Config Engine Endpoint, used for setting up the engine to be tested in tox
+# -------------------------------------------------
+@app.post("/ConfigureEngine")
+def configure_engine_api(config: dict):
+    try:
+        configure_engine_from_settings(config)
+        return {"detail": "Engine configured from settings."}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 # -------------------------------------------------
 # Write query results to CSV
