@@ -1,16 +1,16 @@
-# Description: This script is used to upload data from H5 files to a PostgreSQL database
-
 from glob import glob
 import os
 import logging
 import binascii
+import subprocess
+import sys
 import numpy as np
 import h5py
 import pandas as pd
 from sqlalchemy import create_engine, exc
+import sqlalchemy_utils
 
 
-# Function to convert hexadecimal data to readable text
 def convert_hex_to_readable(data):
     if isinstance(data, bytes):
         try:
@@ -26,7 +26,6 @@ def convert_hex_to_readable(data):
     return data
 
 
-# Recursive function to visit all groups and datasets in an HDF5 file
 def visit_all_items(name, obj, dataset_list):
     if isinstance(obj, h5py.Dataset):
         dataset_list.append((name, obj))
@@ -114,12 +113,17 @@ def get_engine():
     database = 'hades'
 
     # Connect to PostgreSQL
-    return create_engine(f'postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}')
+    engine = create_engine(f'postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}')
+    if not sqlalchemy_utils.database_exists(engine.url):
+        sqlalchemy_utils.create_database(engine.url)
+    return engine
 
 
 if __name__ == "__main__":
     # Set up logging
     logging.basicConfig(filename='h5_import_errors.log', level=logging.ERROR, format='%(asctime)s %(message)s')
+
+    subprocess.run(["tar", "-xvzf", sys.argv[1]])
 
     # Directory containing H5 files
     base_directory = r'/home/vm-user'

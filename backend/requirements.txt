@@ -12,3 +12,4 @@ pytest-pylint
 httpx
 openai
 httpx
+scp

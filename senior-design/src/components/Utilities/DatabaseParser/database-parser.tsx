@@ -19,7 +19,7 @@ interface Dataset {
     id: string;
     title: string;
     description: string;
-    links: { self: string };
+    files: { 0: { links: { self: string }, key: string } };
 }
 
 const DatasetList: React.FC = () => {
@@ -90,6 +90,25 @@ const DatasetList: React.FC = () => {
   //   </Box>
   // );
 
+  async function createDatabase(filePath: string, fileName: string) {
+    try {
+      const data = { filePath: filePath, fileName: fileName };
+      const response = await fetch(`http://localhost:8000/PutDatabase`, {
+          method: "PUT",
+          body: JSON.stringify(data),
+          headers: {
+              "Content-Type": "application/json"
+          }
+      });
+
+      if (!response.ok) {
+          throw new Error(`Server error: ${response.status}`);
+      }
+    } catch (error) {
+        console.error("Error running command:", error);
+    }
+  }
+
   // For reference to create parser box
   return (
     <Container maxWidth="lg" sx={{ mt: 10, marginTop:"150px" }}>
@@ -105,9 +124,12 @@ const DatasetList: React.FC = () => {
                   <li key={dataset.id}>
                     <h2>{dataset.title}</h2>
                     <p>{dataset.description}</p>
-                    <a href={dataset.links.self} download>
+                    <button style={{marginRight: "10px"}} onClick={() => window.open(dataset.files[0].links.self)}>
                       Download Dataset
-                    </a>
+                    </button>
+                    <button onClick={() => createDatabase(dataset.files[0].links.self, dataset.files[0].key)}>
+                      Create Database Using Dataset
+                    </button>
                   </li>
                 ))}
               </ul>
