@@ -1,5 +1,7 @@
 import { Box, IconButton } from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
+import { PageSelect } from "./PageSelect/page-select";
+import "./query-result.css"
 
 /* eslint-disable  @typescript-eslint/no-explicit-any*/
 
@@ -22,9 +24,7 @@ async function downloadData() {
     }
 }
 
-export const QueryResult = ({ queryResult }: { queryResult: any }) => {
-
-
+export const QueryResult = ({ queryResult, setPageNumber, pageNumber, totalEntries, rowsPerPage, setRowsPerPage }: { queryResult: any, setPageNumber: (value: (((previousState: number) => number) | number)) => void, pageNumber: number, totalEntries: number, rowsPerPage: number, setRowsPerPage: (value: (((previousState: number) => number) | number)) => void }) => {
     const renderResults = () => {
         if (!queryResult) {
             return "No results available.";
@@ -47,8 +47,8 @@ export const QueryResult = ({ queryResult }: { queryResult: any }) => {
             }
 
             return (
-                <Box sx={{ overflow: "auto", borderColor: "black", borderStyle: "solid", borderWidth: "2px"}}>
-                    <table style={{ borderCollapse: 'collapse', width: '100%', margin: "5px" }}>
+                <Box sx={{ overflow: "auto", borderColor: "black", borderStyle: "solid", borderWidth: "2px", borderRadius:"10px"}}>
+                    <table style={{width: '100%', padding: "5px"}}>
                         <thead>
                             <tr>
                                 {Object.keys(queryResult[0]).map((key) => (
@@ -122,8 +122,16 @@ export const QueryResult = ({ queryResult }: { queryResult: any }) => {
                 textAlign: "center",
             }}
         >
-            <Box sx={{ fontSize: '20px', fontWeight: 'bold' }}>Query Results
-                    <IconButton children = {<DownloadIcon/>} sx={{color: 'white' }} onClick={() => downloadData()}/></Box>
+            <Box sx={{ display: 'flex', justifyContent: 'center', flexWrap: { xs: 'wrap', sm: 'nowrap' }}}>
+                <Box sx={{ marginTop: '10px', fontSize: '20px', fontWeight: 'bold', position: 'absolute', left: '50%', transform: 'translateX(-50%)'}}>Query Results <IconButton children = {<DownloadIcon/>} sx={{color: 'white' }} onClick={() => downloadData()}/></Box>
+                <Box sx={{ marginLeft: 'auto', marginTop: { xs: '50px', lg: '0' }}}>
+                    <PageSelect setPageNumber={setPageNumber}
+                        pageNumber={pageNumber}
+                        rows={totalEntries}
+                        rowsPerPage={rowsPerPage}
+                        setRowsPerPage={setRowsPerPage}/>
+                </Box>
+            </Box>
             <Box sx={{ fontSize: '16px', marginTop: '10px' }}>
                 {renderResults()}
             </Box>
