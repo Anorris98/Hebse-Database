@@ -128,5 +128,5 @@ def get_history():
 
             return {"recent_queries": queries}
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Failed to fetch recent queries")
+        raise HTTPException(status_code=500, detail="Failed to fetch recent queries") from e
     
