@@ -20,11 +20,11 @@ def init_engine_once():
         "sshUser": "vm-user",
         "sshKey": "50EgMe$KIE2m",  # Password or private key
         "isRemote": True,
-        "dbHost": "SDmay25-20.ece.iastate.edu",
-        "dbPort": "5432",
-        "dbUsername": "postgres",
-        "dbPassword": "root",
-        "dbName": "hades"
+        "databaseHost": "SDmay25-20.ece.iastate.edu",
+        "databasePort": "5432",
+        "databaseUsername": "postgres",
+        "databasePassword": "root",
+        "databaseName": "hades"
     }
 
     # POST the config to /ConfigureEngine
