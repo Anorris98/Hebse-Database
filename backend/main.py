@@ -10,6 +10,7 @@ from sqlalchemy import create_engine, text, MetaData
 from openai import OpenAI
 
 
+# pylint: disable=too-many-try-statements
 # Engine / SSH tunnel / schema metadata
 engine = None
 tunnel = None
