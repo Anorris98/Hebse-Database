@@ -32,6 +32,30 @@ interface Dataset {
     files: DatasetFile[];
 }
 
+async function createDatabase(filePath: string, fileName: string) {
+  try {
+    const databaseSettings = localStorage.getItem("db_settings");
+    const data = { 
+        filePath: filePath, 
+        fileName: fileName, 
+        databaseSettings: databaseSettings ? JSON.parse(databaseSettings) : undefined 
+    };
+    const response = await fetch(`http://localhost:8000/PutDatabase`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+    }
+  } catch (error) {
+      console.error("Error running command:", error);
+  }
+}
+
 /* Fetch available dataset info from posydon download page */
 const DatasetList: React.FC = () => {
     const [datasets, setDatasets] = useState<Dataset[]>([]);
@@ -61,30 +85,6 @@ const DatasetList: React.FC = () => {
     if (loading) return <p>Loading datasets...</p>;
     if (error) return <p>{error}</p>
 
-
-  async function createDatabase(filePath: string, fileName: string) {
-    try {
-      const databaseSettings = localStorage.getItem("db_settings");
-      const data = { 
-          filePath: filePath, 
-          fileName: fileName, 
-          databaseSettings: databaseSettings ? JSON.parse(databaseSettings) : null 
-      };
-      const response = await fetch(`http://localhost:8000/PutDatabase`, {
-          method: "PUT",
-          body: JSON.stringify(data),
-          headers: {
-              "Content-Type": "application/json"
-          }
-      });
-
-      if (!response.ok) {
-          throw new Error(`Server error: ${response.status}`);
-      }
-    } catch (error) {
-        console.error("Error running command:", error);
-    }
-  }
     
   return (
     /* Background box and boxes for dataset + file info */
