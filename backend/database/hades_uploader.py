@@ -7,7 +7,7 @@ import sys
 import numpy as np
 import h5py
 import pandas as pd
-from sqlalchemy import create_engine, exc
+from sqlalchemy import create_engine, exc, Table, Column, text
 import sqlalchemy_utils
 
 
@@ -35,6 +35,15 @@ def visit_all_items(name, obj, dataset_list):
 
 
 def create_database(engine, h5_files):
+    with engine.connect() as connection:
+        try:
+            connection.execute(text("CREATE SCHEMA IF NOT EXISTS history;"))
+            connection.execute(text("CREATE TABLE history.completed_queries(id SERIAL PRIMARY KEY, query_SQL text, time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);"))
+            connection.commit()
+        except Exception as e:
+            logging.error(f"Error creating schema or table: {e}")
+            raise
+
     for file_path in h5_files:
         with h5py.File(file_path, 'r') as hdf_file:
             # List to collect all datasets in the file
@@ -110,7 +119,7 @@ def get_engine():
     password = 'root'
     host = 'localhost'
     port = '5432'
-    database = 'hades'
+    database = sys.argv[3]
 
     # Connect to PostgreSQL
     engine = create_engine(f'postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}')
@@ -126,7 +135,7 @@ if __name__ == "__main__":
     subprocess.run(["tar", "-xvzf", sys.argv[1]])
 
     # Directory containing H5 files
-    base_directory = r'/home/vm-user'
+    base_directory = f"/home/{sys.argv[2]}/{sys.argv[1].split('.')[0]}"
 
     # Find all H5 files in the directory and subdirectories
     files = glob(os.path.join(base_directory, '**', '*.h5'), recursive=True)
