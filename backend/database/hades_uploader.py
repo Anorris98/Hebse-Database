@@ -7,7 +7,7 @@ import sys
 import numpy as np
 import h5py
 import pandas as pd
-from sqlalchemy import create_engine, exc, Table, Column, text
+from sqlalchemy import create_engine, exc, text
 import sqlalchemy_utils
 
 
@@ -132,7 +132,7 @@ if __name__ == "__main__":
     # Set up logging
     logging.basicConfig(filename='h5_import_errors.log', level=logging.ERROR, format='%(asctime)s %(message)s')
 
-    subprocess.run(["tar", "-xvzf", sys.argv[1]])
+    subprocess.run(["tar", "-xvzf", sys.argv[1]], check=False)
 
     # Directory containing H5 files
     base_directory = f"/home/{sys.argv[2]}/{sys.argv[1].split('.')[0]}"

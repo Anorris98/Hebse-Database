@@ -1,16 +1,13 @@
-import time
 import traceback
 import csv
 from io import StringIO
-import sshtunnel
-import paramiko
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from sqlalchemy import create_engine, text, MetaData
 from openai import OpenAI
 import sshtunnel
-from paramiko import SSHClient, AutoAddPolicy
+from paramiko import SSHClient, AutoAddPolicy, RSAKey
 from scp import SCPClient
 
 
@@ -80,8 +77,8 @@ def configure_engine_from_settings(config: dict):
         ssh_host = config["sshHost"]
         ssh_port = int(config["sshPort"])
         ssh_user = config["sshUser"]
-        # The database is hosted on remote side, so "databasePort" is the remote database port
-        remote_database_port = int(config["databasePort"])
+        # The DB is hosted on remote side, so "databasePort" is the remote DB port
+        remote_db_port = int(config["databasePort"])
 
         # "sshKey" might be a private key OR a password
         ssh_key_text = config.get("sshKey", "")
@@ -90,12 +87,12 @@ def configure_engine_from_settings(config: dict):
         # treat it as an SSH key. Otherwise, treat as a password.
         if "-----BEGIN" in ssh_key_text:
             # Private key-based SSH
-            pkey = paramiko.RSAKey.from_private_key(StringIO(ssh_key_text))
+            pkey = RSAKey.from_private_key(StringIO(ssh_key_text))
             tunnel_obj = sshtunnel.SSHTunnelForwarder(
                 (ssh_host, ssh_port),
                 ssh_username=ssh_user,
                 ssh_pkey=pkey,
-                remote_bind_address=("127.0.0.1", remote_database_port),
+                remote_bind_address=("127.0.0.1", remote_db_port),
             )
         else:
             # Password-based SSH
@@ -103,31 +100,31 @@ def configure_engine_from_settings(config: dict):
                 (ssh_host, ssh_port),
                 ssh_username=ssh_user,
                 ssh_password=ssh_key_text,
-                remote_bind_address=("127.0.0.1", remote_database_port),
+                remote_bind_address=("127.0.0.1", remote_db_port),
             )
 
         tunnel_obj.start()
         tunnel = tunnel_obj
         # Overwrite host/port so we connect locally to the tunnel
-        database_host = "localhost"
-        database_port = tunnel.local_bind_port
+        db_host = "localhost"
+        db_port = tunnel.local_bind_port
     else:
-        # Local / direct database
-        database_host = config["databaseHost"]
-        database_port = config["databasePort"]
+        # Local / direct DB
+        db_host = config["databaseHost"]
+        db_port = config["databasePort"]
 
-    database_username = config["databaseUsername"]
-    database_password = config["databasePassword"]
-    database_name = config["databaseName"]
+    db_username = config["databaseUsername"]
+    db_password = config["databasePassword"]
+    db_name = config["databaseName"]
 
     # Build SQLAlchemy connection URL
-    database_url = (
-        f"postgresql+psycopg2://{database_username}:{database_password}"
-        f"@{database_host}:{database_port}/{database_name}"
+    db_url = (
+        f"postgresql+psycopg2://{db_username}:{db_password}"
+        f"@{db_host}:{db_port}/{db_name}"
     )
 
     # Create engine and reflect schema
-    engine = create_engine(database_url)
+    engine = create_engine(db_url)
     metadata.reflect(bind=engine)
 
 # -------------------------------------------------
@@ -135,12 +132,12 @@ def configure_engine_from_settings(config: dict):
 # -------------------------------------------------
 @app.post("/init_db")
 def init_database(body: dict):
-    database_config = body.get("db_settings")
-    if not database_config:
+    db_config = body.get("db_settings")
+    if not db_config:
         raise HTTPException(status_code=400, detail="Missing db_settings")
 
     try:
-        configure_engine_from_settings(database_config)
+        configure_engine_from_settings(db_config)
         return {"message": "Database engine initialized."}
     except Exception as e:
         traceback.print_exc()
@@ -261,7 +258,7 @@ def setup_database(body: dict):
         )
 
         print("Downloading dataset...")
-        stdin, stdout, sterr = ssh_client.exec_command(f"curl {remote_file_path} --output {local_file_name}", get_pty=True)
+        stdin, stdout, sterr = ssh_client.exec_command(f"curl {remote_file_path} --output {local_file_name}", get_pty=True)  # pylint: disable=unused-variable
         sterr.read()
 
         with SCPClient(ssh_client.get_transport()) as scp:
@@ -269,16 +266,16 @@ def setup_database(body: dict):
             scp.put("database/hades_uploader.py", "hades_uploader.py")
 
         print("Installing requirements...")
-        stdin, stdout, sterr = ssh_client.exec_command("pip install -r requirements.txt", get_pty=True)
+        stdin, stdout, sterr = ssh_client.exec_command("pip install -r requirements.txt", get_pty=True)  # pylint: disable=unused-variable
         sterr.read()
 
         print("Creating database...")
-        stdin, stdout, sterr = ssh_client.exec_command(f"python3 hades_uploader.py {local_file_name} \"{db_settings['sshUser']}\" \"{db_settings['databaseName']}\"", get_pty=True)
+        stdin, stdout, sterr = ssh_client.exec_command(f"python3 hades_uploader.py {local_file_name} \"{db_settings['sshUser']}\" \"{db_settings['databaseName']}\"", get_pty=True)  # pylint: disable=unused-variable
         sterr.read()
 
         return {"message": f"File downloaded successfully as {local_file_name}"}
     except Exception as e:
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
     finally:
         ssh_client.close()
