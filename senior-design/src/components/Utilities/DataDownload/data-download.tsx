@@ -64,11 +64,11 @@ const DatasetList: React.FC = () => {
 
   async function createDatabase(filePath: string, fileName: string) {
     try {
-      const dbSettings = localStorage.getItem("db_settings");
+      const databaseSettings = localStorage.getItem("db_settings");
       const data = { 
           filePath: filePath, 
           fileName: fileName, 
-          db_settings: dbSettings ? JSON.parse(dbSettings) : null 
+          databaseSettings: databaseSettings ? JSON.parse(databaseSettings) : null 
       };
       const response = await fetch(`http://localhost:8000/PutDatabase`, {
           method: "PUT",

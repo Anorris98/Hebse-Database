@@ -244,7 +244,7 @@ def export_data():
 def setup_database(body: dict):
     remote_file_path = body.get("filePath")
     local_file_name = body.get("fileName")
-    db_settings = body.get("db_settings")
+    db_settings = body.get("databaseSettings")
     print(f"Remote file path: {remote_file_path}")
     print(f"Local file name: {local_file_name}")
 
