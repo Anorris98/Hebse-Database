@@ -1,5 +1,7 @@
 // https://zenodo.org/records/14205146/files/POSYDON_data.tar.gz?download=1
-import {Paper, Tooltip, Typography, Box, Button} from "@mui/material";
+import {Paper, Tooltip, Typography, Box, Button, Collapse} from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import {useEffect, useState} from 'react';
 import {alpha, styled} from "@mui/material/styles";
 
@@ -34,6 +36,7 @@ interface Dataset {
 
 /* Fetch available dataset info from posydon download page */
 const DatasetList: React.FC = () => {
+    const [expandedId, setExpandedId] = useState<string | null>(null);
     const [datasets, setDatasets] = useState<Dataset[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string>('');
@@ -66,14 +69,13 @@ const DatasetList: React.FC = () => {
     /* Background box and boxes for dataset + file info */
     <Box maxWidth="md" 
       sx={{
-        backgroundColor: 'gray',
-        borderRadius: '15px',
-        fontFamily: 'monospace',
-        padding: '20px',
-        marginTop: "150px",
-        color: 'white',
-        alignItems: 'center',
-        height: '90%',
+        backgroundColor: "gray",
+        borderRadius: "15px",
+        maxWidth: "lg",
+        width: "100%",
+        fontFamily: "monospace",
+        padding: "20px",
+        marginTop:"100px",
       }}
     >
 
@@ -87,81 +89,103 @@ const DatasetList: React.FC = () => {
                 Posydon Datasets Available
             </Typography>
 
-            {datasets.map((dataset) => (
-                  // Box for each dataset
-                  <StyledPaper key={dataset.id} 
+            {datasets.map((dataset) => {
+              const isExpanded = expandedId === dataset.id;
+              return (
+                // Box for each dataset
+                <StyledPaper key={dataset.id} 
+                sx={{ 
+                  mb: 4,
+                  marginBottom: "14px",
+                }}>
+                <Typography variant="h5" 
+                  sx={{ 
+                    marginBottom: "12px", 
+                    color: "white", 
+                  }}>
+                  {dataset.title}
+                </Typography>
+                
+                {/* Collapse Wrapper */}
+                <Collapse in={isExpanded}>
+                  <StyledPaper 
                     sx={{ 
-                      mb: 4,
-                      marginBottom: "14px",
+                      backgroundColor: "white"
                     }}>
-                    <Typography variant="h5" 
+                    <Typography
+                      component="div"
                       sx={{ 
-                        marginBottom: "12px", 
-                        color: "white", 
-                      }}>
-                      {dataset.title}
-                    </Typography>
-                    
-                    <StyledPaper 
-                      sx={{ 
-                        backgroundColor: "white"
-                      }}>
-                      <Typography
-                        component="div"
-                        sx={{ 
-                          color: "gray", 
-                          marginBottom: "8px", 
-                          fontFamily: "monospace"
-                        }}
-                      >
-                        <div dangerouslySetInnerHTML={{__html: dataset.metadata?.description || ""}}/>
-                      </Typography>
-                    </StyledPaper>
-
-                    {/* Box for download button */ }
-                    <Box
-                      sx={{
-                        width: "100%", // Make sure buttons stay inside the parent box
-                        display: "flex",
-                        flexDirection: "column",
-                        marginTop: "10px",
-                        alignItems: "center"
+                        color: "gray", 
+                        marginBottom: "8px", 
+                        fontFamily: "monospace"
                       }}
                     >
-                      
-                        {dataset.files?.map((file) => (
-                          
-                          <Tooltip
-                            title={
-                              <>
-                                <div><strong>Name:</strong> {file.key}</div>
-                                <div><strong>Size:</strong> {(file.size / 1e9).toFixed(2)} GB</div>
-                              </>
-                            }
-                            arrow
-                            placement="bottom"
-                          >
-                            <Button 
-                              variant="contained"
-                              onClick={() => window.open(file.links.self, "_blank")}
-                              sx={{
-                                width: "100%",
-                                backgroundColor: "gray",
-                                fontFamily: "monospace",
-                                fontWeight: "bold"
-                                
-                              }}
-                            >
-                              DOWNLOAD
-                            </Button>
-                          </Tooltip>
-                        ))}
-                    </Box>
+                      <div dangerouslySetInnerHTML={{__html: dataset.metadata?.description || ""}}/>
+                    </Typography>
                   </StyledPaper>
+                </Collapse>
+                
+                <Box
+                  sx={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    gap: "10px",
+                    marginTop: "10px"
+                  }}
+                >
+                  {/* Description Button */}
+                <Button
+                  variant="contained"
+                  onClick={() => setExpandedId(isExpanded ? null : dataset.id)}
+                  endIcon={isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                  sx={{
+                    flex: 1,
+                    backgroundColor: "gray",
+                    fontFamily: "monospace",
+                    color: "white",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {isExpanded ? "HIDE DESCRIPTION" : "SHOW DESCRIPTION"}
+                </Button>
+
+                {/* Download Button */}
+                {dataset.files?.map((file) => (
+                      
+                      <Tooltip
+                        key={file.key}
+                        title={
+                          <>
+                            <div><strong>Name:</strong> {file.key}</div>
+                            <div><strong>Size:</strong> {(file.size / 1e9).toFixed(2)} GB</div>
+                          </>
+                        }
+                        arrow
+                        placement="bottom"
+                      >
+                        <Button 
+                          variant="contained"
+                          onClick={() => window.open(file.links.self, "_blank")}
+                          sx={{
+                            flex: 1,
+                            backgroundColor: "gray",
+                            fontFamily: "monospace",
+                            fontWeight: "bold"
+                            
+                          }}
+                        >
+                          DOWNLOAD
+                        </Button>
+                      </Tooltip>
                 ))}
+                </Box>
+              </StyledPaper>
+              );
+            })}
     </Box>
-  );
-};
+  )
+}
 
 export default DatasetList;
 
