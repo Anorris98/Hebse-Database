@@ -102,6 +102,7 @@ const DatasetList: React.FC = () => {
                   sx={{ 
                     marginBottom: "12px", 
                     color: "white", 
+                    fontFamily: "monospace"
                   }}>
                   {dataset.title}
                 </Typography>
