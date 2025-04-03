@@ -36,7 +36,7 @@ interface Dataset {
 
 /* Fetch available dataset info from posydon download page */
 const DatasetList: React.FC = () => {
-    const [expandedId, setExpandedId] = useState<string | null>(null);
+    const [expandedId, setExpandedId] = useState<string | undefined>(undefined);
     const [datasets, setDatasets] = useState<Dataset[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string>('');
@@ -137,7 +137,7 @@ const DatasetList: React.FC = () => {
                   {/* Description Button */}
                 <Button
                   variant="contained"
-                  onClick={() => setExpandedId(isExpanded ? null : dataset.id)}
+                  onClick={() => setExpandedId(isExpanded ? undefined : dataset.id)}
                   endIcon={isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                   sx={{
                     flex: 1,
