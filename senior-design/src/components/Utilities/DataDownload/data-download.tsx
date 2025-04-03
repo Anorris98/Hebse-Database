@@ -36,7 +36,7 @@ interface Dataset {
 
 /* Fetch available dataset info from posydon download page */
 const DatasetList: React.FC = () => {
-    const [expandedId, setExpandedId] = useState<string | undefined>(undefined);
+    const [expandedId, setExpandedId] = useState<string | undefined>();
     const [datasets, setDatasets] = useState<Dataset[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string>('');
