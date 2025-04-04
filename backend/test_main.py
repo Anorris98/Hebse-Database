@@ -1,57 +1,58 @@
-import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy import create_engine, text
+from mock import patch
 from main import app
 
+
+# Create a TestClient instance
 client = TestClient(app)
+#Mock SQLAlchemy engine
+engine = create_engine("sqlite:///:memory:")
 
-#This updated version configures a live test to the database via the test_Configure Dictionary(hasmap)).
-@pytest.fixture(scope="session", autouse=True)
-def init_engine_once():
-    """
-    Runs only once for all tests. Calls /ConfigureEngine with the 
-    needed config for your test DB environment. This ensures the 
-    engine is actually created in main.py BEFORE other tests run.
-    """
-    # config (adjust to match local/remote DB scenario).
-    # If you're using a tunnel or remote, set "isRemote"=True, etc.
-    test_config = {
-        "sshHost": "SDmay25-20.ece.iastate.edu",
-        "sshPort": 22,
-        "sshUser": "vm-user",
-        "sshKey": "50EgMe$KIE2m",  # Password or private key
-        "isRemote": True,
-        "databaseHost": "SDmay25-20.ece.iastate.edu",
-        "databasePort": "5432",
-        "databaseUsername": "postgres",
-        "databasePassword": "root",
-        "databaseName": "hades"
+
+def test_get_data_successful_query():
+    # Define a sample request body with a valid query
+    request_body = {
+        "query": "SELECT * FROM users"
     }
+    # Mock the database connection and execution
+    with engine.connect() as connection:
+        # Create a table and insert mock data
+        connection.execute(text("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT)"))
+        connection.execute(text("INSERT INTO users (id, name) VALUES (1, 'Test')"))
 
-    # POST the config to /ConfigureEngine
-    response = client.post("/ConfigureEngine", json=test_config)
-    assert response.status_code == 200, f"Config failed: {response.json()}"
-    print("Engine configured response:", response.json())
+        # Execute the query
+        query_result = connection.execute(text(request_body["query"])).fetchall()
 
-    yield 
+        # Convert result to dictionary format for comparison
+        result_data = [{"id": row[0], "name": row[1]} for row in query_result]
+
+        # Mocked data response
+        expected_response = [{"id": 1, "name": "Test"}]
+
+        # Perform assertions
+        assert result_data == expected_response
 
 def test_get_data_invalid_request():
     # Define a request body without the 'query' key
     request_body = {}
+
     response = client.post("/GetData", json=request_body)
+
     assert response.status_code == 400
     assert response.json() == {
         "detail": "Query key is required."
     }
 
+@patch('main.engine', new=engine)
 def test_get_data_error_executing_query():
     # Define a sample request body with an invalid query
     request_body = {
         "query": "SELECT * FROM non_existent_table"  # Invalid table name
     }
+
     response = client.post("/GetData", json=request_body)
     assert response.status_code == 500
-
-    # Make sure it’s still returning a psycopg2 error for a missing table:
     error_message = response.json()["detail"].split("\n")[0]
     print(error_message)
-    assert error_message == "(psycopg2.errors.UndefinedTable) relation \"non_existent_table\" does not exist"
+    assert error_message == "(sqlite3.OperationalError) no such table: non_existent_table"

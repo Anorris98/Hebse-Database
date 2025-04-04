@@ -1,16 +1,16 @@
-# Description: This script is used to upload data from H5 files to a PostgreSQL database
-
 from glob import glob
 import os
 import logging
 import binascii
+import subprocess
+import sys
 import numpy as np
 import h5py
 import pandas as pd
-from sqlalchemy import create_engine, exc
+from sqlalchemy import create_engine, exc, text
+import sqlalchemy_utils
 
 
-# Function to convert hexadecimal data to readable text
 def convert_hex_to_readable(data):
     if isinstance(data, bytes):
         try:
@@ -26,7 +26,6 @@ def convert_hex_to_readable(data):
     return data
 
 
-# Recursive function to visit all groups and datasets in an HDF5 file
 def visit_all_items(name, obj, dataset_list):
     if isinstance(obj, h5py.Dataset):
         dataset_list.append((name, obj))
@@ -36,6 +35,15 @@ def visit_all_items(name, obj, dataset_list):
 
 
 def create_database(engine, h5_files):
+    with engine.connect() as connection:
+        try:
+            connection.execute(text("CREATE SCHEMA IF NOT EXISTS history;"))
+            connection.execute(text("CREATE TABLE history.completed_queries(id SERIAL PRIMARY KEY, query_SQL text, time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);"))
+            connection.commit()
+        except Exception as e:
+            logging.error(f"Error creating schema or table: {e}")
+            raise
+
     for file_path in h5_files:
         with h5py.File(file_path, 'r') as hdf_file:
             # List to collect all datasets in the file
@@ -111,18 +119,23 @@ def get_engine():
     password = 'root'
     host = 'localhost'
     port = '5432'
-    database = 'hades'
+    database = sys.argv[3]
 
     # Connect to PostgreSQL
-    return create_engine(f'postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}')
+    engine = create_engine(f'postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}')
+    if not sqlalchemy_utils.database_exists(engine.url):
+        sqlalchemy_utils.create_database(engine.url)
+    return engine
 
 
 if __name__ == "__main__":
     # Set up logging
     logging.basicConfig(filename='h5_import_errors.log', level=logging.ERROR, format='%(asctime)s %(message)s')
 
+    subprocess.run(["tar", "-xvzf", sys.argv[1]], check=False)
+
     # Directory containing H5 files
-    base_directory = r'/home/vm-user'
+    base_directory = f"/home/{sys.argv[2]}/{sys.argv[1].split('.')[0]}"
 
     # Find all H5 files in the directory and subdirectories
     files = glob(os.path.join(base_directory, '**', '*.h5'), recursive=True)

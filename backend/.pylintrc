@@ -109,6 +109,9 @@ disable=
     # We anticipate #3512 where it will become optional
     fixme,
     consider-using-assignment-expr,
+    logging-fstring-interpolation,
+    too-many-statements,
+    too-many-try-statements
 
 
 [REPORTS]

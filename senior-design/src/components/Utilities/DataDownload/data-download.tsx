@@ -35,6 +35,30 @@ interface Dataset {
     files: DatasetFile[];
 }
 
+async function createDatabase(filePath: string, fileName: string) {
+  try {
+    const databaseSettings = localStorage.getItem("db_settings");
+    const data = { 
+        filePath: filePath, 
+        fileName: fileName, 
+        databaseSettings: databaseSettings ? JSON.parse(databaseSettings) : undefined 
+    };
+    const response = await fetch(`http://localhost:8000/PutDatabase`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+    }
+  } catch (error) {
+      console.error("Error running command:", error);
+  }
+}
+
 /* Fetch available dataset info from posydon download page */
 const DatasetList: React.FC = () => {
     const [expandedId, setExpandedId] = useState<string | undefined>();
@@ -195,14 +219,70 @@ const DatasetList: React.FC = () => {
                     </StyledPaper>
                   </Collapse>
 
-                </StyledPaper>
-
-              </Box>
-              );
-            })}
-      </Box>
-  )
-}
+                    {/* Box for download button */ }
+                    <Box
+                      sx={{
+                        width: "100%", // Make sure buttons stay inside the parent box
+                        display: "flex",
+                        flexDirection: "column",
+                        marginTop: "10px",
+                        alignItems: "center"
+                      }}
+                    >
+                      
+                        {dataset.files?.map((file) => (
+                          <Tooltip
+                            title={
+                              <>
+                                <div><strong>Name:</strong> {file.key}</div>
+                                <div><strong>Size:</strong> {(file.size / 1e9).toFixed(2)} GB</div>
+                              </>
+                            }
+                            arrow
+                            placement="bottom"
+                          >
+                            <Box
+                              sx={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                width: "100%",
+                                gap: "10px",
+                              }}
+                            >
+                              <Button
+                                variant="contained"
+                                onClick={() => window.open(file.links.self, "_blank")}
+                                sx={{
+                                  flex: 1,
+                                  backgroundColor: "gray",
+                                  fontFamily: "monospace",
+                                  fontWeight: "bold"
+                                }}
+                              >
+                                DOWNLOAD
+                              </Button>
+                              <Button
+                                variant="contained"
+                                onClick={() => createDatabase(file.links.self, file.key)}
+                                sx={{
+                                  flex: 1,
+                                  backgroundColor: "gray",
+                                  fontFamily: "monospace",
+                                  fontWeight: "bold"
+                                }}
+                              >
+                                CREATE DATABASE USING DATASET
+                              </Button>
+                            </Box>
+                          </Tooltip>
+                        ))}
+                    </Box>
+                  </StyledPaper>
+                ))}
+    </Box>
+  );
+};
 
 export default DatasetList;
 
