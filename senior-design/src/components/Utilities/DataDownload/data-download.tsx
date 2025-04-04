@@ -3,6 +3,7 @@ import {Paper, Tooltip, Typography, Box, Button, Collapse} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import DownloadIcon from "@mui/icons-material/Download";
+import UploadFile from "@mui/icons-material/UploadFile";
 import {useEffect, useState} from 'react';
 import {alpha, styled} from "@mui/material/styles";
 
@@ -163,37 +164,50 @@ const DatasetList: React.FC = () => {
 
                       {/* Download Button */}
                       {dataset.files?.map((file) => (
-                            
-                        <Tooltip
-                          key={file.key}
-                          title={
-                            <>
-                              <div><strong>Name:</strong> {file.key}</div>
-                              <div><strong>Size:</strong> {(file.size / 1e9).toFixed(2)} GB</div>
-                            </>
-                          }
-                          arrow
-                          placement="bottom"
+                        <>
+                        <Button 
+                          variant="contained"
+                          onClick={() => window.open(file.links.self, "_blank")}
+                          endIcon={<DownloadIcon/>}
+                          sx={{
+                            flex: 1,
+                            backgroundColor: "gray",
+                            fontFamily: "monospace",
+                            fontWeight: "bold"
+                          }}
                         >
-                          <Button 
+                          <Tooltip
+                            title={
+                              <>
+                                <div><strong>Name:</strong> {file.key}</div>
+                                <div><strong>Size:</strong> {(file.size / 1e9).toFixed(2)} GB</div>
+                              </>
+                            }
+                            arrow
+                            placement="bottom"
+                        >
+                          <span>DOWNLOAD</span>
+                          </Tooltip>
+                        </Button>
+
+                          <Button
                             variant="contained"
-                            onClick={() => window.open(file.links.self, "_blank")}
-                            endIcon={<DownloadIcon/>}
+                            onClick={() => createDatabase(file.links.self, file.key)}
+                            endIcon={<UploadFile/>}
                             sx={{
                               flex: 1,
                               backgroundColor: "gray",
                               fontFamily: "monospace",
                               fontWeight: "bold"
-                                  
                             }}
                           >
-                            DOWNLOAD
+                            CREATE DATABASE USING DATASET
                           </Button>
-                        </Tooltip>
+                          </>
                       ))}
                     </Box>
-
-                  {/* Collapse Wrapper */}
+                    
+                    {/* Collapse Wrapper */}
                   <Collapse 
                     in={isExpanded}
                     timeout="auto"
@@ -219,68 +233,11 @@ const DatasetList: React.FC = () => {
                     </StyledPaper>
                   </Collapse>
 
-                    {/* Box for download button */ }
-                    <Box
-                      sx={{
-                        width: "100%", // Make sure buttons stay inside the parent box
-                        display: "flex",
-                        flexDirection: "column",
-                        marginTop: "10px",
-                        alignItems: "center"
-                      }}
-                    >
-                      
-                        {dataset.files?.map((file) => (
-                          <Tooltip
-                            title={
-                              <>
-                                <div><strong>Name:</strong> {file.key}</div>
-                                <div><strong>Size:</strong> {(file.size / 1e9).toFixed(2)} GB</div>
-                              </>
-                            }
-                            arrow
-                            placement="bottom"
-                          >
-                            <Box
-                              sx={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                width: "100%",
-                                gap: "10px",
-                              }}
-                            >
-                              <Button
-                                variant="contained"
-                                onClick={() => window.open(file.links.self, "_blank")}
-                                sx={{
-                                  flex: 1,
-                                  backgroundColor: "gray",
-                                  fontFamily: "monospace",
-                                  fontWeight: "bold"
-                                }}
-                              >
-                                DOWNLOAD
-                              </Button>
-                              <Button
-                                variant="contained"
-                                onClick={() => createDatabase(file.links.self, file.key)}
-                                sx={{
-                                  flex: 1,
-                                  backgroundColor: "gray",
-                                  fontFamily: "monospace",
-                                  fontWeight: "bold"
-                                }}
-                              >
-                                CREATE DATABASE USING DATASET
-                              </Button>
-                            </Box>
-                          </Tooltip>
-                        ))}
-                    </Box>
-                  </StyledPaper>
-                ))}
-    </Box>
+                </StyledPaper>
+              </Box>
+            );
+          })}
+      </Box> 
   );
 };
 
