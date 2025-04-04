@@ -2,6 +2,7 @@
 import {Paper, Tooltip, Typography, Box, Button, Collapse} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import DownloadIcon from "@mui/icons-material/Download";
 import {useEffect, useState} from 'react';
 import {alpha, styled} from "@mui/material/styles";
 
@@ -67,7 +68,8 @@ const DatasetList: React.FC = () => {
     
   return (
     /* Background box and boxes for dataset + file info */
-    <Box maxWidth="md" 
+    
+    <Box
       sx={{
         backgroundColor: "gray",
         borderRadius: "15px",
@@ -75,116 +77,130 @@ const DatasetList: React.FC = () => {
         width: "100%",
         fontFamily: "monospace",
         padding: "20px",
-        marginTop:"100px",
       }}
     >
-
-            <Typography variant="h4" 
-              sx={{ 
-                marginBottom: "20px", 
-                textAlign: "center", 
-                fontFamily: "monospace" , 
-                color: "white"  
-              }}>
-                Posydon Datasets Available
-            </Typography>
-
+      <Box 
+        sx={{ 
+          fontSize: "30px",
+          marginBottom: "20px", 
+          textAlign: "center", 
+          fontFamily: "monospace" , 
+          color: "white",
+        }}>
+          Posydon Datasets Available
+      </Box>
+    
             {datasets.map((dataset) => {
               const isExpanded = expandedId === dataset.id;
               return (
-                // Box for each dataset
-                <StyledPaper key={dataset.id} 
-                sx={{ 
-                  mb: 4,
-                  marginBottom: "14px",
-                }}>
-                <Typography variant="h5" 
-                  sx={{ 
-                    marginBottom: "12px", 
-                    color: "white", 
-                    fontFamily: "monospace"
-                  }}>
-                  {dataset.title}
-                </Typography>
-                
-                {/* Collapse Wrapper */}
-                <Collapse in={isExpanded}>
-                  <StyledPaper 
-                    sx={{ 
-                      backgroundColor: "white"
-                    }}>
-                    <Typography
-                      component="div"
+                <Box
+                  key={dataset.id}
+                  sx={{
+                    marginBottom: "16px",
+                    display: "flex",
+                    flexDirection: "column"
+                  }}
+                >
+                {/* Box for each dataset */}
+                <StyledPaper sx={{ padding: "16px" }}>
+                    <Typography variant="h5" 
                       sx={{ 
-                        color: "gray", 
-                        marginBottom: "8px", 
-                        fontFamily: "monospace"
+                        marginBottom: "12px", 
+                        color: "white", 
+                        fontFamily: "monospace",
+                        textAlign: "left"
+                      }}>
+                      {dataset.title}
+                    </Typography>
+
+                    <Box
+                      sx={{
+                        width: "100%",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        gap: "10px"
                       }}
                     >
-                      <div dangerouslySetInnerHTML={{__html: dataset.metadata?.description || ""}}/>
-                    </Typography>
-                  </StyledPaper>
-                </Collapse>
-                
-                <Box
-                  sx={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    gap: "10px",
-                    marginTop: "10px"
-                  }}
-                >
-                  {/* Description Button */}
-                <Button
-                  variant="contained"
-                  onClick={() => setExpandedId(isExpanded ? undefined : dataset.id)}
-                  endIcon={isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                  sx={{
-                    flex: 1,
-                    backgroundColor: "gray",
-                    fontFamily: "monospace",
-                    color: "white",
-                    fontWeight: "bold",
-                  }}
-                >
-                  {isExpanded ? "HIDE DESCRIPTION" : "SHOW DESCRIPTION"}
-                </Button>
-
-                {/* Download Button */}
-                {dataset.files?.map((file) => (
-                      
-                      <Tooltip
-                        key={file.key}
-                        title={
-                          <>
-                            <div><strong>Name:</strong> {file.key}</div>
-                            <div><strong>Size:</strong> {(file.size / 1e9).toFixed(2)} GB</div>
-                          </>
-                        }
-                        arrow
-                        placement="bottom"
+                      {/* Description Button */}
+                      <Button
+                        variant="contained"
+                        onClick={() => setExpandedId(isExpanded ? undefined : dataset.id)}
+                        endIcon={isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                        sx={{
+                          flex: 1,
+                          backgroundColor: "gray",
+                          fontFamily: "monospace",
+                          color: "white",
+                          fontWeight: "bold",
+                        }}
                       >
-                        <Button 
-                          variant="contained"
-                          onClick={() => window.open(file.links.self, "_blank")}
-                          sx={{
-                            flex: 1,
-                            backgroundColor: "gray",
-                            fontFamily: "monospace",
-                            fontWeight: "bold"
+                        {isExpanded ? "HIDE DESCRIPTION" : "SHOW DESCRIPTION"}
+                      </Button>
+
+                      {/* Download Button */}
+                      {dataset.files?.map((file) => (
                             
-                          }}
+                        <Tooltip
+                          key={file.key}
+                          title={
+                            <>
+                              <div><strong>Name:</strong> {file.key}</div>
+                              <div><strong>Size:</strong> {(file.size / 1e9).toFixed(2)} GB</div>
+                            </>
+                          }
+                          arrow
+                          placement="bottom"
                         >
-                          DOWNLOAD
-                        </Button>
-                      </Tooltip>
-                ))}
-                </Box>
-              </StyledPaper>
+                          <Button 
+                            variant="contained"
+                            onClick={() => window.open(file.links.self, "_blank")}
+                            endIcon={<DownloadIcon/>}
+                            sx={{
+                              flex: 1,
+                              backgroundColor: "gray",
+                              fontFamily: "monospace",
+                              fontWeight: "bold"
+                                  
+                            }}
+                          >
+                            DOWNLOAD
+                          </Button>
+                        </Tooltip>
+                      ))}
+                    </Box>
+
+                  {/* Collapse Wrapper */}
+                  <Collapse 
+                    in={isExpanded}
+                    timeout="auto"
+                    unmountOnExit
+                  >
+
+                    <StyledPaper 
+                      sx={{ 
+                        backgroundColor: "white",
+                        mt: 2
+                      }}>
+                      <Typography
+                        component="div"
+                        sx={{ 
+                          color: "gray", 
+                          marginBottom: "8px", 
+                          fontFamily: "monospace",
+                          padding: "12px"
+                        }}
+                      >
+                        <div dangerouslySetInnerHTML={{__html: dataset.metadata?.description || ""}}/>
+                      </Typography>
+                    </StyledPaper>
+                  </Collapse>
+
+                </StyledPaper>
+
+              </Box>
               );
             })}
-    </Box>
+      </Box>
   )
 }
 
