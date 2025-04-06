@@ -1,5 +1,9 @@
 // https://zenodo.org/records/14205146/files/POSYDON_data.tar.gz?download=1
-import {Paper, Tooltip, Typography, Box, Button} from "@mui/material";
+import {Paper, Tooltip, Typography, Box, Button, Collapse} from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import DownloadIcon from "@mui/icons-material/Download";
+import UploadFile from "@mui/icons-material/UploadFile";
 import {useEffect, useState} from 'react';
 import {alpha, styled} from "@mui/material/styles";
 
@@ -58,6 +62,7 @@ async function createDatabase(filePath: string, fileName: string) {
 
 /* Fetch available dataset info from posydon download page */
 const DatasetList: React.FC = () => {
+    const [expandedId, setExpandedId] = useState<string | undefined>();
     const [datasets, setDatasets] = useState<Dataset[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string>('');
@@ -88,72 +93,89 @@ const DatasetList: React.FC = () => {
     
   return (
     /* Background box and boxes for dataset + file info */
-    <Box maxWidth="md" 
+    
+    <Box
       sx={{
-        backgroundColor: 'gray',
-        borderRadius: '15px',
-        fontFamily: 'monospace',
-        padding: '20px',
-        marginTop: "150px",
-        color: 'white',
-        alignItems: 'center',
-        height: '90%',
+        backgroundColor: "gray",
+        borderRadius: "15px",
+        maxWidth: "lg",
+        width: "100%",
+        fontFamily: "monospace",
+        padding: "20px",
       }}
     >
-
-            <Typography variant="h4" 
-              sx={{ 
-                marginBottom: "20px", 
-                textAlign: "center", 
-                fontFamily: "monospace" , 
-                color: "white"  
-              }}>
-                Posydon Datasets Available
-            </Typography>
-
-            {datasets.map((dataset) => (
-                  // Box for each dataset
-                  <StyledPaper key={dataset.id} 
-                    sx={{ 
-                      mb: 4,
-                      marginBottom: "14px",
-                    }}>
+      <Box 
+        sx={{ 
+          fontSize: "30px",
+          marginBottom: "20px", 
+          textAlign: "center", 
+          fontFamily: "monospace" , 
+          color: "white",
+        }}>
+          Posydon Datasets Available
+      </Box>
+    
+            {datasets.map((dataset) => {
+              const isExpanded = expandedId === dataset.id;
+              return (
+                <Box
+                  key={dataset.id}
+                  sx={{
+                    marginBottom: "16px",
+                    display: "flex",
+                    flexDirection: "column"
+                  }}
+                >
+                {/* Box for each dataset */}
+                <StyledPaper sx={{ padding: "16px" }}>
                     <Typography variant="h5" 
                       sx={{ 
                         marginBottom: "12px", 
                         color: "white", 
+                        fontFamily: "monospace",
+                        textAlign: "left"
                       }}>
                       {dataset.title}
                     </Typography>
-                    
-                    <StyledPaper 
-                      sx={{ 
-                        backgroundColor: "white"
-                      }}>
-                      <Typography
-                        component="div"
-                        sx={{ 
-                          color: "gray", 
-                          marginBottom: "8px", 
-                          fontFamily: "monospace"
-                        }}
-                      >
-                        <div dangerouslySetInnerHTML={{__html: dataset.metadata?.description || ""}}/>
-                      </Typography>
-                    </StyledPaper>
 
-                    {/* Box for download button */ }
                     <Box
                       sx={{
-                        width: "100%", // Make sure buttons stay inside the parent box
+                        width: "100%",
                         display: "flex",
-                        flexDirection: "column",
-                        marginTop: "10px",
-                        alignItems: "center"
+                        justifyContent: "space-between",
+                        gap: "10px"
                       }}
                     >
-                      
-                        {dataset.files?.map((file) => (
+                      {/* Description Button */}
+                      <Button
+                        variant="contained"
+                        onClick={() => setExpandedId(isExpanded ? undefined : dataset.id)}
+                        endIcon={isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                        sx={{
+                          flex: 1,
+                          backgroundColor: "gray",
+                          fontFamily: "monospace",
+                          color: "white",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {isExpanded ? "HIDE DESCRIPTION" : "SHOW DESCRIPTION"}
+                      </Button>
+
+                      {/* Download Button */}
+                      {dataset.files?.map((file) => (
+                        <>
+                        <Button 
+                          variant="contained"
+                          onClick={() => window.open(file.links.self, "_blank")}
+                          endIcon={<DownloadIcon/>}
+                          sx={{
+                            flex: 1,
+                            backgroundColor: "gray",
+                            fontFamily: "monospace",
+                            fontWeight: "bold"
+                          }}
+                        >
                           <Tooltip
                             title={
                               <>
@@ -163,47 +185,59 @@ const DatasetList: React.FC = () => {
                             }
                             arrow
                             placement="bottom"
-                          >
-                            <Box
-                              sx={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                width: "100%",
-                                gap: "10px",
-                              }}
-                            >
-                              <Button
-                                variant="contained"
-                                onClick={() => window.open(file.links.self, "_blank")}
-                                sx={{
-                                  flex: 1,
-                                  backgroundColor: "gray",
-                                  fontFamily: "monospace",
-                                  fontWeight: "bold"
-                                }}
-                              >
-                                DOWNLOAD
-                              </Button>
-                              <Button
-                                variant="contained"
-                                onClick={() => createDatabase(file.links.self, file.key)}
-                                sx={{
-                                  flex: 1,
-                                  backgroundColor: "gray",
-                                  fontFamily: "monospace",
-                                  fontWeight: "bold"
-                                }}
-                              >
-                                CREATE DATABASE USING DATASET
-                              </Button>
-                            </Box>
+                        >
+                          <span>DOWNLOAD</span>
                           </Tooltip>
-                        ))}
+                        </Button>
+
+                          <Button
+                            variant="contained"
+                            onClick={() => createDatabase(file.links.self, file.key)}
+                            endIcon={<UploadFile/>}
+                            sx={{
+                              flex: 1,
+                              backgroundColor: "gray",
+                              fontFamily: "monospace",
+                              fontWeight: "bold"
+                            }}
+                          >
+                            CREATE DATABASE USING DATASET
+                          </Button>
+                          </>
+                      ))}
                     </Box>
-                  </StyledPaper>
-                ))}
-    </Box>
+                    
+                    {/* Collapse Wrapper */}
+                  <Collapse 
+                    in={isExpanded}
+                    timeout="auto"
+                    unmountOnExit
+                  >
+
+                    <StyledPaper 
+                      sx={{ 
+                        backgroundColor: "white",
+                        mt: 2
+                      }}>
+                      <Typography
+                        component="div"
+                        sx={{ 
+                          color: "gray", 
+                          marginBottom: "8px", 
+                          fontFamily: "monospace",
+                          padding: "12px"
+                        }}
+                      >
+                        <div dangerouslySetInnerHTML={{__html: dataset.metadata?.description || ""}}/>
+                      </Typography>
+                    </StyledPaper>
+                  </Collapse>
+
+                </StyledPaper>
+              </Box>
+            );
+          })}
+      </Box> 
   );
 };
 
