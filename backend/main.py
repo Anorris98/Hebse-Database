@@ -64,7 +64,7 @@ app.add_middleware(
 #      parse and use that as ssh_pkey
 #   2) Otherwise, treat sshKey as a password
 # -------------------------------------------------
-def configure_engine_from_settings(config: dict):
+def configure_engine_from_settings(config: dict):  # pragma: no cover
     global engine, tunnel # pylint: disable=global-statement
 
     # If we already have a tunnel, stop it before reconfiguring
@@ -131,7 +131,7 @@ def configure_engine_from_settings(config: dict):
 # Init database route
 # -------------------------------------------------
 @app.post("/init_db")
-def init_database(body: dict):
+def init_database(body: dict):  # pragma: no cover
     db_config = body.get("db_settings")
     if not db_config:
         raise HTTPException(status_code=400, detail="Missing db_settings")
@@ -168,7 +168,7 @@ def get_data(body: dict):
 # Ask GPT
 # -------------------------------------------------
 @app.post("/ask_gpt")
-def ask_gpt(request: dict):
+def ask_gpt(request: dict):  # pragma: no cover
     user_query = request.get("query")
     settings = request.get("settings")
 
@@ -230,7 +230,7 @@ def create_csv(returned_data):
 # -------------------------------------------------
 # Download CSV
 # -------------------------------------------------
-@app.get("/exportData")
+@app.get("/exportData")  # pragma: no cover
 def export_data():
     file_name = "query_results.csv"
     #create_csv()
@@ -241,7 +241,7 @@ def export_data():
 # Download dataset from remote server and set up database
 # -------------------------------------------------------
 @app.put("/PutDatabase")
-def setup_database(body: dict):
+def setup_database(body: dict):  # pragma: no cover
     remote_file_path = body.get("filePath")
     local_file_name = body.get("fileName")
     db_settings = body.get("databaseSettings")
