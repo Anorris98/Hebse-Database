@@ -148,8 +148,8 @@ const DatasetList: React.FC = () => {
                                 width: "100%",
                                 backgroundColor: "gray",
                                 fontFamily: "monospace",
-                                fontWeight: "bold"
-                                
+                                fontWeight: "bold",
+                                color: "white",
                               }}
                             >
                               DOWNLOAD
