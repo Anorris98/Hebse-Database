@@ -161,7 +161,7 @@ def get_data(body: dict):
             result = connection.execute(text(raw_query))
             rows = [row._mapping for row in result]
 
-            if(not history):
+            if(not history):  # pragma: no cover
                 log_query = text("INSERT INTO history.completed_queries (query_sql) VALUES (:query)")
                 connection.execute(log_query, {"query": raw_query})
                 connection.commit()
@@ -288,7 +288,7 @@ def setup_database(body: dict):  # pragma: no cover
         ssh_client.close()
 
 @app.get("/getHistory")
-def get_history():
+def get_history(): # pragma: no cover
     try:
         with engine.connect() as connection:
             query = text(

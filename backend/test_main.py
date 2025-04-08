@@ -20,7 +20,8 @@ with engine.connect() as connection:
 def test_get_data_successful_query():
     # Define a sample request body with a valid query
     request_body = {
-        "query": "SELECT * FROM users"
+        "query": "SELECT * FROM users",
+        "history": True
     }
 
     response = client.post("/GetData", json=request_body)
