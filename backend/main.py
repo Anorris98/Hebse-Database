@@ -11,6 +11,7 @@ from paramiko import SSHClient, AutoAddPolicy, RSAKey
 from scp import SCPClient
 
 
+# pylint: disable=too-many-try-statements
 # Engine / SSH tunnel / schema metadata
 engine = None
 tunnel = None
@@ -149,6 +150,7 @@ def init_database(body: dict):  # pragma: no cover
 @app.post("/GetData")
 def get_data(body: dict):
     raw_query = body.get("query")
+    history = body.get("history", False)
     if not raw_query:
         raise HTTPException(status_code=400, detail="Query key is required.")
     if engine is None:
@@ -158,6 +160,12 @@ def get_data(body: dict):
         with engine.connect() as connection:
             result = connection.execute(text(raw_query))
             rows = [row._mapping for row in result]
+
+            if(not history):
+                log_query = text("INSERT INTO history.completed_queries (query_sql) VALUES (:query)")
+                connection.execute(log_query, {"query": raw_query})
+                connection.commit()
+
             create_csv(rows)
             return {"message": "Query executed successfully.", "data": rows}
     except Exception as e:
@@ -236,7 +244,6 @@ def export_data():
     #create_csv()
     return FileResponse(file_name, media_type="text/csv", filename="query_results.csv")
 
-
 # -------------------------------------------------------
 # Download dataset from remote server and set up database
 # -------------------------------------------------------
@@ -279,3 +286,17 @@ def setup_database(body: dict):  # pragma: no cover
         raise HTTPException(status_code=500, detail=str(e)) from e
     finally:
         ssh_client.close()
+
+@app.get("/getHistory")
+def get_history():
+    try:
+        with engine.connect() as connection:
+            query = text(
+                'SELECT * FROM "history"."completed_queries" ORDER BY time DESC LIMIT 20'
+            )
+            result = connection.execute(query)
+            queries = [row._mapping for row in result]
+
+            return {"recent_queries": queries}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Failed to fetch recent queries") from e
