@@ -16,6 +16,7 @@ import {
 import { alpha, styled } from "@mui/material/styles";
 import { DeleteForever, Save, Visibility, VisibilityOff } from "@mui/icons-material";
 import HelpTextField from "../../HelpTextField/help-text-field.tsx";
+import { enableTunnel } from "./utility-functions.ts";
 
 type DatabaseConfig = {
   databaseHost: string;
@@ -24,6 +25,7 @@ type DatabaseConfig = {
   databasePassword: string;
   databaseName: string;
   isRemote: boolean;
+  isBackendRemote: boolean;
   sshHost: string;
   sshPort: string;
   sshUser: string;
@@ -100,6 +102,7 @@ const DatabaseSetup = () => {
 
   // Whether this DB uses a remote (SSH) connection
   const [isRemote, setIsRemote] = useState(false);
+  const [isBackendRemote, setIsBackendRemote] = useState(false);
 
   // SSH fields (for remote mode)
   const [sshHost, setSshHost] = useState("");
@@ -134,6 +137,7 @@ const DatabaseSetup = () => {
         setDatabasePassword(parsed.databasePassword || "");
         setDatabaseName(parsed.databaseName || "");
         setIsRemote(!!parsed.isRemote);
+        setIsBackendRemote(!!parsed.isBackendRemote);
 
         // Fill in SSH if remote
         setSshHost(parsed.sshHost || "");
@@ -162,6 +166,7 @@ const DatabaseSetup = () => {
       setDatabasePassword("");
       setDatabaseName("");
       setIsRemote(false);
+      setIsBackendRemote(false);
       setSshHost("");
       setSshPort("22");
       setSshUser("");
@@ -181,6 +186,7 @@ const DatabaseSetup = () => {
       setDatabasePassword(cfg.databasePassword);
       setDatabaseName(cfg.databaseName);
       setIsRemote(cfg.isRemote);
+      setIsBackendRemote(cfg.isBackendRemote);
 
       setSshHost(cfg.sshHost || "");
       setSshPort(cfg.sshPort || "22");
@@ -215,6 +221,7 @@ const DatabaseSetup = () => {
       databasePassword,
       databaseName,
       isRemote,
+      isBackendRemote,
       sshHost,
       sshPort,
       sshUser,
@@ -234,6 +241,7 @@ const DatabaseSetup = () => {
         databasePassword,
         databaseName,
         isRemote,
+        isBackendRemote,
         sshHost,
         sshPort,
         sshUser,
@@ -241,6 +249,7 @@ const DatabaseSetup = () => {
       })
     );
 
+    enableTunnel(isBackendRemote)
     // Refresh
     setProfileNames(Object.keys(allProfiles));
     setSelectedProfileKey(profileName);
@@ -284,6 +293,7 @@ const DatabaseSetup = () => {
     setDatabasePassword("");
     setDatabaseName("");
     setIsRemote(false);
+    setIsBackendRemote(false);
     setSshHost("");
     setSshPort("22");
     setSshUser("");
@@ -302,6 +312,11 @@ const DatabaseSetup = () => {
       </InputAdornment>
     ),
   };
+
+  function toggleRemote(toggle_option: boolean) {
+    setIsRemote(toggle_option)
+    setIsBackendRemote(toggle_option && isBackendRemote);
+  }
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -354,12 +369,24 @@ const DatabaseSetup = () => {
             control={
               <Switch
                 checked={isRemote}
-                onChange={(input) => setIsRemote(input.target.checked)}
+                onChange={(input) => {toggleRemote(input.target.checked)}}
               />
             }
             label="Remote Database (SSH)"
             sx={{ "& .MuiFormControlLabel-label": { fontFamily: "monospace", color: "white" } }}
           />
+          { isRemote &&
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={isBackendRemote}
+                  onChange={(input) => setIsBackendRemote(input.target.checked)}
+                />
+              }
+              label="Remote Backend"
+              sx={{ "& .MuiFormControlLabel-label": { fontFamily: "monospace", color: "white" } }}
+            />
+          }
         </Box>
 
         {/* Local DB Fields */}
