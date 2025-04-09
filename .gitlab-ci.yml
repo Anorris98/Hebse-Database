@@ -18,7 +18,8 @@ deploy-backend:
     - export DECODED_PASSWORD=$(echo $ENCODED_PASSWORD | base64 --decode)
     - sshpass -p $DECODED_PASSWORD scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ./backend/main.py vm-user@SDmay25-20.ece.iastate.edu:~
     - sshpass -p $DECODED_PASSWORD scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ./backend/requirements.txt vm-user@SDmay25-20.ece.iastate.edu:~/backend_requirements.txt
-    - sshpass -p $DECODED_PASSWORD ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null vm-user@SDmay25-20.ece.iastate.edu "pip install -r backend_requirements.txt && fuser -k 8000/tcp && fastapi run main.py &"
+    - sshpass -p $DECODED_PASSWORD ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null vm-user@SDmay25-20.ece.iastate.edu "pip install -r backend_requirements.txt && fuser -k 8000/tcp || true && nohup fastapi run main.py > out.log 2>&1 &"
+
 
 
 eslint:
