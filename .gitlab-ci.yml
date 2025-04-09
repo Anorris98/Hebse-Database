@@ -11,8 +11,8 @@ tox:
 
 deploy-backend:
   stage: backend
-  # only:
-  #   - main
+  # rules:
+  #   - if: '$CI_COMMIT_BRANCH == "main"'
   script:
     - apt-get update && apt-get install -y sshpass
     - export DECODED_PASSWORD=$(echo $ENCODED_PASSWORD | base64 --decode)
