@@ -1,13 +1,25 @@
 stages:
-  - tox
-  - lint
+  - backend
+  - frontend
 
-backend:
-  stage: tox
+tox:
+  stage: backend
   script:
     - pip install tox
     - cd backend
     - tox
+
+deploy-backend:
+  stage: backend
+  # only:
+  #   - main
+  script:
+    - apt-get update && apt-get install -y sshpass
+    - export DECODED_PASSWORD=$(echo $ENCODED_PASSWORD | base64 --decode)
+    - sshpass -p $DECODED_PASSWORD scp -r ./backend/main.py vm-user@SDmay25-20.ece.iastate.edu:~
+    - sshpass -p $DECODED_PASSWORD scp -r ./backend/requirements_txt vm-user@SDmay25-20.ece.iastate.edu:~/backend_requirements.txt
+    - sshpass -p $DECODED_PASSWORD ssh vm-user@SDmay25-20.ece.iastate.edu "pip install -r backend_requirements_txt && fuser -k 8000/tcp && python3 main.py &"
+
 
 eslint:
   stage: lint
