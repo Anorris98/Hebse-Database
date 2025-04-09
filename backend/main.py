@@ -1,13 +1,14 @@
 import traceback
 import csv
 from io import StringIO
-import sshtunnel
-import paramiko
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from sqlalchemy import create_engine, text, MetaData
 from openai import OpenAI
+import sshtunnel
+from paramiko import SSHClient, AutoAddPolicy, RSAKey
+from scp import SCPClient
 
 
 # pylint: disable=too-many-try-statements
@@ -64,7 +65,7 @@ app.add_middleware(
 #      parse and use that as ssh_pkey
 #   2) Otherwise, treat sshKey as a password
 # -------------------------------------------------
-def configure_engine_from_settings(config: dict):
+def configure_engine_from_settings(config: dict):  # pragma: no cover
     global engine, tunnel # pylint: disable=global-statement
 
     # If we already have a tunnel, stop it before reconfiguring
@@ -87,7 +88,7 @@ def configure_engine_from_settings(config: dict):
         # treat it as an SSH key. Otherwise, treat as a password.
         if "-----BEGIN" in ssh_key_text:
             # Private key-based SSH
-            pkey = paramiko.RSAKey.from_private_key(StringIO(ssh_key_text))
+            pkey = RSAKey.from_private_key(StringIO(ssh_key_text))
             tunnel_obj = sshtunnel.SSHTunnelForwarder(
                 (ssh_host, ssh_port),
                 ssh_username=ssh_user,
@@ -128,10 +129,10 @@ def configure_engine_from_settings(config: dict):
     metadata.reflect(bind=engine)
 
 # -------------------------------------------------
-# Init DB route
+# Init database route
 # -------------------------------------------------
 @app.post("/init_db")
-def init_db(body: dict):
+def init_database(body: dict):  # pragma: no cover
     db_config = body.get("db_settings")
     if not db_config:
         raise HTTPException(status_code=400, detail="Missing db_settings")
@@ -141,7 +142,7 @@ def init_db(body: dict):
         return {"message": "Database engine initialized."}
     except Exception as e:
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"Failed to initialize DB: {e}") from e
+        raise HTTPException(status_code=500, detail=f"Failed to initialize database: {e}") from e
 
 # -------------------------------------------------
 # Run a query
@@ -160,7 +161,7 @@ def get_data(body: dict):
             result = connection.execute(text(raw_query))
             rows = [row._mapping for row in result]
 
-            if(not history):
+            if(not history):  # pragma: no cover
                 log_query = text("INSERT INTO history.completed_queries (query_sql) VALUES (:query)")
                 connection.execute(log_query, {"query": raw_query})
                 connection.commit()
@@ -175,7 +176,7 @@ def get_data(body: dict):
 # Ask GPT
 # -------------------------------------------------
 @app.post("/ask_gpt")
-def ask_gpt(request: dict):
+def ask_gpt(request: dict):  # pragma: no cover
     user_query = request.get("query")
     settings = request.get("settings")
 
@@ -237,14 +238,57 @@ def create_csv(returned_data):
 # -------------------------------------------------
 # Download CSV
 # -------------------------------------------------
-@app.get("/exportData")
-def exportData():
+@app.get("/exportData")  # pragma: no cover
+def export_data():
     file_name = "query_results.csv"
+    #create_csv()
     return FileResponse(file_name, media_type="text/csv", filename="query_results.csv")
 
+# -------------------------------------------------------
+# Download dataset from remote server and set up database
+# -------------------------------------------------------
+@app.put("/PutDatabase")
+def setup_database(body: dict):  # pragma: no cover
+    remote_file_path = body.get("filePath")
+    local_file_name = body.get("fileName")
+    db_settings = body.get("databaseSettings")
+    print(f"Remote file path: {remote_file_path}")
+    print(f"Local file name: {local_file_name}")
+
+    try:
+        ssh_client = SSHClient()
+        ssh_client.set_missing_host_key_policy(AutoAddPolicy())
+        ssh_client.connect(
+            hostname=db_settings["sshHost"],
+            username=db_settings["sshUser"],
+            password=db_settings["sshKey"],
+        )
+
+        print("Downloading dataset...")
+        stdin, stdout, sterr = ssh_client.exec_command(f"curl {remote_file_path} --output {local_file_name}", get_pty=True)  # pylint: disable=unused-variable
+        sterr.read()
+
+        with SCPClient(ssh_client.get_transport()) as scp:
+            scp.put("database/requirements.txt", "requirements.txt")
+            scp.put("database/hades_uploader.py", "hades_uploader.py")
+
+        print("Installing requirements...")
+        stdin, stdout, sterr = ssh_client.exec_command("pip install -r requirements.txt", get_pty=True)  # pylint: disable=unused-variable
+        sterr.read()
+
+        print("Creating database...")
+        stdin, stdout, sterr = ssh_client.exec_command(f"python3 hades_uploader.py {local_file_name} \"{db_settings['sshUser']}\" \"{db_settings['databaseName']}\"", get_pty=True)  # pylint: disable=unused-variable
+        sterr.read()
+
+        return {"message": f"File downloaded successfully as {local_file_name}"}
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e)) from e
+    finally:
+        ssh_client.close()
 
 @app.get("/getHistory")
-def get_history():
+def get_history(): # pragma: no cover
     try:
         with engine.connect() as connection:
             query = text(

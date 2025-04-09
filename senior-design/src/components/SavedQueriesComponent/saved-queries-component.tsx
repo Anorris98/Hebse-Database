@@ -60,10 +60,10 @@ export const SavedQueriesComponent = ({savedQueries, setSavedQueries, setInputVa
                     }} key={index}>
                         <IconButton sx={{height: "10px", width: "30px", textAlign: "center"}}
                                     onClick={() => deleteQuery(item)}><Clear
-                            sx={{color: 'white', backgroundColor: "black"}}/></IconButton>
-                        <IconButton sx={{height: "10px", width: "30px", textAlign: "center"}}
+                            sx={{color: 'white', backgroundColor: "transparent"}}/></IconButton>
+                        <IconButton sx={{marginLeft: "10px", height: "10px", width: "30px", textAlign: "center"}}
                                     onClick={() => setInputValue(item)}><ContentCopyOutlined
-                            sx={{color: 'white', backgroundColor: "black"}}/></IconButton>
+                            sx={{color: 'white', backgroundColor: "transparent"}}/></IconButton>
                         <Box flexGrow={1} component="div" sx={{
                             whiteSpace: 'normal',
                             overflowWrap: 'break-word',
