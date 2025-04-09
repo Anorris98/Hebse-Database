@@ -16,9 +16,9 @@ deploy-backend:
   script:
     - apt-get update && apt-get install -y sshpass
     - export DECODED_PASSWORD=$(echo $ENCODED_PASSWORD | base64 --decode)
-    - sshpass -p $DECODED_PASSWORD scp -r ./backend/main.py vm-user@SDmay25-20.ece.iastate.edu:~
-    - sshpass -p $DECODED_PASSWORD scp -r ./backend/requirements_txt vm-user@SDmay25-20.ece.iastate.edu:~/backend_requirements.txt
-    - sshpass -p $DECODED_PASSWORD ssh vm-user@SDmay25-20.ece.iastate.edu "pip install -r backend_requirements_txt && fuser -k 8000/tcp && python3 main.py &"
+    - sshpass -p $DECODED_PASSWORD scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ./backend/main.py vm-user@SDmay25-20.ece.iastate.edu:~
+    - sshpass -p $DECODED_PASSWORD scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ./backend/requirements_txt vm-user@SDmay25-20.ece.iastate.edu:~/backend_requirements.txt
+    - sshpass -p $DECODED_PASSWORD ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null vm-user@SDmay25-20.ece.iastate.edu "pip install -r backend_requirements_txt && fuser -k 8000/tcp && python3 main.py &"
 
 
 eslint:
