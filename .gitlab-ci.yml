@@ -22,7 +22,7 @@ deploy-backend:
 
 
 eslint:
-  stage: lint
+  stage: frontend
   image: node:latest
   before_script:
     - cd senior-design
