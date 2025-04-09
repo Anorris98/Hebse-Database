@@ -7,7 +7,6 @@ export const enableTunnel = async (enable: boolean) => {
       const parsed = JSON.parse(savedSettings);
       const data = {
         databaseHost: parsed["databaseHost"],
-        databasePort: parsed["databasePort"],
         sshHost: parsed["sshHost"],
         sshPort: parsed["sshPort"],
         sshUser: parsed["sshUser"],

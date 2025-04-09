@@ -5,12 +5,12 @@ import { NavBar } from './components/NavigationBar/nav-bar.tsx'; // Import NavBa
 import './index.css';
 import { enableTunnel } from './components/Settings/DatabaseSetup/utility-functions.ts';
 
-/* eslint-disable unicorn/prefer-query-selector*/
 const databaseSettings = localStorage.getItem("db_settings");
 if (databaseSettings) {
-    enableTunnel(JSON.parse(databaseSettings)["isBackendRemote"]);
+    enableTunnel(JSON.parse(databaseSettings)["isBackendRemote"] || false);
 }
 
+/* eslint-disable unicorn/prefer-query-selector*/
 createRoot(document.getElementById('root')!).render(
     <Router>
         <NavBar /> {/* Ensure NavBar is always visible */}
