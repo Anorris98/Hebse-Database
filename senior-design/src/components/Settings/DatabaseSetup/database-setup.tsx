@@ -369,7 +369,7 @@ const DatabaseSetup = () => {
             control={
               <Switch
                 checked={isRemote}
-                onChange={(input) => setIsRemote(input.target.checked)}
+                onChange={(input) => toggleRemote(input.target.checked)}
                 sx={{
                   '& .MuiSwitch-switchBase.Mui-checked': {
                     color: 'white',

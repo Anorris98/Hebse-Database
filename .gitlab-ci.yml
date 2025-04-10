@@ -15,12 +15,12 @@ deploy-backend:
   #   - if: '$CI_COMMIT_BRANCH == "main"'
   script:
     - apt-get update && apt-get install -y sshpass
+    - cd backend
+    - docker build -t hadesbackend .
+    - docker save hadesbackend | gzip > hadesbackend.tar.gz
     - export DECODED_PASSWORD=$(echo $ENCODED_PASSWORD | base64 --decode)
-    - sshpass -p $DECODED_PASSWORD scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ./backend/main.py vm-user@SDmay25-20.ece.iastate.edu:~
-    - sshpass -p $DECODED_PASSWORD scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ./backend/requirements.txt vm-user@SDmay25-20.ece.iastate.edu:~/backend_requirements.txt
-    - sshpass -p $DECODED_PASSWORD ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null vm-user@SDmay25-20.ece.iastate.edu "pip install -r backend_requirements.txt && fuser -k 8000/tcp || true && fastapi run main.py & while ! nc -z localhost 8000; do sleep 1; done"
-
-
+    - sshpass -p $DECODED_PASSWORD scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null hadesbackend.tar.gz vm-user@SDmay25-20.ece.iastate.edu:/tmp/
+    - sshpass -p $DECODED_PASSWORD ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null vm-user@SDmay25-20.ece.iastate.edu "ddocker load < /tmp/hadesbackend.tar.gz && docker container stop hadescontainer || true && docker rm hadescontainer || true && docker run -d --name hadescontainer -p 8000:8000 hadesbackend"
 
 
 eslint:
