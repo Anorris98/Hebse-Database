@@ -11,24 +11,17 @@ tox:
 
 deploy-backend:
   stage: backend
-  image: docker:latest
   # rules:
   #   - if: '$CI_COMMIT_BRANCH == "main"'
-  services:
-    - name: docker:dind
-      alias: docker
-  variables:
-    DOCKER_TLS_CERTDIR: ""
-  before_script:
-    - apk update
-    - apk add --no-cache curl sshpass openssh-client gzip
   script:
+    - apt-get update && apt-get install -y sshpass
     - cd backend
-    - docker build -t hadesbackend .
-    - docker save hadesbackend | gzip > hadesbackend.tar.gz
     - export DECODED_PASSWORD=$(echo $ENCODED_PASSWORD | base64 --decode)
+    - sshpass -p $DECODED_PASSWORD scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ./backend/app vm-user@SDmay25-20.ece.iastate.edu:~
+    - sshpass -p $DECODED_PASSWORD scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ./backend/requirements.txt vm-user@SDmay25-20.ece.iastate.edu:~/requirements.txt
     - sshpass -p $DECODED_PASSWORD scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null hadesbackend.tar.gz vm-user@SDmay25-20.ece.iastate.edu:/tmp/
-    - sshpass -p $DECODED_PASSWORD ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null vm-user@SDmay25-20.ece.iastate.edu "ddocker load < /tmp/hadesbackend.tar.gz && docker container stop hadescontainer || true && docker rm hadescontainer || true && docker run -d --name hadescontainer -p 8000:8000 hadesbackend"
+    - sshpass -p $DECODED_PASSWORD ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null vm-user@SDmay25-20.ece.iastate.edu "docker build -t hadesbackend . && docker container stop hadescontainer || true && docker rm hadescontainer || true && docker run -d --name hadescontainer -p 8000:8000 hadesbackend"
+
 
 eslint:
   stage: frontend
@@ -38,4 +31,3 @@ eslint:
     - npm install
   script:
     - npx eslint .
-
