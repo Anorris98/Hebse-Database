@@ -222,6 +222,7 @@ export const QueryInput = ({
                         backgroundColor: "darkgray",
                         fontFamily: "monospace",
                         fontWeight: "bold",
+                        color: "white",
                         flex: 1,
                     }}
                     onClick={getSQLFromNaturalLanguage}
@@ -235,6 +236,7 @@ export const QueryInput = ({
                         backgroundColor: "darkgray",
                         fontFamily: "monospace",
                         fontWeight: "bold",
+                        color: "white",
                         flex: 1,
                     }}
                     onClick={saveQuery}
