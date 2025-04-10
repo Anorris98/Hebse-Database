@@ -22,6 +22,7 @@ deploy-backend:
     - apk update
     - apk add --no-cache curl sshpass openssh-client gzip
   script:
+    - unset DOCKER_HOST
     - cd backend
     - docker build -t hadesbackend .
     - docker save hadesbackend | gzip > hadesbackend.tar.gz
