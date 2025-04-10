@@ -16,13 +16,13 @@ deploy-backend:
   #   - if: '$CI_COMMIT_BRANCH == "main"'
   services:
     - docker:dind
+      alias: docker
   variables:
     DOCKER_TLS_CERTDIR: ""
   before_script:
     - apk update
     - apk add --no-cache curl sshpass openssh-client gzip
   script:
-    - unset DOCKER_HOST
     - cd backend
     - docker build -t hadesbackend .
     - docker save hadesbackend | gzip > hadesbackend.tar.gz
