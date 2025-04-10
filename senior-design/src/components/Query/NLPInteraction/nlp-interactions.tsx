@@ -212,12 +212,13 @@ const NlpInteractions = () => {
                 backgroundColor: "darkgray",
                 fontFamily: "monospace",
                 fontWeight: "bold",
+                color: "white",
                 flex: 1,
             }}
             onClick={handleQuery}
             startIcon={<AutoAwesome />}
         >
-          Query
+          QUERY
         </Button>
       </Box>
       {/* GPT Response area */}

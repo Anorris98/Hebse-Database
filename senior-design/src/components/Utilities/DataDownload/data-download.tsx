@@ -173,7 +173,8 @@ const DatasetList: React.FC = () => {
                             flex: 1,
                             backgroundColor: "gray",
                             fontFamily: "monospace",
-                            fontWeight: "bold"
+                            fontWeight: "bold",
+                            color: "white",
                           }}
                         >
                           <Tooltip
@@ -198,6 +199,7 @@ const DatasetList: React.FC = () => {
                               flex: 1,
                               backgroundColor: "gray",
                               fontFamily: "monospace",
+                              color: "white",
                               fontWeight: "bold"
                             }}
                           >

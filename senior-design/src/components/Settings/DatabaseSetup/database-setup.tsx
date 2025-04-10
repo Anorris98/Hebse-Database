@@ -369,7 +369,15 @@ const DatabaseSetup = () => {
             control={
               <Switch
                 checked={isRemote}
-                onChange={(input) => {toggleRemote(input.target.checked)}}
+                onChange={(input) => setIsRemote(input.target.checked)}
+                sx={{
+                  '& .MuiSwitch-switchBase.Mui-checked': {
+                    color: 'white',
+                  },
+                  '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                    backgroundColor: 'white',
+                  },
+                }}
               />
             }
             label="Remote Database (SSH)"
@@ -381,6 +389,14 @@ const DatabaseSetup = () => {
                 <Switch
                   checked={isBackendRemote}
                   onChange={(input) => setIsBackendRemote(input.target.checked)}
+                  sx={{
+                    '& .MuiSwitch-switchBase.Mui-checked': {
+                      color: 'white',
+                    },
+                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                      backgroundColor: 'white',
+                    },
+                  }}
                 />
               }
               label="Remote Backend"
@@ -476,12 +492,13 @@ const DatabaseSetup = () => {
               backgroundColor: "darkgray",
               fontFamily: "monospace",
               fontWeight: "bold",
+              color: "white",
               flex: 1,
             }}
             onClick={handleSave}
             startIcon={<Save />}
           >
-            Save Database Settings
+            SAVE DATABASE SETTINGS
           </Button>
 
           {selectedProfileKey && selectedProfileKey !== "new" && (
@@ -491,12 +508,13 @@ const DatabaseSetup = () => {
               sx={{
                 fontFamily: "monospace",
                 fontWeight: "bold",
+                color: "white",
                 flex: 1,
               }}
               onClick={handleRemove}
               startIcon={<DeleteForever />}
             >
-              Remove Database
+              REMOVE DATABASE
             </Button>
           )}
         </Box>
