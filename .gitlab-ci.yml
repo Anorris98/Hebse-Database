@@ -11,8 +11,8 @@ tox:
 
 deploy-backend:
   stage: backend
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
+  # rules:
+  #   - if: '$CI_COMMIT_BRANCH == "main"'
   script:
     - apt-get update && apt-get install -y sshpass
     - cd backend
@@ -20,7 +20,8 @@ deploy-backend:
     - sshpass -p $DECODED_PASSWORD scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ./app vm-user@SDmay25-20.ece.iastate.edu:~/app
     - sshpass -p $DECODED_PASSWORD scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ./Dockerfile vm-user@SDmay25-20.ece.iastate.edu:~/Dockerfile
     - sshpass -p $DECODED_PASSWORD scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ./requirements.txt vm-user@SDmay25-20.ece.iastate.edu:~/requirements.txt
-    - sshpass -p $DECODED_PASSWORD ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null vm-user@SDmay25-20.ece.iastate.edu "docker build -t hadesbackend . && docker container stop hadescontainer || true && docker rm hadescontainer || true && docker run -d --name hadescontainer -p 8000:8000 hadesbackend"
+    - sshpass -p $DECODED_PASSWORD ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null vm-user@SDmay25-20.ece.iastate.edu "docker build -t hadesbackend . && docker container stop hadescontainer || true && docker rm hadescontainer"
+    - sshpass -p $DECODED_PASSWORD ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null vm-user@SDmay25-20.ece.iastate.edu "docker run -d --name hadescontainer -p 8000:8000 hadesbackend"
 
 
 eslint:

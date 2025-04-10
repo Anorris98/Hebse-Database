@@ -73,7 +73,7 @@ def configure_engine_from_settings(config: dict):  # pragma: no cover
         tunnel.stop()
         tunnel = None
 
-    if config.get("isRemote") and not config.get("isBackendRemote"):
+    if config.get("isRemote"):
         # Prepare SSH connection details
         ssh_host = config["sshHost"]
         ssh_port = int(config["sshPort"])
