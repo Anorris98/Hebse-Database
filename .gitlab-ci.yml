@@ -20,8 +20,8 @@ deploy-backend:
     DOCKER_HOST: tcp://docker:2375/
     DOCKER_TLS_CERTDIR: ""
   before_script:
-    - apt-get update
-    - apt-get install -y curl sshpass openssh-client gzip
+    - apk update
+    - apk add --no-cache curl sshpass openssh-client gzip
   script:
     - cd backend
     - docker build -t hadesbackend .
