@@ -16,13 +16,13 @@ deploy-backend:
   services:
     - docker:dind
   before_script:
-    - apk add --no-cache curl bash openssh sshpass gzip
+    - apt-get update
+    - apt-get install -y curl sshpass openssh-client gzip
     - curl -fsSL https://get.docker.com -o get-docker.sh
     - sh get-docker.sh
     - dockerd &
     - sleep 5
   script:
-    - apt-get update && apt-get install -y sshpass
     - cd backend
     - docker build -t hadesbackend .
     - docker save hadesbackend | gzip > hadesbackend.tar.gz
