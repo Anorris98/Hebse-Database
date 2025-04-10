@@ -1,20 +1,34 @@
 stages:
-  - tox
-  - lint
+  - backend
+  - frontend
 
-backend:
-  stage: tox
+tox:
+  stage: backend
   script:
     - pip install tox
     - cd backend
     - tox
 
+deploy-backend:
+  stage: backend
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+  script:
+    - apt-get update && apt-get install -y sshpass
+    - cd backend
+    - export DECODED_PASSWORD=$(echo $ENCODED_PASSWORD | base64 --decode)
+    - sshpass -p $DECODED_PASSWORD scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ./app vm-user@SDmay25-20.ece.iastate.edu:~/app
+    - sshpass -p $DECODED_PASSWORD scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ./Dockerfile vm-user@SDmay25-20.ece.iastate.edu:~/Dockerfile
+    - sshpass -p $DECODED_PASSWORD scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ./requirements.txt vm-user@SDmay25-20.ece.iastate.edu:~/requirements.txt
+    - sshpass -p $DECODED_PASSWORD ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null vm-user@SDmay25-20.ece.iastate.edu "docker build -t hadesbackend . && docker container stop hadescontainer || true && docker rm hadescontainer"
+    - sshpass -p $DECODED_PASSWORD ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null vm-user@SDmay25-20.ece.iastate.edu "docker run -d --name hadescontainer -p 8000:8000 hadesbackend"
+
+
 eslint:
-  stage: lint
+  stage: frontend
   image: node:latest
   before_script:
     - cd senior-design
     - npm install
   script:
     - npx eslint .
-
