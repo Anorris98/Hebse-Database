@@ -2,7 +2,7 @@ from unittest.mock import patch
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, text
 from sqlalchemy.pool import StaticPool
-from backend.app.main import app
+from app.main import app
 
 
 # Create a TestClient instance
@@ -16,7 +16,7 @@ with engine.connect() as connection:
     connection.commit()
 
 
-@patch('main.engine', new=engine)
+@patch('app.main.engine', new=engine)
 def test_get_data_successful_query():
     # Define a sample request body with a valid query
     request_body = {
@@ -42,7 +42,7 @@ def test_get_data_invalid_request():
         "detail": "Query key is required."
     }
 
-@patch('main.engine', new=engine)
+@patch('app.main.engine', new=engine)
 def test_get_data_error_executing_query():
     # Define a sample request body with an invalid query
     request_body = {
@@ -55,7 +55,7 @@ def test_get_data_error_executing_query():
     print(error_message)
     assert error_message == "(sqlite3.OperationalError) no such table: non_existent_table"
 
-@patch('main.engine', new=None)
+@patch('app.main.engine', new=None)
 def test_get_data_no_engine():
     request_body = {
         "query": "SELECT * FROM users"
@@ -86,7 +86,7 @@ def test_ask_gpt_no_settings():
         "detail": "GPT API key is missing."
     }
 
-@patch('main.configure_engine_from_settings')
+@patch('app.main.configure_engine_from_settings')
 def test_configure_engine(mock_configure_engine):
     mock_configure_engine.return_value = "success"
     request_body = {}
@@ -97,7 +97,7 @@ def test_configure_engine(mock_configure_engine):
         "detail": "Engine configured from settings."
     }
 
-@patch('main.configure_engine_from_settings')
+@patch('app.main.configure_engine_from_settings')
 def test_configure_engine_error(mock_configure_engine):
     mock_configure_engine.side_effect = Exception("Failed to initialize database")
     request_body = {}
