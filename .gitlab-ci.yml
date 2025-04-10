@@ -15,7 +15,7 @@ deploy-backend:
   # rules:
   #   - if: '$CI_COMMIT_BRANCH == "main"'
   services:
-    - docker:dind
+    - name: docker:dind
       alias: docker
   variables:
     DOCKER_TLS_CERTDIR: ""
