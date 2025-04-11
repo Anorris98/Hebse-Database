@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev:backend": "cd ../backend && python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000",
+    "dev:backend": "cd ../backend && python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
     "dev:frontend": "concurrently \"node --experimental-strip-types src/tunnel/tunnel-server.ts\" \"vite\"",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "build": "tsc -b && vite build",
