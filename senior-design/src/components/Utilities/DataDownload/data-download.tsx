@@ -100,8 +100,7 @@ const DatasetList: React.FC = () => {
         borderRadius: "15px",
         maxWidth: "lg",
         width: "100%",
-        fontFamily: "monospace",
-        padding: "20px",
+        fontFamily: "monospace"
       }}
     >
       <Box 
