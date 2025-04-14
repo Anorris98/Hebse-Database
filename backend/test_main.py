@@ -2,6 +2,7 @@ from unittest.mock import patch
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, text
 from sqlalchemy.pool import StaticPool
+from app import main
 from app.main import app
 
 
@@ -14,7 +15,6 @@ with engine.connect() as connection:
     connection.execute(text("INSERT INTO users (id, name) VALUES (1, 'Test')"))
     connection.execute(text("INSERT INTO users (id, name) VALUES (2, 'Test2')"))
     connection.commit()
-
 
 @patch('app.main.engine', new=engine)
 def test_get_data_successful_query():
@@ -106,3 +106,30 @@ def test_configure_engine_error(mock_configure_engine):
     assert response.json() == {
         "detail": "Failed to initialize database"
     }
+    
+def test_schema_dict():
+    class mock_metadata:
+        def __init__(self, tables):
+            self.tables = tables
+    
+    class mock_table:
+        def __init__(self, columns):
+            self.columns = columns
+            
+    class mock_column:
+        def __init__(self, name):
+            self.name = name
+    
+    expected = {
+        "table1": ["col1", "col2"],
+        "table2": ["col3"]
+    }
+    
+    assert expected == main.get_clean_schema_dict(mock_metadata({"table1": mock_table([mock_column("col1"), mock_column("col2")]), "table2": mock_table([mock_column("col3")])}))
+    
+def test_no_schema_dict():
+    class mock_metadata:
+        def __init__(self, tables):
+            self.tables = tables
+    
+    assert not main.get_clean_schema_dict(mock_metadata(None))

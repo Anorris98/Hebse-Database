@@ -5,7 +5,9 @@ import { SettingsWelcomeText } from "./SettingsWelcomeText/settings-welcome-text
 
 export const Settings = () => {
     return (
-        <Box sx={{ display: "flex", justifyContent: "center", padding: "20px" }}>
+        <Box sx={{  display: "flex", 
+                    justifyContent: "center", 
+                    padding: "20px" }}>
             <Box sx={{ 
                 maxWidth: "1000px", 
                 width: "100%", 
@@ -14,7 +16,7 @@ export const Settings = () => {
                 gap: "16px"
             }}>
                 {/* Centered Welcome Text */}
-                <Box sx={{ display: "flex", justifyContent: "center", textAlign: "center" }}>
+                <Box sx={{ display: "flex", justifyContent: "center"}}>
                     <SettingsWelcomeText />
                 </Box>                
             <Box
