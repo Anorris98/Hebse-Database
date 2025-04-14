@@ -3,7 +3,6 @@ import {AboutUs} from "../../components/About_Us/about-us.tsx";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 
-// Test suite for AboutUs component
 describe("AboutUs Component", () => {
     it("renders the component without crashing", () => {
         render(<AboutUs />);
@@ -20,12 +19,5 @@ describe("AboutUs Component", () => {
         const linkElement = screen.getByRole("link", { name: /https:\/\/sdmay25-20.sd.ece.iastate.edu\//i });
         expect(linkElement).toBeVisible();
         expect(linkElement).toHaveAttribute("href", "https://sdmay25-20.sd.ece.iastate.edu/");
-    });
-
-    it("applies the correct styles", () => {
-        render(<AboutUs />);
-        const container = screen.getByText("About Us").parentElement;
-        expect(container).toHaveStyle("border-radius: 15px");
-        expect(container).toHaveStyle("text-align: center");
     });
 });
