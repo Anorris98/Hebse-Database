@@ -1,3 +1,4 @@
+import json
 import traceback
 import csv
 from io import StringIO
@@ -16,6 +17,7 @@ from scp import SCPClient
 engine = None
 tunnel = None
 metadata = MetaData()
+schema_dict = {}
 
 app = FastAPI()
 
@@ -66,7 +68,7 @@ app.add_middleware(
 #   2) Otherwise, treat sshKey as a password
 # -------------------------------------------------
 def configure_engine_from_settings(config: dict):  # pragma: no cover
-    global engine, tunnel # pylint: disable=global-statement
+    global engine, tunnel, schema_dict  # pylint: disable=global-statement
 
     # If we already have a tunnel, stop it before reconfiguring
     if tunnel is not None and tunnel.is_active:
@@ -78,7 +80,8 @@ def configure_engine_from_settings(config: dict):  # pragma: no cover
         ssh_host = config["sshHost"]
         ssh_port = int(config["sshPort"])
         ssh_user = config["sshUser"]
-        # The DB is hosted on remote side, so "databasePort" is the remote DB port
+    
+        # The DB is hosted on remote side, so "atabase" is the remote DB port
         remote_db_port = int(config["databasePort"])
 
         # "sshKey" might be a private key OR a password
@@ -127,6 +130,9 @@ def configure_engine_from_settings(config: dict):  # pragma: no cover
     # Create engine and reflect schema
     engine = create_engine(db_url)
     metadata.reflect(bind=engine)
+    metadata.reflect(bind=engine)  # no assignment to metadata, so no global needed
+    schema_dict = get_clean_schema_dict(metadata)  # load the data into a dictionary
+    
 
 # -------------------------------------------------
 # Init database route
@@ -177,6 +183,7 @@ def get_data(body: dict):
 # -------------------------------------------------
 @app.post("/ask_gpt")
 def ask_gpt(request: dict):  # pragma: no cover
+    
     user_query = request.get("query")
     settings = request.get("settings")
 
@@ -193,21 +200,20 @@ def ask_gpt(request: dict):  # pragma: no cover
             messages=[
                 {
                     "role": "system",
-                    "content": (
-                        "You are an NLP assistant that helps users generate queries "
-                        "for a PostgreSQL database. If a user requests a query, you "
-                        "should respond with the query and the query alone. Do not "
-                        "add any additional formatting or text. Always put quotation "
-                        "marks around column names. If there is no query that both "
-                        "fits the schema and follows the request, inform the user "
-                        "and do not send a query. Make sure each column has a unique "
-                        f"name to be returned. The schema is as follows: {metadata.tables}"
-                    ),
+                    "content": ("You are an AI assistant for generating PostgreSQL queries from natural language. You have a database schema below. "
+                                "Rules: "
+                                "1) Output ONLY the SQL query on the first line (no code fences). "
+                                "2) Use \"table\".\"column\" for references, never \"table.column\". "
+                                "3) Only use the columns in the schema. Never make up columns. "
+                                "The json of the schema is as follows: ") + json.dumps(schema_dict)
+,
                 },
                 {"role": "user", "content": user_query},
             ],
             max_tokens=int(settings.get("max_tokens", 1000))  # default=1000
         )
+
+        # print("Schema dictionary:\n", json.dumps(schema_dict, indent=2))  # Debugging: print the tables in the metadataY
 
         return {"response": response.choices[0].message}
     except Exception as e:
@@ -238,12 +244,27 @@ def create_csv(returned_data):
 # -------------------------------------------------
 # Download CSV
 # -------------------------------------------------
-@app.get("/exportData")  # pragma: no cover
-def export_data():
+@app.get("/exportData")
+def export_data():  # pragma: no cover
     file_name = "query_results.csv"
     #create_csv()
     return FileResponse(file_name, media_type="text/csv", filename="query_results.csv")
 
+# -------------------------------------------------
+# Clean Schema
+#   - Returns a dictionary of table names and their columns using the default sqlalchemy metadata object.
+#   - Used by the GPT model to understand the schema in a natural way that reduces token bloat.
+# -------------------------------------------------
+def get_clean_schema_dict(meta: MetaData) -> dict:
+    if not meta.tables:
+        return {}
+
+    clean_schema = {}
+    for table_name, table_obj in meta.tables.items():
+        column_names = [col.name for col in table_obj.columns]
+        clean_schema[table_name] = column_names
+
+    return clean_schema
 # -------------------------------------------------------
 # Download dataset from remote server and set up database
 # -------------------------------------------------------

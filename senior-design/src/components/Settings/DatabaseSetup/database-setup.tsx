@@ -339,6 +339,14 @@ const DatabaseSetup = () => {
           onChange={handleProfileSelect}
           fullWidth
           variant="outlined"
+            MenuProps={{
+                PaperProps: {
+                  sx: {
+                    bgcolor: "darkgrey",   // grey background
+                    color:  "white",       // white item text
+                  },
+                },
+              }}
           sx={{
             backgroundColor: "darkgray",
             fontFamily: "monospace",
@@ -355,13 +363,34 @@ const DatabaseSetup = () => {
           <MenuItem value="new">Add New Database</MenuItem>
         </StyledSelect>
 
-        {/* Text Field: Profile Name */}
         <HelpTextField
-          label="Profile Name"
-          value={profileName}
-          onChange={(input) => setProfileName(input.target.value)}
-          tooltipText="A unique label for this DB configuration."
-        />
+  label="Profile Name"
+  value={profileName}
+  onChange={(input) => {
+    const value = input.target.value.trim();
+
+    if (value.toLowerCase() === "new") {
+      alert(`“new” is a reserved keyword and cannot be used as a profile name.`);
+
+      // Clear the input field
+      setProfileName("");
+
+      // Delete the 'new' profile from localStorage if it somehow exists
+      const allProfiles = loadAllDatabaseConfigs();
+      if (allProfiles["new"]) {
+        delete allProfiles["new"];
+        localStorage.setItem("db_list", JSON.stringify(allProfiles));
+      }
+
+      return;
+    }
+
+    // If not reserved, allow normal input
+    setProfileName(value);
+  }}
+  
+  tooltipText="A unique label for this DB configuration."
+/>
 
         {/* Remote Toggle */}
         <Box sx={{ marginBottom: "15px", marginTop: "15px" }}>
