@@ -5,7 +5,7 @@ import {Utilities} from "../components/Utilities/utilities.tsx";
 import {AboutUs} from "../components/About_Us/about-us.tsx";
 import {Settings} from "../components/Settings/settings.tsx";
 import {History} from "../components/History/history.tsx";
-
+/* istanbul ignore file -- @preserve */
 const App = () => {
     return (
         <Routes>

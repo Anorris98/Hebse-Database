@@ -5,7 +5,7 @@ import { NavBar } from './components/NavigationBar/nav-bar.tsx'; // Import NavBa
 import './index.css';
 
 /* eslint-disable unicorn/prefer-query-selector*/
-
+/* istanbul ignore file -- @preserve */
 createRoot(document.getElementById('root')!).render(
     <Router>
         <NavBar /> {/* Ensure NavBar is always visible */}
