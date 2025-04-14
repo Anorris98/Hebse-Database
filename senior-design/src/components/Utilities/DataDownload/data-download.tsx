@@ -100,7 +100,8 @@ const DatasetList: React.FC = () => {
         borderRadius: "15px",
         maxWidth: "lg",
         width: "100%",
-        fontFamily: "monospace"
+        fontFamily: "monospace",
+        paddingBottom: "4px"
       }}
     >
       <Box 
@@ -122,7 +123,8 @@ const DatasetList: React.FC = () => {
                   sx={{
                     marginBottom: "16px",
                     display: "flex",
-                    flexDirection: "column"
+                    flexDirection: "column",
+                    paddingX: "20px"
                   }}
                 >
                 {/* Box for each dataset */}
