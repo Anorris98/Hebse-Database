@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {useEffect, useState} from "react";
 import {Box, Button, IconButton, InputAdornment, Paper, Typography} from "@mui/material";
-import {Save, Visibility, VisibilityOff} from "@mui/icons-material";
+import {Save, Settings, Visibility, VisibilityOff} from "@mui/icons-material";
 import {alpha, styled} from "@mui/material/styles";
 import HelpTextField from "../../HelpTextField/help-text-field.tsx";
+import {encrypt, decrypt} from "../../Utilities/utility-functions.ts";
 /* istanbul ignore file -- @preserve */
 // Styled components
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -18,38 +20,45 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 
 const GptSetup = () => {
     const [apiKey, setApiKey] = useState("");
-    const [model, setModel] = useState("gpt-4");
+    const [model, setModel] = useState("gpt-4o");
     const [maxTokens, setMaxTokens] = useState("100");
     const [temperature, setTemperature] = useState("0.7");
     const [showApiKey, setShowApiKey] = useState(false);
 
     useEffect(() => {
         const savedSettings = localStorage.getItem("gpt_settings");
-        if (savedSettings) {
-            try {
-                const parsedSettings = JSON.parse(savedSettings);
-                setApiKey(parsedSettings.apiKey || "");
-                setModel(parsedSettings.model || "gpt-4");
-                setMaxTokens(parsedSettings.max_tokens?.toString() || "100");
-                setTemperature(parsedSettings.temperature?.toString() || "0.7");
-            } catch (error) {
-                console.error("Error loading settings:", error);
-            }
-        }
-    }, []);
-
+        if (!savedSettings) return;
+      
+        //decrypts the settings before using the json.
+        decrypt(savedSettings).then((decrypted) => {
+          try {
+            const parsedSettings = JSON.parse(decrypted);
+            setApiKey(parsedSettings.apiKey || "");
+            setModel(parsedSettings.model || "gpt-4");
+            setMaxTokens(parsedSettings.max_tokens?.toString() || "100");
+            setTemperature(parsedSettings.temperature?.toString() || "0.7");
+          } catch (error) {
+            console.error("Failed to parse decrypted GPT settings:", error);
+          }
+        }).catch((err) => {
+          console.error("Failed to decrypt GPT settings:", err);
+        });
+      }, []);
+      
     const handleSave = () => {
         const settings = {
-            apiKey,
-            model,
-            max_tokens: Number.parseInt(maxTokens, 10),
-            temperature: Number.parseFloat(temperature),
+          apiKey,
+          model,
+          max_tokens: Number.parseInt(maxTokens, 10),
+          temperature: Number.parseFloat(temperature),
         };
-
-        console.log("Saving settings:", settings);
-        localStorage.setItem("gpt_settings", JSON.stringify(settings));
-        alert("Settings saved!");
-    };
+      
+        //encrypts the settings and saves them to localStorage
+        encrypt(JSON.stringify(settings)).then(enc => {
+          localStorage.setItem("gpt_settings", enc);
+          alert("Settings saved!");  
+        });
+      };
 
     const apiKeyInputProperties = {
         endAdornment: (

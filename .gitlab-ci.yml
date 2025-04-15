@@ -24,7 +24,6 @@ deploy-backend:
     - sshpass -p $DECODED_PASSWORD ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null vm-user@SDmay25-20.ece.iastate.edu "docker build -t hadesbackend . && docker container stop hadescontainer || true && docker rm hadescontainer"
     - sshpass -p $DECODED_PASSWORD ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null vm-user@SDmay25-20.ece.iastate.edu "docker run -d --name hadescontainer -p 8000:8000 hadesbackend"
 
-
 eslint:
   stage: frontend
   image: node:latest
@@ -32,7 +31,7 @@ eslint:
     - cd senior-design
     - npm install
   script:
-    - npx eslint .
+    - npx eslint . --fix
 
 frontend-unit-test:
   stage: coverage
@@ -43,4 +42,3 @@ frontend-unit-test:
   script:
     - npx vitest run --coverage
   coverage: '/All files[^|]*|[^|]*\s+([\d\.]+)/'
-

@@ -3,11 +3,16 @@ import { BrowserRouter as Router } from 'react-router-dom'; // Import Router onl
 import App from './app/routes'; // Ensure this matches your actual file path
 import { NavBar } from './components/NavigationBar/nav-bar.tsx'; // Import NavBar
 import './index.css';
-import { enableTunnel } from './components/Settings/DatabaseSetup/utility-functions.ts';
+import { enableTunnel, decrypt } from './components/Utilities/utility-functions.ts'; // Import enableTunnel function
 
 const databaseSettings = localStorage.getItem("db_settings");
 if (databaseSettings) {
-    enableTunnel(JSON.parse(databaseSettings)["isBackendRemote"] || false);
+  try {
+    const decrypted = await decrypt(databaseSettings);
+    enableTunnel(JSON.parse(decrypted)["isBackendRemote"] || false);
+  } catch (err) {
+    console.error("Failed to decrypt db_settings:", err);
+  }
 }
 
 /* eslint-disable unicorn/prefer-query-selector*/

@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import {Box, Checkbox, FormControlLabel, IconButton, InputAdornment, Typography, TextField, Tooltip, Button,} from "@mui/material";
 import {AutoAwesome, CheckSharp, ErrorOutline, InfoOutlined} from "@mui/icons-material";
+import {decrypt} from "../../Utilities/utility-functions.ts";
 
 /* istanbul ignore file -- @preserve */
 const NlpInteractions = () => {
@@ -26,8 +27,8 @@ const NlpInteractions = () => {
           setGptConnected(false);
           return;
         }
-
-        const parsedSettings = JSON.parse(savedSettings);
+        const decrypted = await decrypt(savedSettings);
+        const parsedSettings = JSON.parse(decrypted);
         const payload = {
           query: "Hello GPT, are you there?", // Minimal test query
           settings: parsedSettings,
@@ -70,8 +71,9 @@ const NlpInteractions = () => {
         setResponse("GPT settings not found. Please set up your API key first.");
         return;
       }
-
-      const parsedSettings = JSON.parse(savedSettings);
+      
+      const decrypted = await decrypt(savedSettings);
+      const parsedSettings = JSON.parse(decrypted);
       const payload = {
         query,
         settings: parsedSettings,
