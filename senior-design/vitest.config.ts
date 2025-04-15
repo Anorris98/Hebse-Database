@@ -8,7 +8,13 @@ export default defineConfig({
         globals: true,
         environment: "jsdom",
         coverage: {
-            provider: 'istanbul' // or 'v8'
+            provider: 'istanbul', // or 'v8'
+            thresholds: {
+                lines: 100,
+                functions: 100,
+                branches: 100,
+                statements: 100
+            }
         },
     },
 })
