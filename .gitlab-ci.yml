@@ -1,6 +1,7 @@
 stages:
   - tox
   - lint
+  - coverage
 
 backend:
   stage: tox
@@ -17,4 +18,13 @@ eslint:
     - npm install
   script:
     - npx eslint .
+
+coverage:
+  stage: coverage
+  image: node:latest
+  before_script:
+    - cd senior-design
+    - npm install
+  script:
+    - npx vitest run --coverage
 
