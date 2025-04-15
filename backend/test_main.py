@@ -1,57 +1,135 @@
-import pytest
+from unittest.mock import patch
 from fastapi.testclient import TestClient
-from main import app
+from sqlalchemy import create_engine, text
+from sqlalchemy.pool import StaticPool
+from app import main
+from app.main import app
 
+
+# Create a TestClient instance
 client = TestClient(app)
+#Mock SQLAlchemy engine
+engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False}, poolclass=StaticPool)
+with engine.connect() as connection:
+    connection.execute(text("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT)"))
+    connection.execute(text("INSERT INTO users (id, name) VALUES (1, 'Test')"))
+    connection.execute(text("INSERT INTO users (id, name) VALUES (2, 'Test2')"))
+    connection.commit()
 
-#This updated version configures a live test to the database via the test_Configure Dictionary(hasmap)).
-@pytest.fixture(scope="session", autouse=True)
-def init_engine_once():
-    """
-    Runs only once for all tests. Calls /ConfigureEngine with the 
-    needed config for your test DB environment. This ensures the 
-    engine is actually created in main.py BEFORE other tests run.
-    """
-    # config (adjust to match local/remote DB scenario).
-    # If you're using a tunnel or remote, set "isRemote"=True, etc.
-    test_config = {
-        "sshHost": "SDmay25-20.ece.iastate.edu",
-        "sshPort": 22,
-        "sshUser": "vm-user",
-        "sshKey": "50EgMe$KIE2m",  # Password or private key
-        "isRemote": True,
-        "databaseHost": "SDmay25-20.ece.iastate.edu",
-        "databasePort": "5432",
-        "databaseUsername": "postgres",
-        "databasePassword": "root",
-        "databaseName": "hades"
+@patch('app.main.engine', new=engine)
+def test_get_data_successful_query():
+    # Define a sample request body with a valid query
+    request_body = {
+        "query": "SELECT * FROM users",
+        "history": True
     }
 
-    # POST the config to /ConfigureEngine
-    response = client.post("/ConfigureEngine", json=test_config)
-    assert response.status_code == 200, f"Config failed: {response.json()}"
-    print("Engine configured response:", response.json())
+    response = client.post("/GetData", json=request_body)
 
-    yield 
+    assert response.status_code == 200
+
+    expected_response = [{"id": 1, "name": "Test"}, {"id": 2, "name": "Test2"}]
+    assert response.json()["data"] == expected_response
 
 def test_get_data_invalid_request():
     # Define a request body without the 'query' key
     request_body = {}
+
     response = client.post("/GetData", json=request_body)
+
     assert response.status_code == 400
     assert response.json() == {
         "detail": "Query key is required."
     }
 
+@patch('app.main.engine', new=engine)
 def test_get_data_error_executing_query():
     # Define a sample request body with an invalid query
     request_body = {
         "query": "SELECT * FROM non_existent_table"  # Invalid table name
     }
+
     response = client.post("/GetData", json=request_body)
     assert response.status_code == 500
-
-    # Make sure it’s still returning a psycopg2 error for a missing table:
     error_message = response.json()["detail"].split("\n")[0]
     print(error_message)
-    assert error_message == "(psycopg2.errors.UndefinedTable) relation \"non_existent_table\" does not exist"
+    assert error_message == "(sqlite3.OperationalError) no such table: non_existent_table"
+
+@patch('app.main.engine', new=None)
+def test_get_data_no_engine():
+    request_body = {
+        "query": "SELECT * FROM users"
+    }
+
+    response = client.post("/GetData", json=request_body)
+
+    assert response.status_code == 500
+    assert response.json() == {
+        "detail": "Database engine not initialized."
+    }
+
+def test_ask_gpt_no_query():
+    request_body = {}
+    response = client.post("/ask_gpt", json=request_body)
+    assert response.status_code == 400
+    assert response.json() == {
+        "detail": "Query is required."
+    }
+
+def test_ask_gpt_no_settings():
+    request_body = {
+        "query": "Give me the average radius of the final profile"
+    }
+    response = client.post("/ask_gpt", json=request_body)
+    assert response.status_code == 400
+    assert response.json() == {
+        "detail": "GPT API key is missing."
+    }
+
+@patch('app.main.configure_engine_from_settings')
+def test_configure_engine(mock_configure_engine):
+    mock_configure_engine.return_value = "success"
+    request_body = {}
+    response = client.post("/ConfigureEngine", json=request_body)
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "detail": "Engine configured from settings."
+    }
+
+@patch('app.main.configure_engine_from_settings')
+def test_configure_engine_error(mock_configure_engine):
+    mock_configure_engine.side_effect = Exception("Failed to initialize database")
+    request_body = {}
+    response = client.post("/ConfigureEngine", json=request_body)
+    assert response.status_code == 500
+    assert response.json() == {
+        "detail": "Failed to initialize database"
+    }
+    
+def test_schema_dict():
+    class mock_metadata:
+        def __init__(self, tables):
+            self.tables = tables
+    
+    class mock_table:
+        def __init__(self, columns):
+            self.columns = columns
+            
+    class mock_column:
+        def __init__(self, name):
+            self.name = name
+    
+    expected = {
+        "table1": ["col1", "col2"],
+        "table2": ["col3"]
+    }
+    
+    assert expected == main.get_clean_schema_dict(mock_metadata({"table1": mock_table([mock_column("col1"), mock_column("col2")]), "table2": mock_table([mock_column("col3")])}))
+    
+def test_no_schema_dict():
+    class mock_metadata:
+        def __init__(self, tables):
+            self.tables = tables
+    
+    assert not main.get_clean_schema_dict(mock_metadata(None))

@@ -3,6 +3,12 @@ import { BrowserRouter as Router } from 'react-router-dom'; // Import Router onl
 import App from './app/routes'; // Ensure this matches your actual file path
 import { NavBar } from './components/NavigationBar/nav-bar.tsx'; // Import NavBar
 import './index.css';
+import { enableTunnel } from './components/Settings/DatabaseSetup/utility-functions.ts';
+
+const databaseSettings = localStorage.getItem("db_settings");
+if (databaseSettings) {
+    enableTunnel(JSON.parse(databaseSettings)["isBackendRemote"] || false);
+}
 
 /* eslint-disable unicorn/prefer-query-selector*/
 /* istanbul ignore file -- @preserve */

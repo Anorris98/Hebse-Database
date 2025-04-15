@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev:backend": "cd ../backend && python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000",
-    "dev:frontend": "vite",
+    "dev:backend": "cd ../backend && python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
+    "dev:frontend": "concurrently \"node --experimental-strip-types src/tunnel/tunnel-server.ts\" \"vite\"",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
@@ -19,13 +19,17 @@
     "@mui/icons-material": "^6.1.5",
     "@mui/material": "^6.1.5",
     "@mui/x-data-grid": "^7.27.3",
+    "cors": "^2.8.5",
     "fastapi": "^0.0.8",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.27.0"
+    "react-router-dom": "^6.27.0",
+    "tunnel-ssh": "^5.2.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.1",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",

@@ -73,22 +73,20 @@ export const QueryInput = ({
                 return;
             }
             const parsedDatabaseSettings = JSON.parse(savedDatabaseSettings);
-
+        
             // Empty query check
             if (!inputValue.trim()) {
                 onQueryResult("Query cannot be empty.");
                 return;
             }
-
+        
             if (!databaseConnected) {
                 onQueryResult("Cannot query: database is not connected.");
                 return;
             }
-
-            const data ={ query: inputValue,
-                        db_settings: parsedDatabaseSettings,
-                        };
-
+        
+            const data = { query: inputValue, db_settings: parsedDatabaseSettings };
+        
             try {
                 const response = await fetch(`http://localhost:8000/GetData`, {
                     method: "POST",
@@ -97,20 +95,26 @@ export const QueryInput = ({
                         "Content-Type": "application/json"
                     }
                 });
-
+        
                 if (!response.ok) {
-                    throw new Error(`Server error: ${response.status}`);
+                    // Handle error response from the server
+                    const errorBody = await response.json();
+                    if (errorBody && errorBody.detail) {
+                        onQueryResult(`Error from server: ${errorBody.detail}`);
+                    } else {
+                        onQueryResult(`An unknown error occurred: ${response.status}`);
+                    }
+                    return;
                 }
-
+        
                 const body = await response.json();
-                setInputValue(body.message); // Update input value
                 onQueryResult(body.data || "No result returned.");
-            } 
-            catch (error) {
+            } catch (error) {
                 console.error("Error fetching query result:", error);
                 onQueryResult("An error occurred while fetching the result.");
             }
         }
+        
 
             function saveQuery() {
                 if (inputValue != '') {
@@ -222,6 +226,7 @@ export const QueryInput = ({
                         backgroundColor: "darkgray",
                         fontFamily: "monospace",
                         fontWeight: "bold",
+                        color: "white",
                         flex: 1,
                     }}
                     onClick={getSQLFromNaturalLanguage}
@@ -235,6 +240,7 @@ export const QueryInput = ({
                         backgroundColor: "darkgray",
                         fontFamily: "monospace",
                         fontWeight: "bold",
+                        color: "white",
                         flex: 1,
                     }}
                     onClick={saveQuery}

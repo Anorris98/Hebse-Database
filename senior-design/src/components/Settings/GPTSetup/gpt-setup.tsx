@@ -108,12 +108,13 @@ return (
                         backgroundColor: "darkgray",
                         fontFamily: "monospace",
                         fontWeight: "bold",
+                        color: "white",
                         flex: 1,
                     }}
                     onClick={handleSave}
                     startIcon={<Save />}
                 >
-                    Save API Settings
+                    SAVE API SETTINGS
                 </Button>
             </Box>
         </StyledPaper>

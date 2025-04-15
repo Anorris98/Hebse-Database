@@ -3,19 +3,20 @@ import Downloader from "./DataDownload/data-download.tsx";
 
 export const Utilities = () => {
     return (
-        <div>
+        <Box 
+            sx={{
+                minHeight: "100vh",
+            }}
+        >
             <Box
                 sx={{
-                    maxWidth: "1000px",
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "16px",
+                    paddingTop: "120px",
+                    paddingBottom: "16px",
+                    maxWidth: "lg",
                 }}
             >
-                {/* Posydon Data Selector */}
                 <Downloader />
             </Box>
-        </div>
+        </Box>
     );
 };

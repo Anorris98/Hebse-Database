@@ -1,19 +1,23 @@
+import json
 import traceback
 import csv
 from io import StringIO
-import sshtunnel
-import paramiko
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from sqlalchemy import create_engine, text, MetaData
 from openai import OpenAI
+import sshtunnel
+from paramiko import SSHClient, AutoAddPolicy, RSAKey
+from scp import SCPClient
 
 
+# pylint: disable=too-many-try-statements
 # Engine / SSH tunnel / schema metadata
 engine = None
 tunnel = None
 metadata = MetaData()
+schema_dict = {}
 
 app = FastAPI()
 
@@ -63,8 +67,8 @@ app.add_middleware(
 #      parse and use that as ssh_pkey
 #   2) Otherwise, treat sshKey as a password
 # -------------------------------------------------
-def configure_engine_from_settings(config: dict):
-    global engine, tunnel # pylint: disable=global-statement
+def configure_engine_from_settings(config: dict):  # pragma: no cover
+    global engine, tunnel, schema_dict  # pylint: disable=global-statement
 
     # If we already have a tunnel, stop it before reconfiguring
     if tunnel is not None and tunnel.is_active:
@@ -76,7 +80,8 @@ def configure_engine_from_settings(config: dict):
         ssh_host = config["sshHost"]
         ssh_port = int(config["sshPort"])
         ssh_user = config["sshUser"]
-        # The DB is hosted on remote side, so "databasePort" is the remote DB port
+    
+        # The DB is hosted on remote side, so "atabase" is the remote DB port
         remote_db_port = int(config["databasePort"])
 
         # "sshKey" might be a private key OR a password
@@ -86,7 +91,7 @@ def configure_engine_from_settings(config: dict):
         # treat it as an SSH key. Otherwise, treat as a password.
         if "-----BEGIN" in ssh_key_text:
             # Private key-based SSH
-            pkey = paramiko.RSAKey.from_private_key(StringIO(ssh_key_text))
+            pkey = RSAKey.from_private_key(StringIO(ssh_key_text))
             tunnel_obj = sshtunnel.SSHTunnelForwarder(
                 (ssh_host, ssh_port),
                 ssh_username=ssh_user,
@@ -125,12 +130,15 @@ def configure_engine_from_settings(config: dict):
     # Create engine and reflect schema
     engine = create_engine(db_url)
     metadata.reflect(bind=engine)
+    metadata.reflect(bind=engine)  # no assignment to metadata, so no global needed
+    schema_dict = get_clean_schema_dict(metadata)  # load the data into a dictionary
+    
 
 # -------------------------------------------------
-# Init DB route
+# Init database route
 # -------------------------------------------------
 @app.post("/init_db")
-def init_db(body: dict):
+def init_database(body: dict):  # pragma: no cover
     db_config = body.get("db_settings")
     if not db_config:
         raise HTTPException(status_code=400, detail="Missing db_settings")
@@ -140,7 +148,7 @@ def init_db(body: dict):
         return {"message": "Database engine initialized."}
     except Exception as e:
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"Failed to initialize DB: {e}") from e
+        raise HTTPException(status_code=500, detail=f"Failed to initialize database: {e}") from e
 
 # -------------------------------------------------
 # Run a query
@@ -148,6 +156,7 @@ def init_db(body: dict):
 @app.post("/GetData")
 def get_data(body: dict):
     raw_query = body.get("query")
+    history = body.get("history", False)
     if not raw_query:
         raise HTTPException(status_code=400, detail="Query key is required.")
     if engine is None:
@@ -157,6 +166,12 @@ def get_data(body: dict):
         with engine.connect() as connection:
             result = connection.execute(text(raw_query))
             rows = [row._mapping for row in result]
+
+            if(not history):  # pragma: no cover
+                log_query = text("INSERT INTO history.completed_queries (query_sql) VALUES (:query)")
+                connection.execute(log_query, {"query": raw_query})
+                connection.commit()
+
             create_csv(rows)
             return {"message": "Query executed successfully.", "data": rows}
     except Exception as e:
@@ -167,7 +182,8 @@ def get_data(body: dict):
 # Ask GPT
 # -------------------------------------------------
 @app.post("/ask_gpt")
-def ask_gpt(request: dict):
+def ask_gpt(request: dict):  # pragma: no cover
+    
     user_query = request.get("query")
     settings = request.get("settings")
 
@@ -184,21 +200,20 @@ def ask_gpt(request: dict):
             messages=[
                 {
                     "role": "system",
-                    "content": (
-                        "You are an NLP assistant that helps users generate queries "
-                        "for a PostgreSQL database. If a user requests a query, you "
-                        "should respond with the query and the query alone. Do not "
-                        "add any additional formatting or text. Always put quotation "
-                        "marks around column names. If there is no query that both "
-                        "fits the schema and follows the request, inform the user "
-                        "and do not send a query. Make sure each column has a unique "
-                        f"name to be returned. The schema is as follows: {metadata.tables}"
-                    ),
+                    "content": ("You are an AI assistant for generating PostgreSQL queries from natural language. You have a database schema below. "
+                                "Rules: "
+                                "1) Output ONLY the SQL query on the first line (no code fences). "
+                                "2) Use \"table\".\"column\" for references, never \"table.column\". "
+                                "3) Only use the columns in the schema. Never make up columns. "
+                                "The json of the schema is as follows: ") + json.dumps(schema_dict)
+,
                 },
                 {"role": "user", "content": user_query},
             ],
             max_tokens=int(settings.get("max_tokens", 1000))  # default=1000
         )
+
+        # print("Schema dictionary:\n", json.dumps(schema_dict, indent=2))  # Debugging: print the tables in the metadataY
 
         return {"response": response.choices[0].message}
     except Exception as e:
@@ -230,6 +245,79 @@ def create_csv(returned_data):
 # Download CSV
 # -------------------------------------------------
 @app.get("/exportData")
-def exportData():
+def export_data():  # pragma: no cover
     file_name = "query_results.csv"
+    #create_csv()
     return FileResponse(file_name, media_type="text/csv", filename="query_results.csv")
+
+# -------------------------------------------------
+# Clean Schema
+#   - Returns a dictionary of table names and their columns using the default sqlalchemy metadata object.
+#   - Used by the GPT model to understand the schema in a natural way that reduces token bloat.
+# -------------------------------------------------
+def get_clean_schema_dict(meta: MetaData) -> dict:
+    if not meta.tables:
+        return {}
+
+    clean_schema = {}
+    for table_name, table_obj in meta.tables.items():
+        column_names = [col.name for col in table_obj.columns]
+        clean_schema[table_name] = column_names
+
+    return clean_schema
+# -------------------------------------------------------
+# Download dataset from remote server and set up database
+# -------------------------------------------------------
+@app.put("/PutDatabase")
+def setup_database(body: dict):  # pragma: no cover
+    remote_file_path = body.get("filePath")
+    local_file_name = body.get("fileName")
+    db_settings = body.get("databaseSettings")
+    print(f"Remote file path: {remote_file_path}")
+    print(f"Local file name: {local_file_name}")
+
+    try:
+        ssh_client = SSHClient()
+        ssh_client.set_missing_host_key_policy(AutoAddPolicy())
+        ssh_client.connect(
+            hostname=db_settings["sshHost"],
+            username=db_settings["sshUser"],
+            password=db_settings["sshKey"],
+        )
+
+        print("Downloading dataset...")
+        stdin, stdout, sterr = ssh_client.exec_command(f"curl {remote_file_path} --output {local_file_name}", get_pty=True)  # pylint: disable=unused-variable
+        sterr.read()
+
+        with SCPClient(ssh_client.get_transport()) as scp:
+            scp.put("database/requirements.txt", "requirements.txt")
+            scp.put("database/hades_uploader.py", "hades_uploader.py")
+
+        print("Installing requirements...")
+        stdin, stdout, sterr = ssh_client.exec_command("pip install -r requirements.txt", get_pty=True)  # pylint: disable=unused-variable
+        sterr.read()
+
+        print("Creating database...")
+        stdin, stdout, sterr = ssh_client.exec_command(f"python3 hades_uploader.py {local_file_name} \"{db_settings['sshUser']}\" \"{db_settings['databaseName']}\"", get_pty=True)  # pylint: disable=unused-variable
+        sterr.read()
+
+        return {"message": f"File downloaded successfully as {local_file_name}"}
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e)) from e
+    finally:
+        ssh_client.close()
+
+@app.get("/getHistory")
+def get_history(): # pragma: no cover
+    try:
+        with engine.connect() as connection:
+            query = text(
+                'SELECT * FROM "history"."completed_queries" ORDER BY time DESC LIMIT 20'
+            )
+            result = connection.execute(query)
+            queries = [row._mapping for row in result]
+
+            return {"recent_queries": queries}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Failed to fetch recent queries") from e

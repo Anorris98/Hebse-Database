@@ -23,7 +23,7 @@ const StyledPaginator = styled(TablePagination)(() => ({
 
 export const PageSelect = ({ setPageNumber, pageNumber, rows, rowsPerPage, setRowsPerPage }: { setPageNumber: (value: (((previousState: number) => number) | number)) => void, pageNumber: number, rows: number, rowsPerPage: number, setRowsPerPage: (value: (((previousState: number) => number) | number)) => void}) => {
   const handleChangePage = (
-      _: React.MouseEvent<HTMLButtonElement> | null,
+      _: React.PointerEvent<HTMLButtonElement> | null,
       newPage: number,
     ) => {
       setPageNumber(newPage);
