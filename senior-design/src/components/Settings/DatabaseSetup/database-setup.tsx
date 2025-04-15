@@ -16,7 +16,7 @@ import {
 import { alpha, styled } from "@mui/material/styles";
 import { DeleteForever, Save, Visibility, VisibilityOff } from "@mui/icons-material";
 import HelpTextField from "../../HelpTextField/help-text-field.tsx";
-import { enableTunnel } from "./utility-functions.ts";
+import { enableTunnel, encrypt, decrypt } from "../../Utilities/utility-functions.ts";
 /* istanbul ignore file -- @preserve */
 type DatabaseConfig = {
   databaseHost: string;
@@ -69,14 +69,16 @@ const StyledSelect = styled(Select)(({ theme }) => ({
 // --------------------------------------------------
 // Helper: Load all DB configs from localStorage
 // --------------------------------------------------
-const loadAllDatabaseConfigs = (): Record<string, DatabaseConfig> => {
+const loadAllDatabaseConfigs = async (): Promise<Record<string, DatabaseConfig>> => {
   const stored = localStorage.getItem("db_list");
   if (stored) {
     try {
-      const parsed = JSON.parse(stored);
+      const plain  = await decrypt(stored);
+      const parsed = JSON.parse(plain);
       // If it's not an object (e.g., an old array), reset
       return typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
-    } catch (error) {
+    } 
+    catch (error) {
       console.error("Error parsing db_list:", error);
     }
   }
@@ -117,19 +119,24 @@ const DatabaseSetup = () => {
   // Load profiles on mount + last-used config
   // --------------------------------------------------
   useEffect(() => {
-    const allProfiles = loadAllDatabaseConfigs();
-    setProfileNames(Object.keys(allProfiles));
-
-    const lastLoaded = localStorage.getItem("db_settings");
-    if (lastLoaded) {
+    (async () => {                            
+      const allProfiles = await loadAllDatabaseConfigs();   // await
+      setProfileNames(Object.keys(allProfiles));
+    })();
+  
+    (async () => {                                       
+      const enc = localStorage.getItem("db_settings");
+      if (!enc) return;
+  
       try {
-        const parsed = JSON.parse(lastLoaded);
-
+        const plain  = await decrypt(enc);               // decrypt first
+        const parsed = JSON.parse(plain);                // then parse
+  
         // The key that was last used
         const lastProfileKey = parsed.profileName || "";
         setSelectedProfileKey(lastProfileKey);
         setProfileName(lastProfileKey);
-
+  
         // Fill in DB fields
         setDatabaseHost(parsed.databaseHost || "");
         setDatabasePort(parsed.databasePort || "5432");
@@ -138,22 +145,22 @@ const DatabaseSetup = () => {
         setDatabaseName(parsed.databaseName || "");
         setIsRemote(!!parsed.isRemote);
         setIsBackendRemote(!!parsed.isBackendRemote);
-
+  
         // Fill in SSH if remote
         setSshHost(parsed.sshHost || "");
         setSshPort(parsed.sshPort || "22");
         setSshUser(parsed.sshUser || "");
         setSshKey(parsed.sshKey || "");
       } catch (error) {
-        console.error("Error loading last-used settings:", error);
+        console.error("Error loading last‑used settings:", error);
       }
-    }
+    })();
   }, []);
 
   // --------------------------------------------------
   // When user picks an existing profile from the dropdown
   // --------------------------------------------------
-  const handleProfileSelect = (event: SelectChangeEvent<unknown>) => {
+  const handleProfileSelect = async (event: SelectChangeEvent<unknown>) => {
     const chosenKey = event.target.value as string;
     setSelectedProfileKey(chosenKey);
 
@@ -174,7 +181,7 @@ const DatabaseSetup = () => {
       return;
     }
 
-    const allProfiles = loadAllDatabaseConfigs();
+    const allProfiles = await loadAllDatabaseConfigs();
     const cfg = allProfiles[chosenKey];
     if (cfg) {
       // Put the chosenKey in the Profile Name text field so the user can rename if they want
@@ -198,7 +205,7 @@ const DatabaseSetup = () => {
   // --------------------------------------------------
   // Save the current config
   // --------------------------------------------------
-  const handleSave = () => {
+  const handleSave = async () => {
     // 1) Must have a profileName
     if (!profileName.trim()) {
       alert("Please enter a Profile Name before saving.");
@@ -211,7 +218,7 @@ const DatabaseSetup = () => {
     }
 
     // Load + update localStorage
-    const allProfiles = loadAllDatabaseConfigs();
+    const allProfiles = await loadAllDatabaseConfigs(); //await the promise, happens at every function call to loadAllDatabaseConfigs to allow encrypting an decrypting.
 
     // Overwrite/create the profile
     allProfiles[profileName] = {
@@ -228,53 +235,55 @@ const DatabaseSetup = () => {
       sshKey,
     };
 
-    localStorage.setItem("db_list", JSON.stringify(allProfiles));
+    const encryptedDatabaseList = await encrypt(JSON.stringify(allProfiles));
+    localStorage.setItem("db_list", encryptedDatabaseList);
 
     // Also store this as last-used in db_settings
-    localStorage.setItem(
-      "db_settings",
-      JSON.stringify({
-        profileName,
-        databaseHost,
-        databasePort,
-        databaseUsername,
-        databasePassword,
-        databaseName,
-        isRemote,
-        isBackendRemote,
-        sshHost,
-        sshPort,
-        sshUser,
-        sshKey,
-      })
-    );
+    const plainText = JSON.stringify({
+      profileName,
+      databaseHost,
+      databasePort,
+      databaseUsername,
+      databasePassword,
+      databaseName,
+      isRemote,
+      isBackendRemote,
+      sshHost,
+      sshPort,
+      sshUser,
+      sshKey,
+    });
 
+    const encrypted = await encrypt(plainText);           // encrypt
+    localStorage.setItem("db_settings", encrypted);       // store ciphertext
     enableTunnel(isBackendRemote)
+    
     // Refresh
     setProfileNames(Object.keys(allProfiles));
     setSelectedProfileKey(profileName);
-
     alert("Database settings saved!");
   };
 
   // --------------------------------------------------
   // Remove current profile
   // --------------------------------------------------
-  const handleRemove = () => {
+  const handleRemove = async() => {
     if (!selectedProfileKey || selectedProfileKey === "new") {
       return;
     }
-    const allProfiles = loadAllDatabaseConfigs();
+    const allProfiles = await loadAllDatabaseConfigs();
 
     // Remove it
     delete allProfiles[selectedProfileKey];
-    localStorage.setItem("db_list", JSON.stringify(allProfiles));
+    const encList = await encrypt(JSON.stringify(allProfiles));
+    localStorage.setItem("db_list", encList);
 
     // If that was lastUsed, clear
     const lastUsed = localStorage.getItem("db_settings");
     if (lastUsed) {
       try {
-        const parsed = JSON.parse(lastUsed);
+        const decrypted = await decrypt(lastUsed);
+        const parsed = JSON.parse(decrypted);
         if (parsed.profileName === selectedProfileKey) {
           localStorage.removeItem("db_settings");
         }
@@ -366,7 +375,7 @@ const DatabaseSetup = () => {
         <HelpTextField
   label="Profile Name"
   value={profileName}
-  onChange={(input) => {
+  onChange={async (input) => {              //handler must be async for encryption and decryption to work properly.
     const value = input.target.value.trim();
 
     if (value.toLowerCase() === "new") {
@@ -376,10 +385,12 @@ const DatabaseSetup = () => {
       setProfileName("");
 
       // Delete the 'new' profile from localStorage if it somehow exists
-      const allProfiles = loadAllDatabaseConfigs();
+      
+      const allProfiles = await loadAllDatabaseConfigs();
       if (allProfiles["new"]) {
         delete allProfiles["new"];
-        localStorage.setItem("db_list", JSON.stringify(allProfiles));
+        const encList = await encrypt(JSON.stringify(allProfiles)); 
+        localStorage.setItem("db_list", encList);
       }
 
       return;

@@ -4,6 +4,7 @@ import {Save, Search, AutoAwesome,} from "@mui/icons-material";
 import {useEffect, useState} from 'react';
 import { CheckSharp, ErrorOutline } from '@mui/icons-material';
 import { FormControlLabel, Checkbox } from '@mui/material';
+import { decrypt } from "../../Utilities/utility-functions";
 /* istanbul ignore file -- @preserve */
 
 interface QueryInputProperties {
@@ -41,8 +42,9 @@ export const QueryInput = ({
                 setdatabaseConnected(false);
                 return;
             }
-
-            const parsed = JSON.parse(savedSettings);
+            const decrypted = await decrypt(savedSettings);
+            const parsed = JSON.parse(decrypted);
+            
             // If you do NOT have "/init_db" on your backend, 
             // this will fail with 404. Make sure the route exists 
             // or skip this call. 
@@ -72,7 +74,8 @@ export const QueryInput = ({
                 onQueryResult("Database settings not found.");
                 return;
             }
-            const parsedDatabaseSettings = JSON.parse(savedDatabaseSettings);
+            const decrypted = await decrypt(savedDatabaseSettings);
+            const parsedDatabaseSettings = JSON.parse(decrypted);
         
             // Empty query check
             if (!inputValue.trim()) {
