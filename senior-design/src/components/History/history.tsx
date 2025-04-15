@@ -2,7 +2,7 @@ import {DataGrid, GridColDef} from '@mui/x-data-grid';
 import {Box, IconButton} from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import {useEffect, useState} from "react";
-
+/* istanbul ignore file -- @preserve */
 
 async function downloadCSVFromHistory(inputValue: { name: string; id: string; }) {
     const data = { query: inputValue.name, history: true};

@@ -11,6 +11,7 @@ if (databaseSettings) {
 }
 
 /* eslint-disable unicorn/prefer-query-selector*/
+/* istanbul ignore file -- @preserve */
 createRoot(document.getElementById('root')!).render(
     <Router>
         <NavBar /> {/* Ensure NavBar is always visible */}

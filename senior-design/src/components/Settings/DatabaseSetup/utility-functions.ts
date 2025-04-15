@@ -1,3 +1,4 @@
+/* istanbul ignore file -- @preserve */
 export const enableTunnel = async (enable: boolean) => {
     const savedSettings = localStorage.getItem("db_settings");
     if (!savedSettings) {

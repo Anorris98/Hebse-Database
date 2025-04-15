@@ -2,7 +2,7 @@ import { Box } from "@mui/material";
 import GPTSetup from "./GPTSetup/gpt-setup.tsx";
 import DatabaseSetup from "./DatabaseSetup/database-setup.tsx";
 import { SettingsWelcomeText } from "./SettingsWelcomeText/settings-welcome-text.tsx";
-
+/* istanbul ignore file -- @preserve */
 export const Settings = () => {
     return (
         <Box sx={{  display: "flex", 

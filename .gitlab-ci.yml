@@ -1,6 +1,7 @@
 stages:
   - backend
   - frontend
+  - coverage
 
 tox:
   stage: backend
@@ -32,3 +33,14 @@ eslint:
     - npm install
   script:
     - npx eslint .
+
+frontend-unit-test:
+  stage: coverage
+  image: node:latest
+  before_script:
+    - cd senior-design
+    - npm install
+  script:
+    - npx vitest run --coverage
+  coverage: '/All files[^|]*|[^|]*\s+([\d\.]+)/'
+

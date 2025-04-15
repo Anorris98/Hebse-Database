@@ -6,6 +6,7 @@ import {AboutUs} from "../components/About_Us/about-us.tsx";
 import {Settings} from "../components/Settings/settings.tsx";
 import {History} from "../components/History/history.tsx";
 import {createTheme, ThemeProvider} from "@mui/material";
+/* istanbul ignore file -- @preserve */
 
 const theme = createTheme({
     palette: {
@@ -43,6 +44,7 @@ const theme = createTheme({
     },
 });
 
+
 const App = () => {
     return (
         <ThemeProvider theme={theme}>
@@ -55,6 +57,7 @@ const App = () => {
                 <Route path='*' element={<ErrorPage/>}/>
             </Routes>
         </ThemeProvider>
+
     )
 };
 

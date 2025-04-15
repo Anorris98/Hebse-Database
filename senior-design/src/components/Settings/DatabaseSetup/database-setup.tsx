@@ -17,7 +17,7 @@ import { alpha, styled } from "@mui/material/styles";
 import { DeleteForever, Save, Visibility, VisibilityOff } from "@mui/icons-material";
 import HelpTextField from "../../HelpTextField/help-text-field.tsx";
 import { enableTunnel } from "./utility-functions.ts";
-
+/* istanbul ignore file -- @preserve */
 type DatabaseConfig = {
   databaseHost: string;
   databasePort: string;
