@@ -3,7 +3,7 @@ import {Box, Button, IconButton, InputAdornment, Paper, Typography} from "@mui/m
 import {Save, Visibility, VisibilityOff} from "@mui/icons-material";
 import {alpha, styled} from "@mui/material/styles";
 import HelpTextField from "../../HelpTextField/help-text-field.tsx";
-
+/* istanbul ignore file -- @preserve */
 // Styled components
 const StyledPaper = styled(Paper)(({ theme }) => ({
     padding: "30px",

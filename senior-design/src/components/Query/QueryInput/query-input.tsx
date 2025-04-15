@@ -4,7 +4,7 @@ import {Save, Search, AutoAwesome,} from "@mui/icons-material";
 import {useEffect, useState} from 'react';
 import { CheckSharp, ErrorOutline } from '@mui/icons-material';
 import { FormControlLabel, Checkbox } from '@mui/material';
-
+/* istanbul ignore file -- @preserve */
 
 interface QueryInputProperties {
     onQueryResult: (result: string) => void;

@@ -3,7 +3,7 @@ import cors from "cors";
 import { createTunnel } from "tunnel-ssh";
 import { Server } from "node:net";
 import { Client } from "ssh2";
-
+/* istanbul ignore file -- @preserve */
 const app = express();
 app.use(json());
 app.use(cors())

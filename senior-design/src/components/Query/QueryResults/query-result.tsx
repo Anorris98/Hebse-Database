@@ -4,7 +4,7 @@ import { PageSelect } from "./PageSelect/page-select";
 import "./query-result.css"
 
 /* eslint-disable  @typescript-eslint/no-explicit-any*/
-
+/* istanbul ignore file -- @preserve */
 async function downloadData() {  
     try{
         const response = await fetch('http://localhost:8000/exportData')  

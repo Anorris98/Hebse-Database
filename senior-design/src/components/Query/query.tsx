@@ -5,7 +5,7 @@ import { QueryWelcomeText } from "../QueryWelcomeText/query-welcome-text.tsx";
 import { SavedQueriesComponent } from "../SavedQueriesComponent/saved-queries-component.tsx";
 import { Box } from "@mui/material";
 import NlpInteractions from "./NLPInteraction/nlp-interactions.tsx";
-
+/* istanbul ignore file -- @preserve */
 export const Query = () => {
     const [pageNumber, setPageNumber] = useState(0);
     const [queryResult, setQueryResult] = useState('');

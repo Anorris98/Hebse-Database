@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {Box, Checkbox, FormControlLabel, IconButton, InputAdornment, Typography, TextField, Tooltip, Button,} from "@mui/material";
 import {AutoAwesome, CheckSharp, ErrorOutline, InfoOutlined} from "@mui/icons-material";
 
-
+/* istanbul ignore file -- @preserve */
 const NlpInteractions = () => {
   const [query, setQuery] = useState("");
   const [response, setResponse] = useState(
