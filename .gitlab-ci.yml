@@ -19,7 +19,7 @@ eslint:
   script:
     - npx eslint .
 
-coverage:
+frontend-unit-test:
   stage: coverage
   image: node:latest
   before_script:
@@ -27,4 +27,5 @@ coverage:
     - npm install
   script:
     - npx vitest run --coverage
+  coverage: '/All files[^|]*|[^|]*\s+([\d\.]+)/'
 
