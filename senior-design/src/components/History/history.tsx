@@ -2,7 +2,6 @@ import {DataGrid, GridColDef} from '@mui/x-data-grid';
 import {Box, IconButton} from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import {useEffect, useState} from "react";
-/* istanbul ignore file -- @preserve */
 
 async function downloadCSVFromHistory(inputValue: { name: string; id: string; }) {
     const data = { query: inputValue.name, history: true};
@@ -66,7 +65,7 @@ export const History = () => {
             })
             .then((data) => {
                 const rows = data.recent_queries.map((query: { id: string; query_sql: string; time: string | number | Date; }) => ({
-                    id: query.id, // Generate a unique ID
+                    id: query.id,
                     name: query.query_sql,
                     datetime: new Date(query.time).toLocaleString(),
                 }));
