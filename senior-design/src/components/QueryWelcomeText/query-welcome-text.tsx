@@ -14,7 +14,7 @@ export const QueryWelcomeText = () => {
               textAlign: "center",
           }}
       >
-          <Box sx={{fontSize: '20px', fontWeight: 'bold'}}>
+          <Box sx={{fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', textAlign: 'center',}}>
               How can I help?
           </Box>
           <Box sx={{fontSize: '16px'}}>

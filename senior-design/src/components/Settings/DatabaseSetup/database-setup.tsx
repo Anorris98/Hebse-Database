@@ -333,10 +333,7 @@ const DatabaseSetup = () => {
         <Typography
           variant="h4"
           sx={{
-            marginBottom: "20px",
-            textAlign: "center",
-            fontFamily: "monospace",
-            color: "white",
+            fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', textAlign: 'center', marginBottom: "20px"
           }}
         >
           Database Connection Setup

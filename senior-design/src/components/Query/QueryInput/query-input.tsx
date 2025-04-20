@@ -142,7 +142,7 @@ export const QueryInput = ({
                 height: '100%',
             }}
         >
-            <Typography variant="h5" sx={{ marginBottom: "5px", fontFamily: "monospace" }}>
+            <Typography variant="h5" sx={{ fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', }}>
                 SQL Query Input
             </Typography>
             <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>

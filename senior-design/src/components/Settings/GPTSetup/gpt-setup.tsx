@@ -74,7 +74,7 @@ const GptSetup = () => {
 return (
     <Box sx={{ width: "100%" }}>
         <StyledPaper elevation={6}>
-            <Typography variant="h4" sx={{ marginBottom: "20px", textAlign: "center", fontFamily: "monospace" , color: "white"  }}>
+            <Typography variant="h4" sx={{ fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', textAlign: 'center', marginBottom: "20px"}}>
                 GPT API Settings
             </Typography>
 

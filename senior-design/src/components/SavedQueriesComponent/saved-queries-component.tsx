@@ -36,7 +36,7 @@ export const SavedQueriesComponent = ({savedQueries, setSavedQueries, setInputVa
                 textAlign: "center",
             }}
         >
-            <Box sx={{fontSize: '20px', fontWeight: 'bold', backgroundColor: 'gray'}}>
+            <Box sx={{fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', backgroundColor: 'gray'}}>
                 Saved Queries <IconButton sx={{maxHeight: "10px", width: "30px"}}
                                           onClick={() => setDisplaySavedQueries(!displaySavedQueries)} children={<ArrowDropDownCircleRounded sx={{color:"white"}}/>}/>
             </Box>

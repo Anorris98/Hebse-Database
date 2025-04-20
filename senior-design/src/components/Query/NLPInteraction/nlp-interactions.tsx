@@ -116,7 +116,7 @@ const NlpInteractions = () => {
     >
 
       <Box sx={{ display: "flex", alignItems: "center", mb: 2, marginBottom: "15px", }}>
-        <Typography variant="h5" sx={{ fontFamily: "monospace" }}>
+        <Typography variant="h5" sx={{ fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', }}>
           Query Assistance
         </Typography>
         <Tooltip title={"Use this field to talk to GPT about query formatting or get general schema help."} arrow>
