@@ -20,16 +20,14 @@ export const SettingsWelcomeText = () => {
     color: "white",
   }}
 >
-  {/* Main title: centered */}
-  <Box
-    sx={{
-      fontSize: "20px",
-      fontWeight: "bold",
-      textAlign: "center",
-    }}
-  >
-    Configure Your Settings
-  </Box>
+      {/* Main title: centered */}
+      <Box
+        sx={{
+          fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', textAlign: 'center'
+        }}
+      >
+        Configure Your Settings
+      </Box>
 
   {/* Intro copy: left‑aligned by default */}
   <Box sx={{ fontSize: "16px" }}>

@@ -106,11 +106,7 @@ const DatasetList: React.FC = () => {
     >
       <Box 
         sx={{ 
-          fontSize: "30px",
-          marginBottom: "20px", 
-          textAlign: "center", 
-          fontFamily: "monospace" , 
-          color: "white",
+          fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', padding: '20px', textAlign: 'center'
         }}>
           Posydon Datasets Available
       </Box>

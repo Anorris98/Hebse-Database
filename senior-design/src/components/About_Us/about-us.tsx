@@ -29,7 +29,7 @@ export const AboutUs = () => {
                         justifyContent: "flex-start",
                     }}
                 >
-                    <Box sx={{ fontSize: '20px', fontWeight: 'bold' }}>
+                    <Box sx={{ fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', marginBottom: '20px', textAlign: 'center' }}>
                         About Us
                     </Box>
                     <Box sx={{ fontSize: '16px' }}>
