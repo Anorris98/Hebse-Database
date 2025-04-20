@@ -16,7 +16,7 @@ export const Query = () => {
     return (
         <Box sx={{ display: "flex", justifyContent: "center", padding: "20px" }}>
             <Box sx={{ 
-                maxWidth: "1200px", 
+                maxWidth: "1100px", 
                 width: "100%", 
                 display: "flex", 
                 flexDirection: "column", 
