@@ -87,30 +87,45 @@ export const History = () => {
     const paginationModel = { page: 0, pageSize: 8 };
 
     return (
-        <Box sx={{
-            backgroundColor: "gray",
-            borderRadius: "15px",
-            width: "1100px",
-            fontFamily: "monospace",
-            padding: "20px",
-            marginTop:"100px",
-            justifyContent: "center",
-            display: "flex",
-            flexDirection: "column",
-            height: "500px",
-        }}>
-            <Box sx={{fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', marginBottom: '20px', textAlign: 'center'}}>
-                Query History
+        <Box
+            sx={{
+                minHeight: "100vh",
+            }}
+        >
+            <Box
+                sx={{
+                    paddingTop: "120px",
+                    paddingBottom: "16px",
+                    width: "1100px",
+                }}
+            >
+                <Box sx={{
+                    backgroundColor: "gray",
+                    borderRadius: "15px",
+                    width: "1070px",
+                    fontFamily: "monospace",
+                    padding: "20px",
+                    justifyContent: "flex-start",
+                    display: "flex",
+                    flexDirection: "column",
+                    height: "500px",
+                }}>
+                    <Box sx={{ fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', marginBottom: '20px', textAlign: 'center' }}>
+                        Query History
+                    </Box>
+                    <DataGrid
+                        rows={queries}
+                        columns={columns}
+                        initialState={{ pagination: { paginationModel } }}
+                        sx={{
+                            border: 2, fontFamily: 'monospace', borderColor: 'white', color: 'white', '& .header': {
+                                backgroundColor: 'darkgray',
+                                fontWeight: 'bold',
+                            }
+                        }}
+                    />
+                </Box>
             </Box>
-            <DataGrid
-                rows={queries}
-                columns={columns}
-                initialState={{ pagination: { paginationModel } }}
-                sx={{ border: 2, fontFamily:'monospace', borderColor:'white', color:'white', '& .header': {
-                        backgroundColor: 'darkgray',
-                        fontWeight: 'bold',
-                    }}}
-            />
         </Box>
     )
 }
