@@ -5,7 +5,7 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import DownloadIcon from "@mui/icons-material/Download";
 import UploadFile from "@mui/icons-material/UploadFile";
 import {useEffect, useState} from 'react';
-import {alpha, styled} from "@mui/material/styles";
+import {styled} from "@mui/material/styles";
 /* istanbul ignore file -- @preserve */
 // Styled components
 const StyledPaper = styled(Paper)(({ theme }) => ({
