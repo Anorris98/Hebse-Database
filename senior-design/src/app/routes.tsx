@@ -69,7 +69,6 @@ const App = () => {
                 <Route path='/History' element={<History/>}/>
                 <Route path='/Utilities' element={<Utilities/>}/>
                 <Route path='/About_Us' element={<AboutUs/>}/>
-                <Route path='/User_Manual' element={<UserManual/>}/>
                 <Route path='*' element={<ErrorPage/>}/>
             </Routes>
         </ThemeProvider>

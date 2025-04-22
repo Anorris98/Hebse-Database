@@ -511,7 +511,7 @@ const DatabaseSetup = () => {
               tooltipText="Your SSH username on the remote host."
             />
             <HelpTextField
-              label="SSH Password"
+              label="SSH Private Key (or Password)"
               type={showPassword ? "text" : "password"}
               value={sshKey}
               onChange={(input) => setSshKey(input.target.value)}
