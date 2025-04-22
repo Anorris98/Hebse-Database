@@ -23,7 +23,11 @@ const StyledToolbar = styled(Toolbar)(({theme}) => ({
 
 const StyledButton = styled(Button)(() => ({
     marginRight: '8px',
-    backgroundColor: 'darkgray',
+    backgroundColor: "#1f034f",
+    opacity: '100%',
+    backdropFilter: 'blur(24px)',
+    border: '2px solid',
+    borderColor: 'darkgray',
     textTransform: 'none',
     maxHeight: '120%',
     fontFamily: 'monospace'
@@ -72,7 +76,7 @@ export const NavBar = () => {
                     </Box>
                     <Box component='section' sx={{
                         p: 1,
-                        border: '5px inset black',
+                        border: '5px inset #1f034f',
                         fontSize: '20px',
                         fontFamily: 'monospace',
                         fontWeight: 'bold',

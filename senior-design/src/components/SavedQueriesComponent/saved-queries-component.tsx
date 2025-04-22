@@ -60,7 +60,7 @@ export const SavedQueriesComponent = ({savedQueries, setSavedQueries, setInputVa
                     }} key={index}>
                         <IconButton sx={{height: "10px", width: "30px", textAlign: "center"}}
                                     onClick={() => deleteQuery(item)}><Clear
-                            sx={{color: 'white', backgroundColor: "transparent"}}/></IconButton>
+                            sx={{color: 'red', backgroundColor: "transparent"}}/></IconButton>
                         <IconButton sx={{marginLeft: "10px", height: "10px", width: "30px", textAlign: "center"}}
                                     onClick={() => setInputValue(item)}><ContentCopyOutlined
                             sx={{color: 'white', backgroundColor: "transparent"}}/></IconButton>

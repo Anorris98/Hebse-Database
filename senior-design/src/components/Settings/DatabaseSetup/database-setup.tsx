@@ -526,7 +526,7 @@ const DatabaseSetup = () => {
           <Button
             variant="contained"
             sx={{
-              backgroundColor: "darkgray",
+              backgroundColor: "#0b9e26",
               fontFamily: "monospace",
               fontWeight: "bold",
               color: "white",

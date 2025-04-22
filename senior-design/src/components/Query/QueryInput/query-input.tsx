@@ -150,13 +150,13 @@ export const QueryInput = ({
                     control={
                         <Checkbox
                             checked={databaseConnected}
-                            icon={<ErrorOutline />}
+                            icon={<ErrorOutline style={{color: "red"}}/>}
                             checkedIcon={<CheckSharp />}
                             disabled
                             sx={{
                                 color: "white",
                                 "&.Mui-checked": {
-                                    color: "white",
+                                    color: "#0b9e26",
                                 },
                             }}
                         />
@@ -240,7 +240,7 @@ export const QueryInput = ({
                 <Button
                     variant="contained"
                     sx={{
-                        backgroundColor: "darkgray",
+                        backgroundColor: "#0b9e26",
                         fontFamily: "monospace",
                         fontWeight: "bold",
                         color: "white",
