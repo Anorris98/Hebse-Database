@@ -54,7 +54,7 @@ const App = () => {
                 styles={{
                     body: {
                         backgroundImage: `url(${backgroundImage})`,
-                        backgroundRepeat: 'no-repeat',
+                        backgroundRepeat: 'repeat',
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         backgroundAttachment: 'fixed',

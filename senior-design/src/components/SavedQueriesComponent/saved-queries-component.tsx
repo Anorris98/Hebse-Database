@@ -44,7 +44,7 @@ export const SavedQueriesComponent = ({savedQueries, setSavedQueries, setInputVa
                 savedQueries.map((item: string, index: number) => (
                     <Box sx={{
                         borderRadius: "8px",
-                        border: "1px solid transparent",
+                        border: "4px solid transparent",
                         textAlign: 'center',
                         maxWidth: "calc(100% - 24px)",
                         padding: '4px',
@@ -53,7 +53,8 @@ export const SavedQueriesComponent = ({savedQueries, setSavedQueries, setInputVa
                         textTransform: 'none',
                         fontFamily: 'monospace',
                         fontSize: "16px",
-                        color: 'white',
+                        fontWeight: "light",
+                        color: 'black',
                         display: "inline-flex",
                         alignItems: "center",
                         flexDirection: 'row-reverse'
@@ -63,7 +64,7 @@ export const SavedQueriesComponent = ({savedQueries, setSavedQueries, setInputVa
                             sx={{color: 'red', backgroundColor: "transparent"}}/></IconButton>
                         <IconButton sx={{marginLeft: "10px", height: "10px", width: "30px", textAlign: "center"}}
                                     onClick={() => setInputValue(item)}><ContentCopyOutlined
-                            sx={{color: 'white', backgroundColor: "transparent"}}/></IconButton>
+                            sx={{color: '#1779e3', backgroundColor: "transparent"}}/></IconButton>
                         <Box flexGrow={1} component="div" sx={{
                             whiteSpace: 'normal',
                             overflowWrap: 'break-word',
