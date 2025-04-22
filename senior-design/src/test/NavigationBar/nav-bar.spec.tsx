@@ -30,6 +30,7 @@ describe("NavBar Component", () => {
         expect(screen.getByText("Utilities")).toBeVisible();
         expect(screen.getByText("Settings")).toBeVisible();
         expect(screen.getByText("About Us")).toBeVisible();
+        expect(screen.getByText("User Manual")).toBeVisible();
     });
 
     it("renders HADES title", () => {
@@ -89,5 +90,15 @@ describe("NavBar Component", () => {
         );
         fireEvent.click(screen.getByText("About Us"));
         expect(mockNavigate).toHaveBeenCalledExactlyOnceWith("/About_Us")
+    });
+
+    it("navigates to User Manual when clicked", () => {
+        render(
+            <MemoryRouter>
+                <NavBar />
+            </MemoryRouter>
+        );
+        fireEvent.click(screen.getByText("User Manual"));
+        expect(mockNavigate).toHaveBeenCalledExactlyOnceWith("/User_Manual")
     });
 });

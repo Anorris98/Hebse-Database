@@ -5,6 +5,7 @@ import {Utilities} from "../components/Utilities/utilities.tsx";
 import {AboutUs} from "../components/About_Us/about-us.tsx";
 import {Settings} from "../components/Settings/settings.tsx";
 import {History} from "../components/History/history.tsx";
+import {UserManual} from "../components/UserManual/user-manual.tsx";
 import {createTheme, ThemeProvider, CssBaseline, GlobalStyles} from "@mui/material";
 import backgroundImage from '../assets/app_background.jpg';
 /* istanbul ignore file -- @preserve */
@@ -69,6 +70,7 @@ const App = () => {
                 <Route path='/History' element={<History/>}/>
                 <Route path='/Utilities' element={<Utilities/>}/>
                 <Route path='/About_Us' element={<AboutUs/>}/>
+                <Route path='/User_Manual' element={<UserManual/>}/>
                 <Route path='*' element={<ErrorPage/>}/>
             </Routes>
         </ThemeProvider>
