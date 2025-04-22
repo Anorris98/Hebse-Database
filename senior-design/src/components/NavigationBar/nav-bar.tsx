@@ -5,7 +5,8 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import {Build, Info, Search, Settings, Undo} from "@mui/icons-material";
+import {Build, Info, Search, Settings, Undo, } from "@mui/icons-material";
+import BookIcon from '@mui/icons-material/Book';
 
 const StyledToolbar = styled(Toolbar)(({theme}) => ({
     display: 'flex',
@@ -71,6 +72,10 @@ export const NavBar = () => {
                             <StyledButton variant="contained" size="small" startIcon={<Info/>}
                                           onClick={() => navigate("/About_Us")}>
                                 About Us
+                            </StyledButton>
+                            <StyledButton variant="contained" size="small" startIcon={<BookIcon/>}
+                                          onClick={() => navigate("/User_Manual")}>
+                                User Manual
                             </StyledButton>
                         </Box>
                     </Box>
