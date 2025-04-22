@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {useEffect, useState} from "react";
 import {Box, Button, IconButton, InputAdornment, Paper, Typography} from "@mui/material";
-import {Save, Settings, Visibility, VisibilityOff} from "@mui/icons-material";
-import {alpha, styled} from "@mui/material/styles";
+import {Save, Visibility, VisibilityOff} from "@mui/icons-material";
+import {styled} from "@mui/material/styles";
 import HelpTextField from "../../HelpTextField/help-text-field.tsx";
 import {encrypt, decrypt} from "../../Utilities/utility-functions.ts";
 /* istanbul ignore file -- @preserve */

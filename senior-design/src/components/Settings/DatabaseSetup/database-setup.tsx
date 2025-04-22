@@ -13,7 +13,7 @@ import {
   Switch,
   Typography
 } from "@mui/material";
-import { alpha, styled } from "@mui/material/styles";
+import {styled } from "@mui/material/styles";
 import { DeleteForever, Save, Visibility, VisibilityOff } from "@mui/icons-material";
 import HelpTextField from "../../HelpTextField/help-text-field.tsx";
 import { enableTunnel, encrypt, decrypt } from "../../Utilities/utility-functions.ts";
