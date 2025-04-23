@@ -4,11 +4,11 @@ import { UserManualText } from "./UserManualText/user-manual-text.tsx";
 export const UserManual = () => {
     return (
         <Box sx={{
-            maxWidth: "1000px",
+            maxWidth: "1150px",
             width: "100%",
             display: "flex",
             flexDirection: "column",
-            justifyContent: "flex-start",
+            justifyContent: "flex",
             marginTop: "120px",
             marginBottom: "20px",
             gap: "20px"
@@ -18,8 +18,8 @@ export const UserManual = () => {
                 sx={{
                     backgroundColor: "gray",
                     borderRadius: "15px",
-                    maxWidth: "1000px",
-                    width: "1000px",
+                    maxWidth: "1150px",
+                    width: "1150px",
                     fontFamily: "monospace",
                     padding: "10px",
                     textAlign: "center",
@@ -27,7 +27,7 @@ export const UserManual = () => {
                 }}
             >
                 <Box sx={{ fontSize: "22px", fontWeight: "bold" }}>{"Welcome to the Manual"}</Box>
-                <Box sx={{ fontSize: "16px", textAlign: "left" }}>{"Welcome to HADES, the Holistic Astronomical Database Exploration System, the perfect tool for examining POSYDON generated data! This is the user manual. Here you will find informaiton on how to use and setup HADES."}</Box>
+                <Box sx={{ fontSize: "16px", textAlign: "justify" }}>{"Welcome to HADES, the Holistic Astronomical Database Exploration System, the perfect tool for examining POSYDON generated data! This is the user manual. Here you will find informaiton on how to use and setup HADES."}</Box>
             </Box>
             <Box sx={{}}>
                 <UserManualText

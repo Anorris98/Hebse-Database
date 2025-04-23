@@ -25,8 +25,8 @@ export const UserManualText = ({ title, message, sections }: UserManualWelcomeTe
       sx={{
         backgroundColor: "gray",
         borderRadius: "15px",
-        maxWidth: "1000px",
-        width: "1000px",
+        maxWidth: "1150px",
+        width: "1150px",
         fontFamily: "monospace",
         padding: "10px",
         textAlign: "center",
@@ -46,7 +46,7 @@ export const UserManualText = ({ title, message, sections }: UserManualWelcomeTe
         {sections.map((section, index) => (
           <Box key={index} sx={{ marginTop: "20px" }}>
             <Box sx={{ fontSize: "18px", fontWeight: "bold" }}>{section.title}</Box>
-            <Box sx={{ marginTop: "5px", textAlign: "left" }}>
+            <Box sx={{ marginTop: "5px", textAlign: "justify" }}>
               {section.description.split("\n").map((line, index) => (
                 <span key={index}>
                   {line}
