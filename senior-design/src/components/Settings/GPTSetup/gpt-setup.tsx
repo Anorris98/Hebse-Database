@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {useEffect, useState} from "react";
 import {Box, Button, IconButton, InputAdornment, Paper, Typography} from "@mui/material";
 import {Save, Visibility, VisibilityOff} from "@mui/icons-material";
@@ -40,8 +39,8 @@ const GptSetup = () => {
           } catch (error) {
             console.error("Failed to parse decrypted GPT settings:", error);
           }
-        }).catch((err) => {
-          console.error("Failed to decrypt GPT settings:", err);
+        }).catch((error) => {
+          console.error("Failed to decrypt GPT settings:", error);
         });
       }, []);
       

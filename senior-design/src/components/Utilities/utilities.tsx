@@ -12,7 +12,7 @@ export const Utilities = () => {
                 sx={{
                     paddingTop: "120px",
                     paddingBottom: "16px",
-                    width: "1100px",
+                    width: "1150px",
                 }}
             >
                 <Downloader />
