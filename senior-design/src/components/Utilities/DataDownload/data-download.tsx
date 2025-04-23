@@ -5,7 +5,7 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import DownloadIcon from "@mui/icons-material/Download";
 import UploadFile from "@mui/icons-material/UploadFile";
 import {useEffect, useState} from 'react';
-import {alpha, styled} from "@mui/material/styles";
+import {styled} from "@mui/material/styles";
 /* istanbul ignore file -- @preserve */
 // Styled components
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -13,7 +13,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
     borderRadius: "12px",
     backdropFilter: "blur(24px)",
     border: `1px solid ${theme.palette.divider}`,
-    backgroundColor: alpha(theme.palette.background.default, 0.4),
+    backgroundColor: "gray",
     boxShadow: theme.shadows[1],
     color: theme.palette.text.primary,
     fontFamily: "monospace",
@@ -215,13 +215,13 @@ const DatasetList: React.FC = () => {
 
                     <StyledPaper 
                       sx={{ 
-                        backgroundColor: "white",
+                        backgroundColor: "darkgray",
                         mt: 2
                       }}>
                       <Typography
                         component="div"
                         sx={{ 
-                          color: "gray", 
+                          color: "white", 
                           marginBottom: "8px", 
                           fontFamily: "monospace",
                           padding: "12px"

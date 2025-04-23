@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {useEffect, useState} from "react";
 import {Box, Button, IconButton, InputAdornment, Paper, Typography} from "@mui/material";
-import {Save, Settings, Visibility, VisibilityOff} from "@mui/icons-material";
-import {alpha, styled} from "@mui/material/styles";
+import {Save, Visibility, VisibilityOff} from "@mui/icons-material";
+import {styled} from "@mui/material/styles";
 import HelpTextField from "../../HelpTextField/help-text-field.tsx";
 import {encrypt, decrypt} from "../../Utilities/utility-functions.ts";
 /* istanbul ignore file -- @preserve */
@@ -12,7 +11,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
     borderRadius: "12px",
     backdropFilter: "blur(24px)",
     border: `1px solid ${theme.palette.divider}`,
-    backgroundColor: alpha(theme.palette.background.default, 0.4),
+    backgroundColor: "gray",
     boxShadow: theme.shadows[1],
     color: theme.palette.text.primary,
     fontFamily: "monospace",
@@ -40,8 +39,8 @@ const GptSetup = () => {
           } catch (error) {
             console.error("Failed to parse decrypted GPT settings:", error);
           }
-        }).catch((err) => {
-          console.error("Failed to decrypt GPT settings:", err);
+        }).catch((error) => {
+          console.error("Failed to decrypt GPT settings:", error);
         });
       }, []);
       
@@ -114,7 +113,7 @@ return (
                 <Button
                     variant="contained"
                     sx={{
-                        backgroundColor: "darkgray",
+                        backgroundColor: "#0b9e26",
                         fontFamily: "monospace",
                         fontWeight: "bold",
                         color: "white",

@@ -7,9 +7,10 @@ export const Settings = () => {
     return (
         <Box sx={{  display: "flex", 
                     justifyContent: "center", 
-                    padding: "20px" }}>
+                    padding: "20px",
+                    minHeight: "100vh"}}>
             <Box sx={{ 
-                maxWidth: "1100px", 
+                maxWidth: "1150px", 
                 width: "100%", 
                 display: "flex", 
                 flexDirection: "column", 
@@ -21,7 +22,7 @@ export const Settings = () => {
                 </Box>                
             <Box
                 sx={{
-                    maxWidth: "1100px",
+                    maxWidth: "1150px",
                     width: "100%",
                     display: "flex",
                     flexDirection: "column",

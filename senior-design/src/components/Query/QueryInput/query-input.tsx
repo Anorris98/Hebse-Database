@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import {Button, IconButton, TextField, Typography, InputAdornment,} from "@mui/material";
+import {Button, IconButton, TextField, Typography, InputAdornment, Dialog, DialogActions, DialogContent, DialogTitle} from "@mui/material";
 import {Save, Search, AutoAwesome,} from "@mui/icons-material";
 import {useEffect, useState} from 'react';
 import { CheckSharp, ErrorOutline } from '@mui/icons-material';
@@ -9,11 +9,11 @@ import { decrypt } from "../../Utilities/utility-functions";
 
 interface QueryInputProperties {
     onQueryResult: (result: string) => void;
-    savedQueries: string[];
-    setSavedQueries: (value: string[] | ((previousState: string[]) => string[])) => void;
+    savedQueries: Record<string, string>[];
+    setSavedQueries: (value: Record<string, string>[] | ((previousState: Record<string, string>[]) => Record<string, string>[])) => void;
     inputValue: string;
     setInputValue: (value: string | ((previousState: string) => string)) => void;
-    setPageNumber?: (value: number | ((previousState: number) => number)) => void; // Make it optional if not always used
+    setPageNumber?: (value: number | ((previousState: number) => number)) => void;
 }
 
 export const QueryInput = ({
@@ -25,6 +25,8 @@ export const QueryInput = ({
 
         const [databaseConnected, setdatabaseConnected] = useState(false);
         const [checkingConnection, setCheckingConnection] = useState(true);
+        const [isModalOpen, setIsModalOpen] = useState(false);
+        const [queryName, setQueryName] = useState("");
 
         // 1) Load "saved" queries from localStorage
         useEffect(() => {
@@ -119,140 +121,214 @@ export const QueryInput = ({
         }
         
 
-            function saveQuery() {
-                if (inputValue != '') {
-                    localStorage.saved = JSON.stringify([...savedQueries, inputValue]);
-                    setSavedQueries((previousState: string[]) => [...previousState, inputValue]);
-                }
+        function saveQuery() {
+            if (!inputValue.trim()) {
+                alert("Query cannot be empty.");
+                return;
             }
 
-            return (
-                <Box
+            setIsModalOpen(true);
+        }
+
+        function handleSave() {
+            if (!queryName.trim()) {
+                alert("Query name cannot be empty.");
+                return;
+            }
+    
+            const newQuery = { [queryName.trim()]: inputValue };
+            const updatedQueries = [...savedQueries, newQuery];
+            localStorage.setItem("saved", JSON.stringify(updatedQueries));
+            setSavedQueries(updatedQueries);
+            setIsModalOpen(false);
+            setQueryName("");
+        }
+
+        return (
+        <><Box
+        sx={{
+            backgroundColor: 'gray',
+            flexGrow: 1,
+            borderRadius: '15px',
+            fontFamily: 'monospace',
+            padding: '20px',
+            color: 'white',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            height: '100%',
+        }}
+    >
+        <Typography variant="h5" sx={{ fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', }}>
+            SQL Query Input
+        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+            <FormControlLabel
+                control={
+                    <Checkbox
+                        checked={databaseConnected}
+                        icon={<ErrorOutline style={{color: "red"}}/>}
+                        checkedIcon={<CheckSharp />}
+                        disabled
+                        sx={{
+                            color: "white",
+                            "&.Mui-checked": {
+                                color: "#0b9e26",
+                            },
+                        }}
+                    />
+                }
+                label={
+                    checkingConnection
+                        ? "Checking DB connection..."
+                        : (databaseConnected
+                            ? "Database is connected!"
+                            : "Database not connected. Check Settings -> Database.")
+                }
+                sx={{ color: "white", fontFamily: "monospace", '& .MuiFormControlLabel-label': { fontFamily: 'monospace', color: "white" } }}
+            />
+        </Box>
+        <TextField
+            value={inputValue}
+            onChange={(event) => setInputValue(event.target.value)}
+            id="outlined-basic"
+            label="Query"
+            variant="outlined"
+            fullWidth
+            multiline
+            minRows={12} // Match first TextField
+            maxRows={12} // Match first TextField
+            slotProps={{
+                input: {
+                startAdornment: (
+                    <InputAdornment position="start">
+                    <IconButton sx={{ width: 0, height: 0, opacity: 0, padding: 0, margin: 0 }}>
+                        <AutoAwesome />
+                    </IconButton>
+                    </InputAdornment>
+                ),
+                },
+                inputLabel: {
+                    style: { fontFamily: "monospace", color: "white" },
+                },
+            }}
             sx={{
-                backgroundColor: 'gray',
-                flexGrow: 1,
-                borderRadius: '15px',
-                fontFamily: 'monospace',
-                padding: '20px',
-                color: 'white',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-                height: '100%',
+                width: "100%", 
+                backgroundColor: "gray",
+                borderRadius: "15px",
+                marginBottom: "8px",
+                "& .MuiOutlinedInput-root": {
+                padding: "8px", // Match first TextField
+                "& fieldset": { borderColor: "white" },
+                "&:hover fieldset": { borderColor: "White" },
+                "&.Mui-focused fieldset": { borderColor: "white" },
+                },
+                "& .MuiInputBase-input": {
+                color: "white",
+                fontFamily: "monospace",
+                },
+            }}
+            />
+
+        {/* Buttons Below the TextField */}
+        <Box
+            sx={{
+                display: "flex",
+                width: "100%", // Make sure buttons stay inside the parent box
+                gap: "10px",
+                marginTop: "10px",
+                padding: "10px", // Ensure buttons don’t touch the edges
             }}
         >
-            <Typography variant="h5" sx={{ fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', }}>
-                SQL Query Input
-            </Typography>
-            <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={databaseConnected}
-                            icon={<ErrorOutline />}
-                            checkedIcon={<CheckSharp />}
-                            disabled
-                            sx={{
-                                color: "white",
-                                "&.Mui-checked": {
-                                    color: "white",
-                                },
-                            }}
-                        />
-                    }
-                    label={
-                        checkingConnection
-                            ? "Checking DB connection..."
-                            : (databaseConnected
-                                ? "Database is connected!"
-                                : "Database not connected. Check Settings -> Database.")
-                    }
-                    sx={{ color: "white", fontFamily: "monospace", '& .MuiFormControlLabel-label': { fontFamily: 'monospace', color: "white" } }}
-                />
-            </Box>
-            <TextField
-                value={inputValue}
-                onChange={(event) => setInputValue(event.target.value)}
-                id="outlined-basic"
-                label="Query"
-                variant="outlined"
-                fullWidth
-                multiline
-                minRows={12} // Match first TextField
-                maxRows={12} // Match first TextField
-                slotProps={{
-                    input: {
-                    startAdornment: (
-                        <InputAdornment position="start">
-                        <IconButton sx={{ width: 0, height: 0, opacity: 0, padding: 0, margin: 0 }}>
-                            <AutoAwesome />
-                        </IconButton>
-                        </InputAdornment>
-                    ),
-                    },
-                    inputLabel: {
-                        style: { fontFamily: "monospace", color: "white" },
-                    },
-                }}
+            <Button
+                variant="contained"
                 sx={{
-                    width: "100%", 
-                    backgroundColor: "gray",
-                    borderRadius: "5px",
-                    marginBottom: "8px",
+                    backgroundColor: "darkgray",
+                    fontFamily: "monospace",
+                    fontWeight: "bold",
+                    color: "white",
+                    flex: 1,
+                }}
+                onClick={getSQLFromNaturalLanguage}
+                startIcon={<Search />}
+            >
+                SEARCH
+            </Button>
+            <Button
+                variant="contained"
+                sx={{
+                    backgroundColor: "#0b9e26",
+                    fontFamily: "monospace",
+                    fontWeight: "bold",
+                    color: "white",
+                    flex: 1,
+                }}
+                onClick={saveQuery}
+                startIcon={<Save />}
+            >
+                SAVE
+            </Button>
+        </Box>
+    </Box>
+
+    <Dialog open={isModalOpen} onClose={() => {setIsModalOpen(false); setQueryName("");}} sx={{"& .MuiPaper-root": {borderRadius: "15px", boxShadow: "none"}}}>
+        <DialogTitle sx={{ fontFamily: "monospace", color: "white", backgroundColor: "gray" }}>
+            Save Query
+        </DialogTitle>
+        <DialogContent sx={{ backgroundColor: "gray" }}>
+            <TextField
+                autoFocus
+                margin="dense"
+                label="Query Name"
+                type="text"
+                fullWidth
+                variant="outlined"
+                value={queryName}
+                onChange={(value) => setQueryName(value.target.value)}
+                sx={{
                     "& .MuiOutlinedInput-root": {
-                    padding: "8px", // Match first TextField
-                    "& fieldset": { borderColor: "white" },
-                    "&:hover fieldset": { borderColor: "White" },
-                    "&.Mui-focused fieldset": { borderColor: "white" },
+                        "& fieldset": { borderColor: "white" },
+                        "&:hover fieldset": { borderColor: "white" },
+                        "&.Mui-focused fieldset": { borderColor: "white" },
                     },
                     "& .MuiInputBase-input": {
-                    color: "white",
-                    fontFamily: "monospace",
+                        color: "white",
+                        fontFamily: "monospace",
+                    },
+                    "& .MuiInputLabel-root": {
+                        color: "white",
+                        fontFamily: "monospace",
                     },
                 }}
-                />
-
-            {/* Buttons Below the TextField */}
-            <Box
+            />
+        </DialogContent>
+        <DialogActions sx={{ backgroundColor: "gray" }}>
+            <Button
+                onClick={() => {setIsModalOpen(false); setQueryName("");}}
                 sx={{
-                    display: "flex",
-                    width: "100%", // Make sure buttons stay inside the parent box
-                    gap: "10px",
-                    marginTop: "10px",
-                    padding: "10px", // Ensure buttons don’t touch the edges
+                    backgroundColor: "darkgray",
+                    fontFamily: "monospace",
+                    fontWeight: "bold",
+                    color: "white",
+                    flex: 1,
                 }}
             >
-                <Button
-                    variant="contained"
-                    sx={{
-                        backgroundColor: "darkgray",
-                        fontFamily: "monospace",
-                        fontWeight: "bold",
-                        color: "white",
-                        flex: 1,
-                    }}
-                    onClick={getSQLFromNaturalLanguage}
-                    startIcon={<Search />}
-                >
-                    SEARCH
-                </Button>
-                <Button
-                    variant="contained"
-                    sx={{
-                        backgroundColor: "darkgray",
-                        fontFamily: "monospace",
-                        fontWeight: "bold",
-                        color: "white",
-                        flex: 1,
-                    }}
-                    onClick={saveQuery}
-                    startIcon={<Save />}
-                >
-                    SAVE
-                </Button>
-            </Box>
-        </Box>
-
-            );
+            Cancel
+            </Button>
+            <Button
+                onClick={handleSave}
+                sx={{
+                    backgroundColor: "#0b9e26",
+                    fontFamily: "monospace",
+                    fontWeight: "bold",
+                    color: "white",
+                    flex: 1,
+                }}
+            >
+            Save
+            </Button>
+        </DialogActions>
+    </Dialog>
+    </>);
 };

@@ -132,13 +132,13 @@ const NlpInteractions = () => {
           control={
             <Checkbox
               checked={gptConnected}
-              icon={<ErrorOutline />}
+              icon={<ErrorOutline style={{color: "red"}}/>}
               checkedIcon={<CheckSharp />}
               disabled
               sx={{
                 color: "white",
                 "&.Mui-checked": {
-                  color: "white",
+                  color: "#0b9e26",
                 },
               }}
             />

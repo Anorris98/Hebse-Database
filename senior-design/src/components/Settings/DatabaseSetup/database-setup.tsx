@@ -13,7 +13,7 @@ import {
   Switch,
   Typography
 } from "@mui/material";
-import { alpha, styled } from "@mui/material/styles";
+import {styled } from "@mui/material/styles";
 import { DeleteForever, Save, Visibility, VisibilityOff } from "@mui/icons-material";
 import HelpTextField from "../../HelpTextField/help-text-field.tsx";
 import { enableTunnel, encrypt, decrypt } from "../../Utilities/utility-functions.ts";
@@ -37,7 +37,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   borderRadius: "12px",
   backdropFilter: "blur(24px)",
   border: `1px solid ${theme.palette.divider}`,
-  backgroundColor: alpha(theme.palette.background.default, 0.4),
+  backgroundColor: "gray",
   boxShadow: theme.shadows[1],
   fontFamily: "monospace",
 }));
@@ -526,7 +526,7 @@ const DatabaseSetup = () => {
           <Button
             variant="contained"
             sx={{
-              backgroundColor: "darkgray",
+              backgroundColor: "#0b9e26",
               fontFamily: "monospace",
               fontWeight: "bold",
               color: "white",

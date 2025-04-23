@@ -6,7 +6,8 @@ import {AboutUs} from "../components/About_Us/about-us.tsx";
 import {Settings} from "../components/Settings/settings.tsx";
 import {History} from "../components/History/history.tsx";
 import {UserManual} from "../components/UserManual/user-manual.tsx";
-import {createTheme, ThemeProvider} from "@mui/material";
+import {createTheme, ThemeProvider, CssBaseline, GlobalStyles} from "@mui/material";
+import backgroundImage from '../assets/app_background.jpg';
 /* istanbul ignore file -- @preserve */
 
 const theme = createTheme({
@@ -49,6 +50,20 @@ const theme = createTheme({
 const App = () => {
     return (
         <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <GlobalStyles
+                styles={{
+                    body: {
+                        backgroundImage: `url(${backgroundImage})`,
+                        backgroundRepeat: 'repeat',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundAttachment: 'fixed',
+                        minHeight: '100vh',
+                        margin: 0,
+                    },
+                }}
+            />
             <Routes>
                 <Route path='/' element={<Query/>}/>
                 <Route path='/Settings' element={<Settings/>}/>

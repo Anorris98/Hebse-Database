@@ -4,7 +4,7 @@ import "@testing-library/jest-dom";
 import {SavedQueriesComponent} from "../../components/SavedQueriesComponent/saved-queries-component.tsx";
 
 describe("SavedQueriesComponent", () => {
-    const savedQueriesMock = ["query1", "query2"];
+    const savedQueriesMock = [{"query1Name": "query1"}, {"query2Name": "query2"}];
     let setSavedQueriesMock: ReturnType<typeof vi.fn>;
     let setInputValueMock: ReturnType<typeof vi.fn>;
 
@@ -32,7 +32,7 @@ describe("SavedQueriesComponent", () => {
         renderComponent();
         const toggleButton = screen.getByRole("button");
         fireEvent.click(toggleButton);
-        expect(screen.getByText("query1")).toBeVisible();
+        expect(screen.getByText("query1Name")).toBeVisible();
     });
 
     it("copies query to input when copy icon is clicked", () => {
@@ -48,7 +48,7 @@ describe("SavedQueriesComponent", () => {
         fireEvent.click(screen.getByRole("button"));
         const buttons = screen.getAllByRole("button");
         fireEvent.click(buttons[1]);
-        expect(setSavedQueriesMock).toHaveBeenCalledExactlyOnceWith(["query2"]);
+        expect(setSavedQueriesMock).toHaveBeenCalledExactlyOnceWith([{"query2Name": "query2"}]);
     });
 
     it("hides saved queries if all are deleted", () => {

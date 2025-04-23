@@ -20,8 +20,8 @@ describe("UserManual Component", () => {
       "How to Make a Query",
       "Viewing and Downloading Query History",
     ];
-    titles.forEach((title) => {
+    for (const title of titles) {
       expect(screen.getByText(title)).toBeVisible();
-    });
+    };
   });
 });
