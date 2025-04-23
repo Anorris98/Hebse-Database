@@ -13,7 +13,7 @@ interface QueryInputProperties {
     setSavedQueries: (value: Record<string, string>[] | ((previousState: Record<string, string>[]) => Record<string, string>[])) => void;
     inputValue: string;
     setInputValue: (value: string | ((previousState: string) => string)) => void;
-    setPageNumber?: (value: number | ((previousState: number) => number)) => void;
+    setPageNumber: (value: number | ((previousState: number) => number)) => void;
 }
 
 export const QueryInput = ({
@@ -21,7 +21,8 @@ export const QueryInput = ({
     savedQueries,
     setSavedQueries,
     inputValue,
-    setInputValue}: QueryInputProperties) => {
+    setInputValue,
+    setPageNumber}: QueryInputProperties) => {
 
         const [databaseConnected, setdatabaseConnected] = useState(false);
         const [checkingConnection, setCheckingConnection] = useState(true);
@@ -114,6 +115,8 @@ export const QueryInput = ({
         
                 const body = await response.json();
                 onQueryResult(body.data || "No result returned.");
+                setPageNumber(0);
+
             } catch (error) {
                 console.error("Error fetching query result:", error);
                 onQueryResult("An error occurred while fetching the result.");

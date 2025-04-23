@@ -47,7 +47,8 @@ export const Query = () => {
                             savedQueries={savedQueries}
                             setSavedQueries={setSavedQueries}
                             inputValue={inputValue}
-                            setInputValue={setInputValue} 
+                            setInputValue={setInputValue}
+                            setPageNumber={setPageNumber}
                         />
                     </Box>
                 </Box>
