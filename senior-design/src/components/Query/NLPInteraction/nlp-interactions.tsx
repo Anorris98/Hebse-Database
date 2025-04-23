@@ -232,6 +232,8 @@ const NlpInteractions = () => {
           padding: "5px",
           border: "solid white",
           width: "100%",
+          maxHeight: "95px", // or any height you want
+          overflowY: "auto",   // enables vertical scrolling
         }}
       >
         <Typography sx={{ fontFamily: "monospace" }}>{response}</Typography>
