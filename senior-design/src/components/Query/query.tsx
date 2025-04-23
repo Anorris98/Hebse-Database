@@ -9,20 +9,20 @@ import NlpInteractions from "./NLPInteraction/nlp-interactions.tsx";
 export const Query = () => {
     const [pageNumber, setPageNumber] = useState(0);
     const [queryResult, setQueryResult] = useState('');
-    const [savedQueries, setSavedQueries] = useState<string[]>([]);
+    const [savedQueries, setSavedQueries] = useState<Record<string, string>[]>([]);
     const [inputValue, setInputValue] = useState('');
     const [rowsPerPage, setRowsPerPage] = useState(50);
 
     return (
-        <Box sx={{ display: "flex", justifyContent: "center", padding: "20px" }}>
+        <Box sx={{ display: "flex", justifyContent: "center", paddingTop: "20px"}}>
             <Box sx={{ 
-                maxWidth: "1100px", 
+                maxWidth: "1150px", 
                 width: "100%", 
                 display: "flex", 
                 flexDirection: "column", 
                 gap: "16px", 
                 margin: "0 auto",
-                padding: "0 16px"
+                paddingBottom: "16px"
             }}>
                 {/* Centered Welcome Text */}
                 <Box sx={{ display: "flex", justifyContent: "center", textAlign: "center" }}>

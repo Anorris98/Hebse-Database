@@ -96,13 +96,13 @@ export const History = () => {
                 sx={{
                     paddingTop: "120px",
                     paddingBottom: "16px",
-                    width: "1100px",
+                    width: "1150px",
                 }}
             >
                 <Box sx={{
                     backgroundColor: "gray",
                     borderRadius: "15px",
-                    width: "1070px",
+                    width: "1150px",
                     fontFamily: "monospace",
                     padding: "20px",
                     justifyContent: "flex-start",

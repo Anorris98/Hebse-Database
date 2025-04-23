@@ -10,8 +10,8 @@ if (databaseSettings) {
   try {
     const decrypted = await decrypt(databaseSettings);
     enableTunnel(JSON.parse(decrypted)["isBackendRemote"] || false);
-  } catch (err) {
-    console.error("Failed to decrypt db_settings:", err);
+  } catch (error) {
+    console.error("Failed to decrypt db_settings:", error);
   }
 }
 
