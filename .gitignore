@@ -1,4 +1,4 @@
 **docs
 /backend/.coverage
-/backend/Secure_Storage_Key.bin
 senior-design/coverage
+/senior-design/src/components/Utilities/Secure_Storage_key.bin
