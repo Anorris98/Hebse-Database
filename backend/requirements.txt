@@ -14,4 +14,3 @@ openai
 httpx
 scp
 mock
-cryptography

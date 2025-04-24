@@ -5,9 +5,6 @@
 import json
 import traceback
 import csv
-import os
-import base64 
-import secrets
 from io import StringIO
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -17,7 +14,6 @@ from openai import OpenAI
 import sshtunnel
 from paramiko import SSHClient, AutoAddPolicy, RSAKey
 from scp import SCPClient
-from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 
 # Engine / SSH tunnel / schema metadata
@@ -28,13 +24,6 @@ schema_dict = {}
 
 #start FastAPI
 app = FastAPI()
-
-
-
-# Encryption stuff
-KEY_PATH = "Secure_Storage_Key.bin"          # lives beside main.py
-_KEY: bytes | None = None                    # cached after first read
-
 
 # -------------------------------------------------
 # CORS
@@ -319,66 +308,3 @@ def get_history(): # pragma: no cover
             return {"recent_queries": queries}
     except Exception as e:
         raise HTTPException(status_code=500, detail="Failed to fetch recent queries") from e
-
-# -------------------------------------------------------
-# Backend API End point for frontend to allow encryption of data
-# ------------------------------------------------------- 
-@app.post("/encrypt")
-def encrypt_ep(body: dict):
-    txt = body.get("plaintext")
-    if txt is None:
-        raise HTTPException(400, "plaintext missing")
-    return {"ciphertext": encrypt_string(txt)}
-
-
-# -------------------------------------------------------
-# Backend API End point for frontend to allow Decryption of data
-# ------------------------------------------------------- 
-@app.post("/decrypt")
-def decrypt_ep(body: dict):
-    ct = body.get("ciphertext")
-    if ct is None:
-        raise HTTPException(400, "ciphertext missing")
-    return {"plaintext": decrypt_string(ct)}
-
-
-# -------------------------------------------------------
-# Load or create a 256-bit AES encryption key.
-# If the key file exists, it is read and returned.
-# If not, a new key is generated, saved, and returned.
-def _load_or_create_key() -> bytes:
-    """Read 256‑bit key from disk, or create it the first time."""
-    if os.path.exists(KEY_PATH):
-        with open(KEY_PATH, "rb") as f:
-            return f.read()
-    key = secrets.token_bytes(32)            # 32 bytes  = AES‑256
-    with open(KEY_PATH, "wb") as f:
-        f.write(key)
-    os.chmod(KEY_PATH, 0o600)                # rw‑only for the account
-    return key
-
-# -------------------------------------------------------
-# Encrypt a plaintext string using AES-GCM and return
-# the result as a base64-encoded string containing the
-# nonce and ciphertext. Key is cached after first load.
-# -------------------------------------------------------
-def encrypt_string(plain: str) -> str:
-    global _KEY 
-    _KEY = _KEY or _load_or_create_key()
-    aes = AESGCM(_KEY)
-    nonce = secrets.token_bytes(12)          # GCM recommended 96‑bit IV
-    ct = aes.encrypt(nonce, plain.encode(), None)
-    return base64.urlsafe_b64encode(nonce + ct).decode()
-
-# -------------------------------------------------------
-# Decrypt a base64-encoded string (nonce + ciphertext)
-# previously produced by encrypt_string. Returns the
-# original plaintext string.
-# -------------------------------------------------------
-def decrypt_string(token: str) -> str:
-    global _KEY 
-    _KEY = _KEY or _load_or_create_key()
-    data = base64.urlsafe_b64decode(token.encode())
-    nonce, ct = data[:12], data[12:]
-    aes = AESGCM(_KEY)
-    return aes.decrypt(nonce, ct, None).decode()

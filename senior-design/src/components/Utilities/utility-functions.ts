@@ -57,7 +57,7 @@ export const enableTunnel = async (enable: boolean) => {
 // The backend must be running and accessible at the defined API base.
 // --------------------------------------------------------------------
 export async function encrypt(value: string): Promise<string> {
-  const r = await fetch("http://localhost:8000/encrypt", {
+  const r = await fetch("http://localhost:3001/encrypt", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ plaintext: value }),
@@ -72,11 +72,21 @@ export async function encrypt(value: string): Promise<string> {
 // The backend must be running and accessible at the defined API base.
 // --------------------------------------------------------------------
 export async function decrypt(ciphertext: string): Promise<string> {
-  const r = await fetch("http://localhost:8000/decrypt", {
+  const r = await fetch("http://localhost:3001/decrypt", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ ciphertext }),
   });
-  const { plaintext } = await r.json();
-  return plaintext;
+  
+  const body = await r.json();
+
+  if (!r.ok) {
+    if (body.clearLocalStorage) {
+      localStorage.removeItem("db_list");
+      localStorage.removeItem("db_settings");
+    }
+    throw new Error(body.error || "Decrypt failed");
+  }
+
+  return body.plaintext as string;
 }
