@@ -7,6 +7,9 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+#Encryption key
+src/tunnel/Secure_Storage_key.bin
+
 node_modules
 dist
 dist-ssr
