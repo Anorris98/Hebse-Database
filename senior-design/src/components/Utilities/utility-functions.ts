@@ -84,6 +84,7 @@ export async function decrypt(ciphertext: string): Promise<string> {
     if (body.clearLocalStorage) {
       localStorage.removeItem("db_list");
       localStorage.removeItem("db_settings");
+      localStorage.removeItem("gpt_settings");
     }
     throw new Error(body.error || "Decrypt failed");
   }
