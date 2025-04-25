@@ -13,7 +13,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
     borderRadius: "12px",
     backdropFilter: "blur(24px)",
     border: `1px solid ${theme.palette.divider}`,
-    backgroundColor: "gray",
+    backgroundColor: "#a9a9a9",
     boxShadow: theme.shadows[1],
     color: theme.palette.text.primary,
     fontFamily: "monospace",
@@ -120,7 +120,7 @@ const DatasetList: React.FC = () => {
                     marginBottom: "16px",
                     display: "flex",
                     flexDirection: "column",
-                    paddingX: "20px"
+                    paddingX: "20px",
                   }}
                 >
                 {/* Box for each dataset */}
@@ -215,20 +215,24 @@ const DatasetList: React.FC = () => {
 
                     <StyledPaper 
                       sx={{ 
-                        backgroundColor: "darkgray",
+                        backgroundColor: "gray",
                         mt: 2
                       }}>
-                      <Typography
-                        component="div"
-                        sx={{ 
-                          color: "white", 
-                          marginBottom: "8px", 
-                          fontFamily: "monospace",
-                          padding: "12px"
-                        }}
-                      >
-                        <div dangerouslySetInnerHTML={{__html: dataset.metadata?.description || ""}}/>
-                      </Typography>
+                        <Typography
+                          component="div"
+                          sx={{
+                            color: "white",
+                            marginBottom: "8px",
+                            fontFamily: "monospace",
+                            padding: "12px",
+                            '& a': {
+                              color: '#ADD8E6', // Light blue
+                              textDecoration: 'underline',
+                            }
+                          }}
+                        >
+                          <div dangerouslySetInnerHTML={{ __html: dataset.metadata?.description || "" }} />
+                        </Typography>
                     </StyledPaper>
                   </Collapse>
 
