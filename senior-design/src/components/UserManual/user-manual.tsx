@@ -173,6 +173,26 @@ export const UserManual = () => {
                     ]}
                 />
             </Box>
+            <Box sx={{}}>
+                <UserManualText
+                    title="Sample Queries"
+                    message="This section provides several sample queries as an example."
+                    sections={[
+                        {
+                            title: "Find stars with a mass in the top 2%, and with a metallicity between 1% and 10%",
+                            description: "Equivalent Query: SELECT \"initial_values\".\"model_number\", \"initial_values\".\"star_1_mass\", \"initial_values\".\"Z\" FROM \"initial_values\" WHERE \"initial_values\".\"star_1_mass\" >= (SELECT PERCENTILE_CONT(0.98) WITHIN GROUP (ORDER BY \"initial_values\".\"star_1_mass\") FROM \"initial_values\") AND \"initial_values\".\"Z\" BETWEEN 0.01 AND 0.10"
+                        },
+                        {
+                            title: "Find all systems which have a mass ratio between 0.5 and 0.7 and at some point an orbital period between 5 and 100 days",
+                            description: "SELECT \"binary_history\".\"model_number\", \"binary_history\".\"age\" FROM \"binary_history\" WHERE (\"binary_history\".\"star_1_mass\" / \"binary_history\".\"star_2_mass\" BETWEEN 0.5 AND 0.7 OR \"binary_history\".\"star_2_mass\" / \"binary_history\".\"star_1_mass\" BETWEEN 0.5 AND 0.7) AND \"binary_history\".\"period_days\" BETWEEN 5 AND 100"
+                        },
+                        {
+                            title: "Find all systems where the primary (largest star) accreted more than 10% of their mass during common envelope",
+                            description: "SELECT \"model_number\" FROM \"final_values\" WHERE \"S1_co_core_mass\" > 0.1 * \"star_1_mass\";"
+                        }
+                    ]}
+                />
+            </Box>
         </Box>
     );
 };
