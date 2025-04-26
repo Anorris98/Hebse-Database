@@ -27,7 +27,7 @@ export const UserManual = () => {
                 }}
             >
                 <Box sx={{ fontSize: "22px", fontWeight: "bold" }}>{"Welcome to the Manual"}</Box>
-                <Box sx={{ fontSize: "16px", textAlign: "justify" }}>{"Welcome to HADES, the Holistic Astronomical Database Exploration System, the perfect tool for examining POSYDON generated data! This is the user manual. Here you will find informaiton on how to use and setup HADES."}</Box>
+                <Box sx={{ fontSize: "16px", textAlign: "justify" }}>{"Welcome to HADES, the Holistic Astronomical Database Exploration System, the perfect tool for examining POSYDON generated data! This is the user manual. Here you will find information on how to use and set up HADES."}</Box>
             </Box>
             <Box sx={{}}>
                 <UserManualText
@@ -40,11 +40,11 @@ export const UserManual = () => {
                         },
                         {
                             title: "Connecting HADES to the PostgreSQL Instance",
-                            description: "To connect HADES to your PostgreSQL instance:\n- Open the HADES application and go to the 'Settings' section using the navigation bar.\n- Locate the 'Database Connection Setup' area.\n- Recall the connection details from the database setup.\n- Enter the following details:\n  - Host: The server address (e.g., 'localhost').\n  - Port: Typically 5432 unless changed during setup.\n  - Username: Your PostgreSQL username.\n  - Password: Your PostgreSQL password.\n  - Database: The name of the database you created.\n- Click 'Save' to establish the connection."
+                            description: "To connect HADES to your PostgreSQL instance:\n- Open the HADES application and go to the 'Settings' section using the navigation bar.\n- Locate the 'Database Connection Setup' area.\n- Recall the connection details from the database setup.\n- Enter the following details:\n  - Host: The server address (e.g., 'localhost').\n  - Port: Typically 5432 unless changed during set up.\n  - Username: Your PostgreSQL username.\n  - Password: Your PostgreSQL password.\n  - Database: The name of the database you created.\n- Click 'Save' to establish the connection."
                         },
                         {
                             title: "Downloading and Initializing the Database",
-                            description: "To download and initialize datasets using the utilities page:\n- Please ensure that you have already created and connected to the desired database before proceeding with this step. \n- Navigate to the 'Utilities' page in HADES.\n- You’ll see a list of publiclly available Posydon datasets. For each dataset, you can:\n  - Click 'SHOW DESCRIPTION' to reveal the dataset’s details (click 'HIDE DESCRIPTION' to collapse it).\n  - Click 'DOWNLOAD' to save the dataset file to your device (a tooltip shows the file name and size in GB).\n  - Click 'CREATE DATABASE USING DATASET' to automatically download the dataset and populate your connected PostgreSQL database.\n- The 'CREATE DATABASE USING DATASET' option triggers a process that uses the dataset file to initialize the database, making it ready for use."
+                            description: "To download and initialize datasets using the utilities page:\n- Please ensure that you have already created and connected to the desired database before proceeding with this step. \n- Navigate to the 'Utilities' page in HADES.\n- You’ll see a list of publicly available POSYDON datasets. For each dataset, you can:\n  - Click 'SHOW DESCRIPTION' to reveal the dataset’s details (click 'HIDE DESCRIPTION' to collapse it).\n  - Click 'DOWNLOAD' to save the dataset file to your device (a tooltip shows the file name and size in GB).\n  - Click 'CREATE DATABASE USING DATASET' to automatically download the dataset and populate your connected PostgreSQL database.\n- The 'CREATE DATABASE USING DATASET' option triggers a process that uses the dataset file to initialize the database, making it ready for use."
                         },
                         {
                             title: "Important Notes",
@@ -76,7 +76,7 @@ export const UserManual = () => {
                         },
                         {
                             title: "Important Notes",
-                            description: "- Unique Database Name: Ensure the \"Database Name\" is unique to avoid conflicts.\n- SSH Key Format: For remote connections, verify that your SSH private key is correctly formatted and matches the SSH user and host.\n- Local Storage: Configurations are saved in your browser’s localStorage."
+                            description: "- Unique Database Name: Ensure the \"Database Name\" is unique to avoid conflicts.\n- SSH Key Format: For remote connections, verify that your SSH private key is correctly formatted and matches the SSH user and host.\n- Local Storage: Configurations are saved in your browser’s local storage."
                         },
                     ]}
                 />
@@ -100,7 +100,7 @@ export const UserManual = () => {
                         },
                         {
                             title: "Saving the Settings",
-                            description: "Once you have entered your desired settings, click the 'Save API Settings' button to store them. The settings are saved in your browser's localStorage, ensuring they persist across sessions."
+                            description: "Once you have entered your desired settings, click the 'Save API Settings' button to store them. The settings are saved in your browser's local storage, ensuring they persist across sessions."
                         },
                         {
                             title: "Important Notes",
@@ -116,15 +116,15 @@ export const UserManual = () => {
                     sections={[
                         {
                             title: "Using AI Query Assistance",
-                            description: "On the query page locate the \"Query Assistance\" box. Type your prompt into the \"Ask GPT\" field. Press the \"Query\" button. The AI assisted SQL query will show up below. For best results use prompts that are formated as a question."
+                            description: "On the query page locate the \"Query Assistance\" box. Type your prompt into the \"Ask GPT\" field. Press the \"Query\" button. The AI assisted SQL query will show up below. For best results use prompts that are formatted as a question."
                         },
                         {
-                            title: "Submiting SQL Query",
+                            title: "Submitting SQL Query",
                             description: "To submit an SQL query, either copy an AI assisted SQL query from the \"Query Assistance\" box or write your own SQL query, and enter the SQL query into the \"SQL Query Input\" box. Press \"Save\" to save the query for future use. Press \"Search\" to submit the Query. The result of the Query will appear below in the \"Query Results\" box."
                         },
                         {
                             title: "Viewing Query Results",
-                            description: "To view query results after submiting a query, look at the \"Query Results\" box on the \"Query\" page."
+                            description: "To view query results after submitting a query, look at the \"Query Results\" box on the \"Query\" page."
                         },
                     ]}
                 />
