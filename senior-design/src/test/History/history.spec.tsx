@@ -23,22 +23,28 @@ describe("History", () => {
     beforeEach(() => {
         mockFetch.mockClear();
         mockFetch.mockImplementation((url) => {
-            if (url === "http://localhost:8000/getHistory") {
-                return Promise.resolve({
-                    ok: true,
-                    json: () => Promise.resolve(mockQueries),
-                });
-            } else if (url === "http://localhost:8000/GetData") {
-                return Promise.resolve({
-                    ok: true
-                });
-            } else if (url === "http://localhost:8000/exportData") {
-                return Promise.resolve({
-                    ok: true,
-                    blob: () => Promise.resolve(new Blob(['id,name\n1,Star A'], {type: 'text/csv'}))
-                });
+            switch (url) {
+                case "http://localhost:8000/getHistory": {
+                    return Promise.resolve({
+                        ok: true,
+                        json: () => Promise.resolve(mockQueries),
+                    });
+                }
+                case "http://localhost:8000/GetData": {
+                    return Promise.resolve({
+                        ok: true
+                    });
+                }
+                case "http://localhost:8000/exportData": {
+                    return Promise.resolve({
+                        ok: true,
+                        blob: () => Promise.resolve(new Blob(['id,name\n1,Star A'], {type: 'text/csv'}))
+                    });
+                }
+                default: {
+                    return Promise.reject(new Error("Unknown endpoint"));
+                }
             }
-            return Promise.reject(new Error("Unknown endpoint"));
         });
     });
 
@@ -86,8 +92,7 @@ describe("History", () => {
             }
             return Promise.reject(new Error("Unknown endpoint"));
         });
-        const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {
-        });
+        const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
         render(<History/>);
         await waitFor(() => expect(consoleSpy).toHaveBeenCalledWith(new Error("Failed to fetch recent queries")));
     })
@@ -111,8 +116,7 @@ describe("History", () => {
             return Promise.reject(new Error("Unknown endpoint"));
         });
 
-        const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {
-        });
+        const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
         render(<History/>);
 
@@ -134,23 +138,28 @@ describe("History", () => {
     it("handles error during CSV download", async () => {
 
         mockFetch.mockImplementation((url) => {
-            if (url === "http://localhost:8000/getHistory") {
-                return Promise.resolve({
-                    ok: true,
-                    json: () => Promise.resolve(mockQueries),
-                });
-            } else if (url === "http://localhost:8000/GetData") {
-                return Promise.resolve({
-                    ok: true
-                });
-            } else if (url === "http://localhost:8000/exportData") {
-                return Promise.resolve(new Error("Download failed"));
+            switch (url) {
+                case "http://localhost:8000/getHistory": {
+                    return Promise.resolve({
+                        ok: true,
+                        json: () => Promise.resolve(mockQueries),
+                    });
+                }
+                case "http://localhost:8000/GetData": {
+                    return Promise.resolve({
+                        ok: true
+                    });
+                }
+                case "http://localhost:8000/exportData": {
+                    return Promise.resolve(new Error("Download failed"));
+                }
+                default: {
+                    return Promise.reject(new Error("Unknown endpoint"));
+                }
             }
-            return Promise.reject(new Error("Unknown endpoint"));
         });
 
-        const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {
-        });
+        const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
         render(<History/>);
 

@@ -6,7 +6,7 @@ import tseslint from 'typescript-eslint'
 import eslintPluginUnicorn from "eslint-plugin-unicorn";
 
 export default tseslint.config(
-  { ignores: ['dist'] },
+  { ignores: ['dist', 'coverage/'] },
     eslintPluginUnicorn.configs.recommended,
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
