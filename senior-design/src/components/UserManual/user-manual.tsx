@@ -187,10 +187,6 @@ export const UserManual = () => {
                         {
                             title: "Find all systems which have a mass ratio between 0.5 and 0.7 and at some point an orbital period between 5 and 100 days",
                             description: "SELECT \"binary_history\".\"model_number\", \"binary_history\".\"age\" FROM \"binary_history\" WHERE (\"binary_history\".\"star_1_mass\" / \"binary_history\".\"star_2_mass\" BETWEEN 0.5 AND 0.7 OR \"binary_history\".\"star_2_mass\" / \"binary_history\".\"star_1_mass\" BETWEEN 0.5 AND 0.7) AND \"binary_history\".\"period_days\" BETWEEN 5 AND 100"
-                        },
-                        {
-                            title: "Find all systems where the primary (largest star) accreted more than 10% of their mass during common envelope",
-                            description: "SELECT \"model_number\" FROM \"final_values\" WHERE \"S1_co_core_mass\" > 0.1 * \"star_1_mass\";"
                         }
                     ]}
                 />
