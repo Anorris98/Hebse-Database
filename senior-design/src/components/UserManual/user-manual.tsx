@@ -26,7 +26,9 @@ export const UserManual = () => {
                     color: "white",
                 }}
             >
+                <hr/>
                 <Box sx={{ fontSize: "22px", fontWeight: "bold" }}>{"Welcome to the Manual"}</Box>
+                <hr/>
                 <Box sx={{ fontSize: "16px", textAlign: "justify" }}>{"Welcome to HADES, the Holistic Astronomical Database Exploration System, the perfect tool for examining POSYDON generated data! This is the user manual. Here you will find information on how to use and set up HADES."}</Box>
             </Box>
             <Box sx={{}}>
@@ -169,6 +171,22 @@ export const UserManual = () => {
                         {
                             title: "Troubleshooting",
                             description: "If you encounter issues:\n- Verify the server is active at 'http://localhost:8000'.\n- Look in the browser console for error messages if the download fails.\n- Ensure a stable internet connection."
+                        }
+                    ]}
+                />
+            </Box>
+            <Box sx={{}}>
+                <UserManualText
+                    title="Sample Queries"
+                    message="This section provides several sample queries as an example."
+                    sections={[
+                        {
+                            title: "Find stars with a mass in the top 2%, and with a metallicity between 1% and 10%",
+                            description: "SELECT \"initial_values\".\"model_number\", \"initial_values\".\"star_1_mass\", \"initial_values\".\"star_2_mass\", \"Z\" FROM \"initial_values\" WHERE (\"initial_values\".\"star_1_mass\" > (SELECT (MAX(\"star_1_mass\") + MAX(\"star_2_mass\")) * 0.98 / 2 FROM \"initial_values\") OR \"initial_values\".\"star_2_mass\" > (SELECT (MAX(\"star_1_mass\") + MAX(\"star_2_mass\")) * 0.98 / 2 FROM \"initial_values\")) AND \"initial_values\".\"Z\" between 0.01 and 0.10"
+                        },
+                        {
+                            title: "Find all systems which have a mass ratio between 0.5 and 0.7 and at some point an orbital period between 5 and 100 days",
+                            description: "SELECT \"binary_history\".\"model_number\", \"binary_history\".\"age\" FROM \"binary_history\" WHERE (\"binary_history\".\"star_1_mass\" / \"binary_history\".\"star_2_mass\" BETWEEN 0.5 AND 0.7 OR \"binary_history\".\"star_2_mass\" / \"binary_history\".\"star_1_mass\" BETWEEN 0.5 AND 0.7) AND \"binary_history\".\"period_days\" BETWEEN 5 AND 100"
                         }
                     ]}
                 />
