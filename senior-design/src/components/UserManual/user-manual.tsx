@@ -182,7 +182,7 @@ export const UserManual = () => {
                     sections={[
                         {
                             title: "Find stars with a mass in the top 2%, and with a metallicity between 1% and 10%",
-                            description: "Equivalent Query: SELECT \"initial_values\".\"model_number\", \"initial_values\".\"star_1_mass\", \"initial_values\".\"Z\" FROM \"initial_values\" WHERE \"initial_values\".\"star_1_mass\" >= (SELECT PERCENTILE_CONT(0.98) WITHIN GROUP (ORDER BY \"initial_values\".\"star_1_mass\") FROM \"initial_values\") AND \"initial_values\".\"Z\" BETWEEN 0.01 AND 0.10"
+                            description: "SELECT \"initial_values\".\"model_number\", \"initial_values\".\"star_1_mass\", \"initial_values\".\"Z\" FROM \"initial_values\" WHERE \"initial_values\".\"star_1_mass\" >= (SELECT PERCENTILE_CONT(0.98) WITHIN GROUP (ORDER BY \"initial_values\".\"star_1_mass\") FROM \"initial_values\") AND \"initial_values\".\"Z\" BETWEEN 0.01 AND 0.10"
                         },
                         {
                             title: "Find all systems which have a mass ratio between 0.5 and 0.7 and at some point an orbital period between 5 and 100 days",
