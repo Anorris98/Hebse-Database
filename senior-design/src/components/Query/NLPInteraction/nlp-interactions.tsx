@@ -3,8 +3,7 @@ import {Box, Checkbox, FormControlLabel, IconButton, InputAdornment, Typography,
 import {AutoAwesome, CheckSharp, ErrorOutline, InfoOutlined} from "@mui/icons-material";
 import {decrypt} from "../../Utilities/utility-functions.ts";
 
-/* istanbul ignore file -- @preserve */
-const NlpInteractions = () => {
+export const NlpInteractions = () => {
   const [query, setQuery] = useState("");
   const [response, setResponse] = useState(
     "Enter your request or question to GPT. The system can help format queries or provide general assistance."
@@ -50,7 +49,7 @@ const NlpInteractions = () => {
           setGptConnected(true);
         }
       } catch (error) {
-        console.error("Error checking GPT connection:", error);
+        console.error(":", error);
         setGptConnected(false);
       } finally {
         setCheckingConnection(false);
@@ -241,6 +240,4 @@ const NlpInteractions = () => {
     </Box>
   );
 };
-
-export default NlpInteractions;
 
