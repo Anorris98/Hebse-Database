@@ -33,7 +33,9 @@ export const UserManualText = ({ title, message, sections }: UserManualWelcomeTe
         color: "white",
       }}
     >
+      <hr/>
       <Box sx={{ fontSize: "20px", fontWeight: "bold" }}>{title}</Box>
+      <hr/>
       <Box sx={{ fontSize: "16px", textAlign: "left" }}>
         {message.split("\n").map((line, index) => (
           <span key={index}>
@@ -45,7 +47,9 @@ export const UserManualText = ({ title, message, sections }: UserManualWelcomeTe
       <Collapse in={expanded}>
         {sections.map((section, index) => (
           <Box key={index} sx={{ marginTop: "20px" }}>
+            <hr/>
             <Box sx={{ fontSize: "18px", fontWeight: "bold" }}>{section.title}</Box>
+            <hr/>
             <Box sx={{ marginTop: "5px", textAlign: "justify" }}>
               {section.description.split("\n").map((line, index) => (
                 <span key={index}>

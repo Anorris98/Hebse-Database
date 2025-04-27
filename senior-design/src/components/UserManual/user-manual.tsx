@@ -26,7 +26,9 @@ export const UserManual = () => {
                     color: "white",
                 }}
             >
+                <hr/>
                 <Box sx={{ fontSize: "22px", fontWeight: "bold" }}>{"Welcome to the Manual"}</Box>
+                <hr/>
                 <Box sx={{ fontSize: "16px", textAlign: "justify" }}>{"Welcome to HADES, the Holistic Astronomical Database Exploration System, the perfect tool for examining POSYDON generated data! This is the user manual. Here you will find information on how to use and set up HADES."}</Box>
             </Box>
             <Box sx={{}}>
