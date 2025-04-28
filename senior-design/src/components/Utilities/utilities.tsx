@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 import Downloader from "./DataDownload/data-download.tsx";
-/* istanbul ignore file -- @preserve */
+
 export const Utilities = () => {
     return (
         <Box 
