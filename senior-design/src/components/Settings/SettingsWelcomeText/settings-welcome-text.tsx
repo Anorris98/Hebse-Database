@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Box, Collapse, Button } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-/* istanbul ignore file -- @preserve */
+
 export const SettingsWelcomeText = () => {
   const [expanded, setExpanded] = useState(false);
 
