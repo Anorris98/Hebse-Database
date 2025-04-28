@@ -3,7 +3,9 @@ import {expect, it, vi} from 'vitest';
 import DatasetList from "../../../components/Utilities/DataDownload/data-download.tsx";
 import '@testing-library/jest-dom';
 
-vi.spyOn(window, 'open').mockImplementation(() => null);
+/* eslint-disable  unicorn/no-null */
+
+vi.spyOn(globalThis, 'open').mockImplementation(() => null);
 
 beforeEach(() => {
     vi.stubGlobal('localStorage', {
@@ -26,7 +28,7 @@ const mockDatasets = {
                     {
                         key: 'file1.csv',
                         links: { self: 'http://download/file1' },
-                        size: 1000000000,
+                        size: 1_000_000_000,
                         checksum: 'checksum1',
                     },
                 ],
@@ -221,7 +223,7 @@ describe('DatasetList', () => {
                             {
                                 key: 'file1.csv',
                                 links: { self: 'http://download/file1' },
-                                size: 1000000000,
+                                size: 1_000_000_000,
                                 checksum: 'checksum1',
                             },
                         ],
