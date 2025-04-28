@@ -6,7 +6,7 @@
 // This is used for creating a local port forward during local dev,
 // when the backend is not managing the tunnel itself.
 // --------------------------------------------------------------------
-/* istanbul ignore file -- @preserve */
+
 export const enableTunnel = async (enable: boolean) => {
     const savedSettings = localStorage.getItem("db_settings");
     if (!savedSettings) {
