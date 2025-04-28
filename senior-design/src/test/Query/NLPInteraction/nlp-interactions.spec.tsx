@@ -4,6 +4,7 @@ import {fireEvent, render, screen, waitFor} from "@testing-library/react";
 import {NlpInteractions} from "../../../components/Query/NLPInteraction/nlp-interactions.tsx";
 import * as UtilityFunctions from "../../../components/Utilities/utility-functions";
 
+/* eslint-disable  unicorn/no-null */
 
 describe("NlpInteractions component", () => {
     beforeEach(() => {
@@ -12,7 +13,7 @@ describe("NlpInteractions component", () => {
             if (key === "gpt_settings") {
                 return "mockCiphertext"; // Whatever fake ciphertext
             }
-            return;
+            return null;
         });
 
         // Mock decrypt function
@@ -74,7 +75,7 @@ describe("NlpInteractions component", () => {
 
     it("should set response when missing local storage", async () => {
         vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
-            return;
+            return null;
         });
 
         render(<NlpInteractions />);
@@ -124,7 +125,7 @@ describe("NlpInteractions component", () => {
         fireEvent.change(input, { target: { value: "How do I write a SQL query?" } });
 
         vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
-            return;
+            return null;
         });
 
         const queryButton = screen.getByRole("button", { name: "QUERY" });

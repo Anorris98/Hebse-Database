@@ -1,6 +1,6 @@
 import {Box, TablePagination} from "@mui/material";
 import { styled } from "@mui/material/styles";
-/* istanbul ignore file -- @preserve */
+
 const StyledPaginator = styled(TablePagination)(() => ({
   fontFamily: "monospace",
   color: "white",
