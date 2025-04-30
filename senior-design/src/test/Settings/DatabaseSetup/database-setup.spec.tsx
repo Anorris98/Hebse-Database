@@ -8,7 +8,7 @@ import "@testing-library/jest-dom";
 
 vi.mock("../../../components/HelpTextField/help-text-field.tsx", () => ({
     default: ({ label, value, onChange }: 
-        { label: string; value: string; onChange: (e: ChangeEvent<HTMLInputElement>) => void }) => (
+        { label: string; value: string; onChange: (event: ChangeEvent<HTMLInputElement>) => void }) => (
       <input
         aria-label={label}
         value={value}
@@ -20,8 +20,8 @@ vi.mock("../../../components/HelpTextField/help-text-field.tsx", () => ({
 
 // Mock utility functions
 vi.mock("../../../components/Utilities/utility-functions.ts", () => ({
-  encrypt: vi.fn((x: string) => Promise.resolve(`encrypted(${x})`)),
-  decrypt: vi.fn((x: string) => Promise.resolve(x)),
+  encrypt: vi.fn((param: string) => Promise.resolve(`encrypted(${param})`)),
+  decrypt: vi.fn((param: string) => Promise.resolve(param)),
   enableTunnel: vi.fn(),
 }));
 
