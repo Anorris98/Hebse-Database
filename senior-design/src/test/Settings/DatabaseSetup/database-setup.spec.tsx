@@ -2,12 +2,13 @@
 
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import DatabaseSetup from "../../../components/Settings/DatabaseSetup/database-setup";
-//import React from "react";
+import { ChangeEvent } from "react";
 import { vi } from "vitest";
 import "@testing-library/jest-dom";
 
 vi.mock("../../../components/HelpTextField/help-text-field.tsx", () => ({
-    default: ({ label, value, onChange }: any) => (
+    default: ({ label, value, onChange }: 
+        { label: string; value: string; onChange: (e: ChangeEvent<HTMLInputElement>) => void }) => (
       <input
         aria-label={label}
         value={value}
