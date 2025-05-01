@@ -23,7 +23,7 @@ const HelpTextField: React.FC<HelpTextFieldProperties> = ({ tooltipText, sx, slo
                 variant="outlined"
                 {...properties} // Passing all props dynamically
                 sx={{
-                    backgroundColor: "gray",
+                    backgroundColor: "#2e2d2e",
                     borderRadius: "5px",
                     "& fieldset": { borderColor: "white" },
                     ...sx, // Custom styles

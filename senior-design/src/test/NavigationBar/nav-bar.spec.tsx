@@ -29,17 +29,17 @@ describe("NavBar Component", () => {
         expect(screen.getByText("History")).toBeVisible();
         expect(screen.getByText("Utilities")).toBeVisible();
         expect(screen.getByText("Settings")).toBeVisible();
-        expect(screen.getByText("About Us")).toBeVisible();
+        expect(screen.getByText("About")).toBeVisible();
         expect(screen.getByText("User Manual")).toBeVisible();
     });
 
-    it("renders HADES title", () => {
+    it("renders HEBSE title", () => {
         render(
             <MemoryRouter>
                 <NavBar />
             </MemoryRouter>
         );
-        expect(screen.getByText("HADES")).toBeVisible();
+        expect(screen.getByText("HEBSE")).toBeVisible();
     });
 
     it("navigates to Query when clicked", () => {
@@ -82,14 +82,14 @@ describe("NavBar Component", () => {
         expect(mockNavigate).toHaveBeenCalledExactlyOnceWith("/Settings");
     });
 
-    it("navigates to About Us when clicked", () => {
+    it("navigates to About when clicked", () => {
         render(
             <MemoryRouter>
                 <NavBar />
             </MemoryRouter>
         );
-        fireEvent.click(screen.getByText("About Us"));
-        expect(mockNavigate).toHaveBeenCalledExactlyOnceWith("/About_Us")
+        fireEvent.click(screen.getByText("About"));
+        expect(mockNavigate).toHaveBeenCalledExactlyOnceWith("/About")
     });
 
     it("navigates to User Manual when clicked", () => {

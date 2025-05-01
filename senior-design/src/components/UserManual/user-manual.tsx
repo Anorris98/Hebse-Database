@@ -16,7 +16,7 @@ export const UserManual = () => {
 
             <Box
                 sx={{
-                    backgroundColor: "gray",
+                    backgroundColor: "#2e2d2e",
                     borderRadius: "15px",
                     maxWidth: "1150px",
                     width: "1150px",
@@ -27,30 +27,30 @@ export const UserManual = () => {
                 }}
             >
                 <hr/>
-                <Box sx={{ fontSize: "22px", fontWeight: "bold" }}>{"Welcome to the Manual"}</Box>
+                <Box sx={{ fontSize: "25px", fontWeight: "bold", color: "#d7c8e8" }}>{"Welcome to the Manual"}</Box>
                 <hr/>
-                <Box sx={{ fontSize: "16px", textAlign: "justify" }}>{"Welcome to HADES, the Holistic Astronomical Database Exploration System, the perfect tool for examining POSYDON generated data! This is the user manual. Here you will find information on how to use and set up HADES."}</Box>
+                <Box sx={{ fontSize: "16px", textAlign: "justify" }}>{"Welcome to HEBSE, the Holistic Exploration of Binary Stellar Evolutions, the perfect tool for examining POSYDON generated data! This is the user manual. Here you will find information on how to use and set up HEBSE."}</Box>
             </Box>
             <Box sx={{}}>
                 <UserManualText
                     title="Setting Up and Connecting a PostgreSQL Database"
-                    message="This guide walks you through setting up a PostgreSQL database, connecting it to the HADES application, and downloading/initializing datasets from the utilities page."
+                    message="This guide walks you through setting up a PostgreSQL database, connecting it to the HEBSE application, and downloading/initializing datasets from the utilities page."
                     sections={[
                         {
                             title: "Setting Up a PostgreSQL Database",
                             description: "To set up a PostgreSQL database on your server or local device:\n- Visit the official PostgreSQL website to download the installer: https://www.postgresql.org/download/\n- Select your operating system and follow the provided installation instructions.\n- Once installed, open the PostgreSQL (PSQL) command line or a GUI tool (like pgAdmin) to create a new database.\n- Take note of and write down the connection details: host (e.g., 'localhost' for local setups), port (default is 5432), username, password, and the database name you created."
                         },
                         {
-                            title: "Connecting HADES to the PostgreSQL Instance",
-                            description: "To connect HADES to your PostgreSQL instance:\n- Open the HADES application and go to the 'Settings' section using the navigation bar.\n- Locate the 'Database Connection Setup' area.\n- Recall the connection details from the database setup.\n- Enter the following details:\n  - Host: The server address (e.g., 'localhost').\n  - Port: Typically 5432 unless changed during set up.\n  - Username: Your PostgreSQL username.\n  - Password: Your PostgreSQL password.\n  - Database: The name of the database you created.\n- Click 'Save' to establish the connection."
+                            title: "Connecting HEBSE to the PostgreSQL Instance",
+                            description: "To connect HEBSE to your PostgreSQL instance:\n- Open the HEBSE application and go to the 'Settings' section using the navigation bar.\n- Locate the 'Database Connection Setup' area.\n- Recall the connection details from the database setup.\n- Enter the following details:\n  - Host: The server address (e.g., 'localhost').\n  - Port: Typically 5432 unless changed during set up.\n  - Username: Your PostgreSQL username.\n  - Password: Your PostgreSQL password.\n  - Database: The name of the database you created.\n- Click 'Save' to establish the connection."
                         },
                         {
                             title: "Downloading and Initializing the Database",
-                            description: "To download and initialize datasets using the utilities page:\n- Please ensure that you have already created and connected to the desired database before proceeding with this step. \n- Navigate to the 'Utilities' page in HADES.\n- You’ll see a list of publicly available POSYDON datasets. For each dataset, you can:\n  - Click 'SHOW DESCRIPTION' to reveal the dataset’s details (click 'HIDE DESCRIPTION' to collapse it).\n  - Click 'DOWNLOAD' to save the dataset file to your device (a tooltip shows the file name and size in GB).\n  - Click 'CREATE DATABASE USING DATASET' to automatically download the dataset and populate your connected PostgreSQL database.\n- The 'CREATE DATABASE USING DATASET' option triggers a process that uses the dataset file to initialize the database, making it ready for use."
+                            description: "To download and initialize datasets using the utilities page:\n- Please ensure that you have already created and connected to the desired database before proceeding with this step. \n- Navigate to the 'Utilities' page in HEBSE.\n- You’ll see a list of publicly available POSYDON datasets. For each dataset, you can:\n  - Click 'SHOW DESCRIPTION' to reveal the dataset’s details (click 'HIDE DESCRIPTION' to collapse it).\n  - Click 'DOWNLOAD' to save the dataset file to your device (a tooltip shows the file name and size in GB).\n  - Click 'CREATE DATABASE USING DATASET' to automatically download the dataset and populate your connected PostgreSQL database.\n- The 'CREATE DATABASE USING DATASET' option triggers a process that uses the dataset file to initialize the database, making it ready for use."
                         },
                         {
                             title: "Important Notes",
-                            description: "- Ensure PostgreSQL is running before attempting to connect HADES.\n- Double-check your connection details to avoid errors.\n- Dataset files can be large (sizes are shown in the tooltip); ensure you have enough storage and a reliable internet connection.\n- The 'CREATE DATABASE USING DATASET' feature requires a valid database connection and may take time depending on the dataset size."
+                            description: "- Ensure PostgreSQL is running before attempting to connect HEBSE.\n- Double-check your connection details to avoid errors.\n- Dataset files can be large (sizes are shown in the tooltip); ensure you have enough storage and a reliable internet connection.\n- The 'CREATE DATABASE USING DATASET' feature requires a valid database connection and may take time depending on the dataset size."
                         }
                     ]}
                 />

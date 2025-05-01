@@ -13,6 +13,7 @@ export const Utilities = () => {
                     paddingTop: "120px",
                     paddingBottom: "16px",
                     width: "1150px",
+                    color: "#d7c8e8"
                 }}
             >
                 <Downloader />

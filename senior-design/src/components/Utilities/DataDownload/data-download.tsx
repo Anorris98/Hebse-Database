@@ -13,7 +13,7 @@ const StyledPaper = styled(Paper)(({theme}) => ({
     borderRadius: "12px",
     backdropFilter: "blur(24px)",
     border: `1px solid ${theme.palette.divider}`,
-    backgroundColor: "#a9a9a9",
+    backgroundColor: "#3a303d",
     boxShadow: theme.shadows[1],
     color: theme.palette.text.primary,
     fontFamily: "monospace",
@@ -96,7 +96,7 @@ const DatasetList: React.FC = () => {
 
         <Box
             sx={{
-                backgroundColor: "gray",
+                backgroundColor: "#2e2d2e",
                 borderRadius: "15px",
                 maxWidth: "lg",
                 width: "100%",
@@ -152,7 +152,7 @@ const DatasetList: React.FC = () => {
                                     endIcon={isExpanded ? <ExpandLessIcon/> : <ExpandMoreIcon/>}
                                     sx={{
                                         flex: 1,
-                                        backgroundColor: "gray",
+                                        backgroundColor: "#5a50c7",
                                         fontFamily: "monospace",
                                         color: "white",
                                         fontWeight: "bold",
@@ -170,7 +170,7 @@ const DatasetList: React.FC = () => {
                                             endIcon={<DownloadIcon/>}
                                             sx={{
                                                 flex: 1,
-                                                backgroundColor: "gray",
+                                                backgroundColor: "#5a50c7",
                                                 fontFamily: "monospace",
                                                 fontWeight: "bold",
                                                 color: "white",
@@ -197,7 +197,7 @@ const DatasetList: React.FC = () => {
                                             endIcon={<UploadFile/>}
                                             sx={{
                                                 flex: 1,
-                                                backgroundColor: "gray",
+                                                backgroundColor: "#5a50c7",
                                                 fontFamily: "monospace",
                                                 color: "white",
                                                 fontWeight: "bold"
@@ -218,7 +218,7 @@ const DatasetList: React.FC = () => {
 
                                 <StyledPaper
                                     sx={{
-                                        backgroundColor: "gray",
+                                        backgroundColor: "#2e2d2e",
                                         mt: 2
                                     }}>
                                     <Typography

@@ -4,8 +4,8 @@ import { styled } from "@mui/material/styles";
 const StyledPaginator = styled(TablePagination)(() => ({
   fontFamily: "monospace",
   color: "white",
-  backgroundColor: "gray",
-  border: "black 2px solid",
+  backgroundColor: "#3a303d",
+  border: "white 2px solid",
   borderRadius: "15px",
   "& .MuiTablePagination-select": {
     fontSize: "14px",
@@ -43,12 +43,12 @@ export const PageSelect = ({ setPageNumber, pageNumber, rows, rowsPerPage, setRo
       fontFamily: "monospace",
       display: "flex",
       justifyContent: "flex-end"}}>
-      <StyledPaginator rowsPerPage={rowsPerPage} labelRowsPerPage="Records Per Page" count={rows} page={pageNumber} onPageChange={handleChangePage} onRowsPerPageChange={handleChangeRowsPerPage} slotProps={{
+      <StyledPaginator rowsPerPage={rowsPerPage} labelRowsPerPage="Records Per Page" count={rows} page={pageNumber} onPageChange={handleChangePage} onRowsPerPageChange={handleChangeRowsPerPage} sx={{"& .MuiIconButton-root": {color: "white",}}} slotProps={{
         select: {
           MenuProps: {
             PaperProps: {
               sx: {
-                backgroundColor: "gray",
+                backgroundColor: "#2e2d2e",
                 color: "white"
               }
             }
@@ -59,7 +59,7 @@ export const PageSelect = ({ setPageNumber, pageNumber, rows, rowsPerPage, setRo
             fontFamily: "monospace",
             fontSize: "14px"
           }
-        }
+        },
       }}/>
   </Box>
 }

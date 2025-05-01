@@ -6,9 +6,9 @@ import {QueryWelcomeText} from "../../components/QueryWelcomeText/query-welcome-
 describe("QueryWelcomeText Component", () => {
     it("renders the component without crashing", () => {
         render(<QueryWelcomeText />);
-        expect(screen.getByText("How can I help?")).toBeVisible();
-        expect(screen.getByText("How can I help?").parentElement).toHaveStyle("" +
-            " backgroundColor: \"gray\",\n" +
+        expect(screen.getByText("Welcome to HEBSE!")).toBeVisible();
+        expect(screen.getByText("Welcome to HEBSE!").parentElement).toHaveStyle("" +
+            " backgroundColor: \"#2e2d2e\",\n" +
             "              borderRadius: \"15px\",\n" +
             "              maxWidth: \"lg\",\n" +
             "              width: \"100%\",\n" +

@@ -70,6 +70,24 @@ export const Query = () => {
  {/* Displays the query result passed from the parent state.*/}
                 </Box>
             </Box>
+                {/* <Box
+                    sx={{
+                        position: "fixed",
+                        bottom: "0px",
+                        left: "0px",
+                        //transform: "translateX(-50%)",
+                        backgroundColor: "rgba(0, 0, 0, 0)", // Translucent black
+                        color: "white",
+                        padding: "20px",
+                        borderRadius: "10px",
+                        textAlign: "center",
+                        fontSize: "10px"
+                    }}
+                >
+                    Background image from Phil Brewer on <a href="https://app.astrobin.com/i/jfo1on">Astrobin</a>
+
+                </Box> */}
+
         </Box>
     );
 };

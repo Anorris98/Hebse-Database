@@ -23,7 +23,7 @@ export const UserManualText = ({ title, message, sections }: UserManualWelcomeTe
   return (
     <Box
       sx={{
-        backgroundColor: "gray",
+        backgroundColor: "#2e2d2e",
         borderRadius: "15px",
         maxWidth: "1150px",
         width: "1150px",
@@ -34,7 +34,7 @@ export const UserManualText = ({ title, message, sections }: UserManualWelcomeTe
       }}
     >
       <hr/>
-      <Box sx={{ fontSize: "20px", fontWeight: "bold" }}>{title}</Box>
+      <Box sx={{ fontSize: "20px", fontWeight: "bold", color: "#d7c8e8" }}>{title}</Box>
       <hr/>
       <Box sx={{ fontSize: "16px", textAlign: "left" }}>
         {message.split("\n").map((line, index) => (
@@ -48,7 +48,7 @@ export const UserManualText = ({ title, message, sections }: UserManualWelcomeTe
         {sections.map((section, index) => (
           <Box key={index} sx={{ marginTop: "20px" }}>
             <hr/>
-            <Box sx={{ fontSize: "18px", fontWeight: "bold" }}>{section.title}</Box>
+            <Box sx={{ fontSize: "18px", fontWeight: "bold", color: "#d7c8e8" }}>{section.title}</Box>
             <hr/>
             <Box sx={{ marginTop: "5px", textAlign: "justify" }}>
               {section.description.split("\n").map((line, index) => (
@@ -66,7 +66,7 @@ export const UserManualText = ({ title, message, sections }: UserManualWelcomeTe
         endIcon={expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         sx={{
           marginTop: "10px",
-          backgroundColor: "darkgray",
+          backgroundColor: "#5a50c7",
           fontFamily: "monospace",
           color: "white",
           textTransform: "none",

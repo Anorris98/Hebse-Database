@@ -150,7 +150,7 @@ export const QueryInput = ({
         return (
         <><Box
         sx={{
-            backgroundColor: 'gray',
+            backgroundColor: '#2e2d2e',
             flexGrow: 1,
             borderRadius: '15px',
             fontFamily: 'monospace',
@@ -163,7 +163,7 @@ export const QueryInput = ({
             height: '100%',
         }}
     >
-        <Typography variant="h5" sx={{ fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', }}>
+        <Typography variant="h5" sx={{ fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', color: "#d7c8e8", }}>
             SQL Query Input
         </Typography>
         <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
@@ -189,7 +189,7 @@ export const QueryInput = ({
                             ? "Database is connected!"
                             : "Database not connected. Check Settings -> Database.")
                 }
-                sx={{ color: "white", fontFamily: "monospace", '& .MuiFormControlLabel-label': { fontFamily: 'monospace', color: "white" } }}
+                sx={{ color: "white", fontFamily: "monospace", '& .MuiFormControlLabel-label': { fontFamily: 'monospace', color: "white" }, '& .MuiFormControlLabel-label.Mui-disabled':{ color: "white !important", opacity: 1,} }}
             />
         </Box>
         <TextField
@@ -218,8 +218,8 @@ export const QueryInput = ({
             }}
             sx={{
                 width: "100%", 
-                backgroundColor: "gray",
-                borderRadius: "15px",
+                backgroundColor: "#3a303d",
+                borderRadius: "6px",
                 marginBottom: "8px",
                 "& .MuiOutlinedInput-root": {
                 padding: "8px", // Match first TextField
@@ -247,7 +247,7 @@ export const QueryInput = ({
             <Button
                 variant="contained"
                 sx={{
-                    backgroundColor: "darkgray",
+                    backgroundColor: "#5a50c7",
                     fontFamily: "monospace",
                     fontWeight: "bold",
                     color: "white",
@@ -276,10 +276,10 @@ export const QueryInput = ({
     </Box>
 
     <Dialog open={isModalOpen} onClose={() => {setIsModalOpen(false); setQueryName("");}} sx={{"& .MuiPaper-root": {borderRadius: "15px", boxShadow: "none"}}}>
-        <DialogTitle sx={{ fontFamily: "monospace", color: "white", backgroundColor: "gray" }}>
+        <DialogTitle sx={{ fontFamily: "monospace", color: "white", backgroundColor: "#2e2d2e" }}>
             Save Query
         </DialogTitle>
-        <DialogContent sx={{ backgroundColor: "gray" }}>
+        <DialogContent sx={{ backgroundColor: "#2e2d2e" }}>
             <TextField
                 autoFocus
                 margin="dense"
@@ -306,11 +306,11 @@ export const QueryInput = ({
                 }}
             />
         </DialogContent>
-        <DialogActions sx={{ backgroundColor: "gray" }}>
+        <DialogActions sx={{ backgroundColor: "#2e2d2e" }}>
             <Button
                 onClick={() => {setIsModalOpen(false); setQueryName("");}}
                 sx={{
-                    backgroundColor: "darkgray",
+                    backgroundColor: "#5a50c7",
                     fontFamily: "monospace",
                     fontWeight: "bold",
                     color: "white",
