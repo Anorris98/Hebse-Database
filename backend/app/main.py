@@ -275,14 +275,14 @@ def setup_database(body: dict):  # pragma: no cover
 
         with SCPClient(ssh_client.get_transport()) as scp:
             scp.put("database/requirements.txt", "requirements.txt")
-            scp.put("database/hades_uploader.py", "hades_uploader.py")
+            scp.put("database/hebse_uploader.py", "hebse_uploader.py")
 
         print("Installing requirements...")
         stdin, stdout, sterr = ssh_client.exec_command("pip install -r requirements.txt", get_pty=True)  
         sterr.read()
 
         print("Creating database...")
-        stdin, stdout, sterr = ssh_client.exec_command(f"python3 hades_uploader.py {local_file_name} \"{db_settings['sshUser']}\" \"{db_settings['databaseName']}\"", get_pty=True)  # pylint: disable=unused-variable
+        stdin, stdout, sterr = ssh_client.exec_command(f"python3 hebse_uploader.py {local_file_name} \"{db_settings['sshUser']}\" \"{db_settings['databaseName']}\"", get_pty=True)  # pylint: disable=unused-variable
         sterr.read()
 
         return {"message": f"File downloaded successfully as {local_file_name}"}

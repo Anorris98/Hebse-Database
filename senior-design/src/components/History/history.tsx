@@ -99,7 +99,7 @@ export const History = () => {
                 }}
             >
                 <Box sx={{
-                    backgroundColor: "gray",
+                    backgroundColor: "#2e2d2e",
                     borderRadius: "15px",
                     width: "1150px",
                     fontFamily: "monospace",
@@ -109,7 +109,8 @@ export const History = () => {
                     flexDirection: "column",
                     height: "500px",
                 }}>
-                    <Box sx={{ fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', marginBottom: '20px', textAlign: 'center' }}>
+                    <Box sx={{ fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', marginBottom: '20px', textAlign: 'center', color: '#d7c8e8'
+                     }}>
                         Query History
                     </Box>
                     <DataGrid
@@ -117,8 +118,8 @@ export const History = () => {
                         columns={columns}
                         initialState={{ pagination: { paginationModel } }}
                         sx={{
-                            border: 2, fontFamily: 'monospace', borderColor: 'white', color: 'white', '& .header': {
-                                backgroundColor: 'darkgray',
+                            border: 2, fontFamily: 'monospace', borderColor: 'white', color: 'white', backgroundColor: '#2e2d2e', '& .header': {
+                                backgroundColor: '#3a303d',
                                 fontWeight: 'bold',
                             }
                         }}

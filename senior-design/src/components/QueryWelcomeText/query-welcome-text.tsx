@@ -4,7 +4,7 @@ export const QueryWelcomeText = () => {
   return (
       <Box
           sx={{
-              backgroundColor: "gray",
+              backgroundColor: "#2e2d2e",
               borderRadius: "15px",
               maxWidth: "lg",
               width: "100%",
@@ -14,20 +14,17 @@ export const QueryWelcomeText = () => {
               textAlign: "center",
           }}
       >
-          <Box sx={{fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', textAlign: 'center',}}>
-              How can I help?
+          <Box sx={{fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', textAlign: 'center', color: "#d7c8e8"
+          }}>
+              Welcome to HEBSE!
           </Box>
-          <Box sx={{fontSize: '16px'}}>
-              Welcome to the Binary Star Query Bot! This interactive assistant is
-              designed to help you explore and retrieve data on binary star systems
-              with ease. Whether you're an astronomer, student, or space enthusiast,
-              you can quickly access detailed information on various binary systems,
-              including orbital periods, mass, luminosity, and more. Additionally,
-              you can upload your own binary star data, and the bot will parse and
-              integrate it for seamless querying. From answering general questions
-              about binary stars to providing insights into specific systems, this
-              bot is here to enhance your understanding of the fascinating world of
-              stellar pairs. Let’s explore the stars together!
+          <Box sx={{fontSize: '20px',}}>
+          This interactive application is designed to help you query and explore datasets representing the evolution of binary star systems. 
+          Whether you are an astrophysics researcher, student or just a space enthusiast, HEBSE enables you to pose queries with an ease of LLM-based natural language interface, 
+          while guaranteeing the consistency of robust database query processing. The data is obtained from the publicly available
+           POSYDON project (
+            <a href="https://posydon.org/" target="_blank" rel="noopener noreferrer" style={{ color: 'white', textDecoration: 'underline' }}>https://posydon.org/</a>) 
+            and, as part of its functionality, HEBSE enables you to use updated versions of the data.
           </Box>
       </Box>
   )

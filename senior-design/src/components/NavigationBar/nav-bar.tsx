@@ -1,4 +1,4 @@
-import {alpha, styled} from '@mui/material/styles';
+import {styled} from '@mui/material/styles';
 import {useNavigate} from 'react-router-dom'; // Import useNavigate from React Router
 import Box from '@mui/material/Box';
 import AppBar from '@mui/material/AppBar';
@@ -17,7 +17,7 @@ const StyledToolbar = styled(Toolbar)(({theme}) => ({
     backdropFilter: 'blur(24px)',
     border: '1px solid',
     borderColor: theme.palette.divider,
-    backgroundColor: alpha(theme.palette.background.default, 0.4),
+    backgroundColor: "#2a1345",
     boxShadow: theme.shadows[1],
     padding: '8px 12px'
 }));
@@ -53,29 +53,29 @@ export const NavBar = () => {
                 <StyledToolbar variant="dense" disableGutters>
                     <Box sx={{flexGrow: 1, display: 'flex', alignItems: 'center', px: 0, justifyContent: 'left'}}>
                         <Box sx={{display: {xs: 'none', md: 'flex'}}}>
-                            <StyledButton variant="contained" size="small" startIcon={<Search/>}
+                            <StyledButton variant="contained" size="medium" startIcon={<Search/>}
                                           onClick={() => navigate("/")}>
                                 Query
                             </StyledButton>
-                            <StyledButton variant="contained" size="small" startIcon={<Undo/>}
+                            <StyledButton variant="contained" size="medium" startIcon={<Undo/>}
                                           onClick={() => navigate("/History")}>
                                 History
                             </StyledButton>
-                            <StyledButton variant="contained" size="small" startIcon={<Build/>}
+                            <StyledButton variant="contained" size="medium" startIcon={<Build/>}
                                           onClick={() => navigate("/Utilities")}>
                                 Utilities
                             </StyledButton>
-                            <StyledButton variant="contained" size="small" startIcon={<Settings/>}
+                            <StyledButton variant="contained" size="medium" startIcon={<Settings/>}
                                           onClick={() => navigate("/Settings")}>
                                 Settings
                             </StyledButton>
-                            <StyledButton variant="contained" size="small" startIcon={<Info/>}
-                                          onClick={() => navigate("/About_Us")}>
-                                About Us
-                            </StyledButton>
-                            <StyledButton variant="contained" size="small" startIcon={<BookIcon/>}
+                            <StyledButton variant="contained" size="medium" startIcon={<BookIcon/>}
                                           onClick={() => navigate("/User_Manual")}>
                                 User Manual
+                            </StyledButton>
+                            <StyledButton variant="contained" size="medium" startIcon={<Info/>}
+                                          onClick={() => navigate("/About")}>
+                                About
                             </StyledButton>
                         </Box>
                     </Box>
@@ -87,7 +87,7 @@ export const NavBar = () => {
                         fontWeight: 'bold',
                         borderRadius: '15px'
                     }}>
-                        HADES
+                        HEBSE
                     </Box>
                 </StyledToolbar>
             </Container>

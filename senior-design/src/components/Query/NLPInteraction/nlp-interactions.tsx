@@ -100,7 +100,7 @@ export const NlpInteractions = () => {
   return (
     <Box
       sx={{
-        backgroundColor: "gray",
+        backgroundColor: "#2e2d2e",
         flexGrow: 1,
         borderRadius: "15px",
         fontFamily: "monospace",
@@ -115,7 +115,7 @@ export const NlpInteractions = () => {
     >
 
       <Box sx={{ display: "flex", alignItems: "center", mb: 2, marginBottom: "15px", }}>
-        <Typography variant="h5" sx={{ fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', }}>
+        <Typography variant="h5" sx={{ fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', color: "#d7c8e8"}}>
           Query Assistance
         </Typography>
         <Tooltip title={"Use this field to talk to GPT about query formatting or get general schema help."} arrow>
@@ -149,7 +149,7 @@ export const NlpInteractions = () => {
               ? "GPT Model is connected!"
               : "GPT Model is not connected. Check Settings -> GPT API Settings.")
           }
-          sx={{ color: "white", fontFamily: "monospace", '& .MuiFormControlLabel-label': { fontFamily: 'monospace', color: "white" }}}
+          sx={{ color: "white", fontFamily: "monospace", '& .MuiFormControlLabel-label': { fontFamily: 'monospace', color: "white" },'& .MuiFormControlLabel-label.Mui-disabled':{ color: "white !important", opacity: 1,}}}
         />
       </Box>
 
@@ -181,6 +181,7 @@ export const NlpInteractions = () => {
           }}
           sx={{
             width: "100%", 
+            backgroundColor: "#3a303d",
             '& .MuiInputBase-root': {
               height: "auto",
               alignItems: "flex-start",
@@ -210,7 +211,7 @@ export const NlpInteractions = () => {
         <Button
             variant="contained"
             sx={{
-                backgroundColor: "darkgray",
+                backgroundColor: "#5a50c7",
                 fontFamily: "monospace",
                 fontWeight: "bold",
                 color: "white",
@@ -226,10 +227,11 @@ export const NlpInteractions = () => {
       <Box
         sx={{
           marginTop: "5px",
-          backgroundColor: "inherit",
+          backgroundColor: "#3a303d",
           borderRadius: "5px",
           padding: "5px",
           border: "solid white",
+          borderWidth: "1px",
           width: "100%",
           maxHeight: "95px", // or any height you want
           overflowY: "auto",   // enables vertical scrolling

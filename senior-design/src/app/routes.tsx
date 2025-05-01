@@ -2,12 +2,12 @@ import {Route, Routes} from 'react-router-dom';
 import {ErrorPage} from "../components/ErrorPage/error-page.tsx";
 import {Query} from "../components/Query/query.tsx";
 import {Utilities} from "../components/Utilities/utilities.tsx";
-import {AboutUs} from "../components/About_Us/about-us.tsx";
+import {About} from "../components/About/about.tsx";
 import {Settings} from "../components/Settings/settings.tsx";
 import {History} from "../components/History/history.tsx";
 import {UserManual} from "../components/UserManual/user-manual.tsx";
 import {createTheme, ThemeProvider, CssBaseline, GlobalStyles} from "@mui/material";
-import backgroundImage from '../assets/app_background.jpg';
+import backgroundImage from '../assets/app_background.png';
 /* istanbul ignore file -- @preserve */
 
 const theme = createTheme({
@@ -69,7 +69,7 @@ const App = () => {
                 <Route path='/Settings' element={<Settings/>}/>
                 <Route path='/History' element={<History/>}/>
                 <Route path='/Utilities' element={<Utilities/>}/>
-                <Route path='/About_Us' element={<AboutUs/>}/>
+                <Route path='/About' element={<About/>}/>
                 <Route path='/User_Manual' element={<UserManual/>}/>
                 <Route path='*' element={<ErrorPage/>}/>
             </Routes>

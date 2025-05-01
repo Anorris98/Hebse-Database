@@ -58,7 +58,7 @@ export const QueryResult = ({ queryResult, setPageNumber, pageNumber, totalEntri
                                             border: '1px solid white',
                                             padding: '8px',
                                             textAlign: 'left',
-                                            backgroundColor: 'darkgray',
+                                            backgroundColor: '#3a303d',
                                             color: 'white',
                                         }}
                                     >
@@ -111,7 +111,7 @@ export const QueryResult = ({ queryResult, setPageNumber, pageNumber, totalEntri
         <Box
             component="div"
             sx={{
-                backgroundColor: 'gray',
+                backgroundColor: '#2e2d2e',
                 flexGrow: 1,
                 borderRadius: '15px',
                 maxWidth: 'lg',
@@ -123,7 +123,7 @@ export const QueryResult = ({ queryResult, setPageNumber, pageNumber, totalEntri
             }}
         >
             <Box sx={{ display: 'flex', justifyContent: 'center', flexWrap: { xs: 'wrap', sm: 'nowrap' }}}>
-                <Box sx={{ marginTop: '10px',fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', position: 'absolute', left: '50%', transform: 'translateX(-50%)'}}>Query Results <IconButton children = {<DownloadIcon/>} sx={{color: 'white' }} onClick={() => downloadData()}/></Box>
+                <Box sx={{ marginTop: '10px',fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', position: 'absolute', left: '50%', transform: 'translateX(-50%)', color: "#d7c8e8"}}>Query Results <IconButton children = {<DownloadIcon/>} sx={{color: 'white' }} onClick={() => downloadData()}/></Box>
                 <Box sx={{ marginLeft: 'auto', marginTop: { xs: '50px', lg: '0' }}}>
                     <PageSelect setPageNumber={setPageNumber}
                         pageNumber={pageNumber}

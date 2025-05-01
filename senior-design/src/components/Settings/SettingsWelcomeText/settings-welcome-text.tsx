@@ -9,7 +9,7 @@ export const SettingsWelcomeText = () => {
   return (
     <Box
   sx={{
-    backgroundColor: "gray",
+    backgroundColor: "#2e2d2e",
     borderRadius: "15px",
     maxWidth: "lg",
     width: "100%",
@@ -23,7 +23,7 @@ export const SettingsWelcomeText = () => {
       {/* Main title: centered */}
       <Box
         sx={{
-          fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', textAlign: 'center'
+          fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', textAlign: 'center', color: "#d7c8e8"
         }}
       >
         Configure Your Settings
@@ -38,10 +38,11 @@ export const SettingsWelcomeText = () => {
     {/* Section title: centered */}
     <Box
       sx={{
-        fontSize: "18px",
+        fontSize: "20px",
         fontWeight: "bold",
         marginTop: "15px",
         textAlign: "center",
+        color: "#d7c8e8"
       }}
     >
       GPT API Settings
@@ -54,10 +55,11 @@ export const SettingsWelcomeText = () => {
     {/* Another section title: centered */}
     <Box
       sx={{
-        fontSize: "18px",
+        fontSize: "20px",
         fontWeight: "bold",
         marginTop: "20px",
         textAlign: "center",
+        color: "#d7c8e8"
       }}
     >
       Database Connection
@@ -78,7 +80,7 @@ export const SettingsWelcomeText = () => {
         endIcon={expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         sx={{
           marginTop: "10px",
-          backgroundColor: "darkgray",
+          backgroundColor: "#5a50c7",
           fontFamily: "monospace",
           color: "white",
           textTransform: "none",

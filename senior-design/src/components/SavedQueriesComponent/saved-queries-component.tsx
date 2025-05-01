@@ -24,7 +24,7 @@ export const SavedQueriesComponent = ({savedQueries, setSavedQueries, setInputVa
         <Box
             component="div"
             sx={{
-                backgroundColor: 'gray',
+                backgroundColor: '#2e2d2e',
                 flexGrow: 1,
                 borderRadius: '15px',
                 maxWidth: 'lg',
@@ -35,7 +35,7 @@ export const SavedQueriesComponent = ({savedQueries, setSavedQueries, setInputVa
                 textAlign: "center",
             }}
         >
-            <Box sx={{fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', backgroundColor: 'gray'}}>
+            <Box sx={{fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', backgroundColor: '#2e2d2e', color: "#d7c8e8"}}>
                 Saved Queries <IconButton sx={{maxHeight: "10px", width: "30px"}}
                     onClick={() => setDisplaySavedQueries(!displaySavedQueries)} children={<ArrowDropDownCircleRounded sx={{color:"white"}}/>}/>
             </Box>
@@ -52,12 +52,12 @@ export const SavedQueriesComponent = ({savedQueries, setSavedQueries, setInputVa
                                 maxWidth: "calc(100% - 24px)",
                                 padding: '4px',
                                 margin: '8px',
-                                backgroundColor: 'darkgray',
+                                backgroundColor: '#3a303d',
                                 textTransform: 'none',
                                 fontFamily: 'monospace',
                                 fontSize: "16px",
                                 fontWeight: "light",
-                                color: 'black',
+                                color: 'white',
                                 display: "inline-flex",
                                 alignItems: "center",
                                 flexDirection: 'row-reverse'

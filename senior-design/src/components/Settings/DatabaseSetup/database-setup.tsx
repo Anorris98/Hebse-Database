@@ -37,14 +37,14 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   borderRadius: "12px",
   backdropFilter: "blur(24px)",
   border: `1px solid ${theme.palette.divider}`,
-  backgroundColor: "gray",
+  backgroundColor: "#2e2d2e",
   boxShadow: theme.shadows[1],
   fontFamily: "monospace",
 }));
 
 const StyledSelect = styled(Select)(({ theme }) => ({
   marginBottom: "15px",
-  backgroundColor: "gray",
+  backgroundColor: "#2e2d2e",
   color: "white",
   borderRadius: "5px",
   fontFamily: "monospace",
@@ -333,7 +333,7 @@ const DatabaseSetup = () => {
         <Typography
           variant="h4"
           sx={{
-            fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', textAlign: 'center', marginBottom: "20px"
+            fontSize: '25px', fontWeight: 'bold', fontFamily: 'monospace', textAlign: 'center', marginBottom: "20px", color: "#d7c8e8"
           }}
         >
           Database Connection Setup
@@ -348,13 +348,13 @@ const DatabaseSetup = () => {
             MenuProps={{
                 PaperProps: {
                   sx: {
-                    bgcolor: "darkgrey",   // grey background
+                    bgcolor: "#3a303d",   // grey background
                     color:  "white",       // white item text
                   },
                 },
               }}
           sx={{
-            backgroundColor: "darkgray",
+            backgroundColor: "#3a303d",
             fontFamily: "monospace",
             fontWeight: "bold",
             flex: 1,

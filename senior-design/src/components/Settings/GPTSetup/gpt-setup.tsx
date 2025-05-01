@@ -11,9 +11,9 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
     borderRadius: "12px",
     backdropFilter: "blur(24px)",
     border: `1px solid ${theme.palette.divider}`,
-    backgroundColor: "gray",
+    backgroundColor: "#2e2d2e",
     boxShadow: theme.shadows[1],
-    color: theme.palette.text.primary,
+    color: "#d7c8e8",
     fontFamily: "monospace",
 }));
 
