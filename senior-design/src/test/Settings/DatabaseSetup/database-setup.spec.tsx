@@ -469,7 +469,7 @@ describe("DatabaseSetup", () => {
   
     const selectEl = screen.getByRole("combobox");
     const key = Object.keys(selectEl).find(k => k.startsWith("__reactFiber$"));
-    const fiberNode = key && (selectEl as any)[key];
+    const fiberNode = key && (selectEl as unknown as Record<string, any>)[key];
   
     let owner = fiberNode;
     while (owner && !owner.memoizedProps.onChange) {
