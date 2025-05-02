@@ -27,10 +27,10 @@ describe('GptSetup Component', () => {
       'Model (e.g., gpt-4, gpt-3.5-turbo)',
       { selector: 'input' }
     ) as HTMLInputElement;
-    expect(modelInput.value).toBe('gpt-4o');
+    expect(modelInput.value).toBe('gpt-4o-mini');
 
     const maxTokensInput = screen.getByLabelText('Max Tokens', { selector: 'input' }) as HTMLInputElement;
-    expect(maxTokensInput.value).toBe('100');
+    expect(maxTokensInput.value).toBe('1000');
   });
 
   it('loads and applies saved settings when decrypt succeeds', async () => {
