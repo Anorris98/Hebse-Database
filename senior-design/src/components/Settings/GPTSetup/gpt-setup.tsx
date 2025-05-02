@@ -4,7 +4,7 @@ import {Save, Visibility, VisibilityOff} from "@mui/icons-material";
 import {styled} from "@mui/material/styles";
 import HelpTextField from "../../HelpTextField/help-text-field.tsx";
 import {encrypt, decrypt} from "../../Utilities/utility-functions.ts";
-/* istanbul ignore file -- @preserve */
+
 // Styled components
 const StyledPaper = styled(Paper)(({ theme }) => ({
     padding: "30px",
@@ -21,7 +21,7 @@ const GptSetup = () => {
     const [apiKey, setApiKey] = useState("");
     const [model, setModel] = useState("gpt-4o");
     const [maxTokens, setMaxTokens] = useState("100");
-    const [temperature, setTemperature] = useState("0.7");
+    // const [temperature, setTemperature] = useState("0.7");
     const [showApiKey, setShowApiKey] = useState(false);
 
     useEffect(() => {
@@ -35,7 +35,7 @@ const GptSetup = () => {
             setApiKey(parsedSettings.apiKey || "");
             setModel(parsedSettings.model || "gpt-4");
             setMaxTokens(parsedSettings.max_tokens?.toString() || "100");
-            setTemperature(parsedSettings.temperature?.toString() || "0.7");
+            // setTemperature(parsedSettings.temperature?.toString() || "0.7");
           } catch (error) {
             console.error("Failed to parse decrypted GPT settings:", error);
           }
@@ -49,7 +49,7 @@ const GptSetup = () => {
           apiKey,
           model,
           max_tokens: Number.parseInt(maxTokens, 10),
-          temperature: Number.parseFloat(temperature),
+          // temperature: Number.parseFloat(temperature),
         };
       
         //encrypts the settings and saves them to localStorage
@@ -84,7 +84,8 @@ return (
                 onChange={(input) => setApiKey(input.target.value)}
                 type={showApiKey ? "text" : "password"}
                 tooltipText="Enter your OpenAI API Key. This key is required to access GPT models."
-                inputProps={apiKeyInputProperties}
+                // inputProps={apiKeyInputProperties}
+                slotProps={{ input: apiKeyInputProperties }}
             />
 
             {/* Model Selection Field */}

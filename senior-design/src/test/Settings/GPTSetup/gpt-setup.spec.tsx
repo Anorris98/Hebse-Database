@@ -1,81 +1,189 @@
-import { vi, describe, it, expect} from "vitest";
-import "@testing-library/jest-dom";
-import GptSetup from "../../../components/Settings/GPTSetup/gpt-setup.tsx";
-import * as utils from "../../../components/Utilities/utility-functions.ts"
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import GptSetup from '../../../components/Settings/GPTSetup/gpt-setup.tsx';
+import * as utility from '../../../components/Utilities/utility-functions';
 
-
-// Mock localStorage
-const localStorageMock = (() => {
-  let store: Record<string, string> = {};
-  return {
-    getItem: (key: string) => store[key] || undefined,
-    setItem: (key: string, value: string) => {
-      store[key] = value;
-    },
-    clear: () => {
-      store = {};
-    },
-    removeItem: (key: string) => {
-      delete store[key];
-    },
-  };
-})();
-
-Object.defineProperty(window, "localStorage", { value: localStorageMock });
-
-// Mock encrypt and decrypt
-vi.spyOn(utils, "encrypt").mockImplementation((text: string) => Promise.resolve(`encrypted(${text})`));
-vi.spyOn(utils, "decrypt").mockImplementation((text: string) => Promise.resolve(text.replace(/^encrypted\((.*)\)$/, "$1")));
-
-// Mock alert
+// stub out window.alert
 window.alert = vi.fn();
 
-describe("GptSetup component", () => {
+const renderWithTheme = (ui: React.ReactElement) =>
+  render(<ThemeProvider theme={createTheme()}>{ui}</ThemeProvider>);
+
+describe('GptSetup Component', () => {
   beforeEach(() => {
     localStorage.clear();
     vi.clearAllMocks();
   });
 
-  it("renders all fields correctly", () => {
-    render(<GptSetup />);
-    expect(screen.getByText(/GPT API Settings/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/API Key/i, { selector: 'input' })).toBeInTheDocument();
-    expect(screen.getByLabelText(/Model/i, { selector: 'input' })).toBeInTheDocument();
-    expect(screen.getByLabelText(/Max Tokens/i, { selector: 'input' })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /save api settings/i })).toBeInTheDocument();
+  it('renders defaults when there are no saved settings', () => {
+    renderWithTheme(<GptSetup />);
+    const apiKeyInput = screen.getByLabelText('API Key', { selector: 'input' }) as HTMLInputElement;
+    expect(apiKeyInput.value).toBe('');
+    expect(apiKeyInput.getAttribute('type')).toBe('password');
+
+    const modelInput = screen.getByLabelText(
+      'Model (e.g., gpt-4, gpt-3.5-turbo)',
+      { selector: 'input' }
+    ) as HTMLInputElement;
+    expect(modelInput.value).toBe('gpt-4o');
+
+    const maxTokensInput = screen.getByLabelText('Max Tokens', { selector: 'input' }) as HTMLInputElement;
+    expect(maxTokensInput.value).toBe('100');
   });
 
-  it("updates input values and saves settings", async () => {
-    render(<GptSetup />);
-    const [apiKeyInput] = screen.getAllByLabelText(/API Key/i);
-    fireEvent.change(apiKeyInput, { target: { value: "test-key"}});
-    fireEvent.change(screen.getByLabelText(/Model \(e\.g\., gpt-4, gpt-3\.5-turbo\)/i), { target: { value: "gpt-4" } });
-    fireEvent.change(screen.getByLabelText(/Max Tokens/i), { target: { value: "150" } });
-
-    fireEvent.click(screen.getByRole("button", { name: /save api settings/i }));
-
-    await waitFor(() => {
-      expect(window.alert).toHaveBeenCalledWith("Settings saved!");
-      expect(localStorage.getItem("gpt_settings")).toMatch(/encrypted/);
-    });
-  });
-
-  it("loads and decrypts saved settings from localStorage", async () => {
-    const savedSettings = {
-      apiKey: "stored-key",
-      model: "gpt-3.5-turbo",
-      max_tokens: 123,
-      temperature: 0.8,
+  it('loads and applies saved settings when decrypt succeeds', async () => {
+    const settings = {
+      apiKey: 'my-key',
+      model: 'my-model',
+      max_tokens: 250,
     };
-    localStorage.setItem("gpt_settings", `encrypted(${JSON.stringify(savedSettings)})`);
-
-    render(<GptSetup />);
-
+  
+    localStorage.setItem('gpt_settings', 'enc');
+  
+    const decryptSpy = vi
+      .spyOn(utility, 'decrypt')
+      .mockResolvedValueOnce(JSON.stringify(settings));
+  
+    renderWithTheme(<GptSetup />);
+  
+    // This waitFor ensures React finishes state updates AND Istanbul sees them
     await waitFor(() => {
-      expect(screen.getByLabelText(/API Key/i, { selector: 'input' })).toHaveValue("stored-key");
-      expect(screen.getByLabelText(/Model/i, { selector: 'input' })).toHaveValue("gpt-3.5-turbo");
-      expect(screen.getByLabelText(/Max Tokens/i, { selector: 'input' })).toHaveValue(123);
+      const apiKeyInput = screen.getByLabelText('API Key', { selector: 'input' }) as HTMLInputElement;
+      const modelInput = screen.getByLabelText('Model (e.g., gpt-4, gpt-3.5-turbo)', { selector: 'input' }) as HTMLInputElement;
+      const maxTokensInput = screen.getByLabelText('Max Tokens', { selector: 'input' }) as HTMLInputElement;
+  
+      // These reads from updated state force Istanbul to mark the lines
+      expect(apiKeyInput.value).to.equal('my-key');
+      expect(modelInput.value).to.equal('my-model');
+      expect(maxTokensInput.value).to.equal('250');
     });
+  
+    decryptSpy.mockRestore();
+  });
+
+  it('applies fallback defaults when fields are missing', async () => {
+    const partialSettings = {
+      // missing apiKey
+      model: null,
+      // missing max_tokens
+    };
+  
+    localStorage.setItem('gpt_settings', 'enc');
+  
+    const decryptSpy = vi
+      .spyOn(utility, 'decrypt')
+      .mockResolvedValueOnce(JSON.stringify(partialSettings));
+  
+    renderWithTheme(<GptSetup />);
+  
+    await waitFor(() => {
+      const apiKeyInput = screen.getByLabelText('API Key', { selector: 'input' }) as HTMLInputElement;
+      const modelInput = screen.getByLabelText('Model (e.g., gpt-4, gpt-3.5-turbo)', { selector: 'input' }) as HTMLInputElement;
+      const maxTokensInput = screen.getByLabelText('Max Tokens', { selector: 'input' }) as HTMLInputElement;
+  
+      expect(apiKeyInput.value).to.equal('');          // fallback ""
+      expect(modelInput.value).to.equal('gpt-4');      // fallback
+      expect(maxTokensInput.value).to.equal('100');    // fallback
+    });
+  
+    decryptSpy.mockRestore();
+  });
+
+  it('logs parse errors and leaves defaults when decrypted JSON is bad', async () => {
+    localStorage.setItem('gpt_settings', 'enc');
+    const decryptSpy = vi.spyOn(utility, 'decrypt').mockResolvedValue('not-json');
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    renderWithTheme(<GptSetup />);
+
+    await waitFor(() =>
+      expect(errorSpy).toHaveBeenCalledWith(
+        'Failed to parse decrypted GPT settings:',
+        expect.any(SyntaxError)
+      )
+    );
+
+    // default still in place
+    const apiKeyInput = screen.getByLabelText('API Key', { selector: 'input' }) as HTMLInputElement;
+    expect(apiKeyInput.value).toBe('');
+
+    decryptSpy.mockRestore();
+    errorSpy.mockRestore();
+  });
+
+  it('logs decryption errors and leaves defaults when decrypt rejects', async () => {
+    localStorage.setItem('gpt_settings', 'enc');
+    const err = new Error('fail');
+    const decryptSpy = vi.spyOn(utility, 'decrypt').mockRejectedValue(err);
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    renderWithTheme(<GptSetup />);
+
+    await waitFor(() =>
+      expect(errorSpy).toHaveBeenCalledWith('Failed to decrypt GPT settings:', err)
+    );
+
+    const apiKeyInput = screen.getByLabelText('API Key', { selector: 'input' }) as HTMLInputElement;
+    expect(apiKeyInput.value).toBe('');
+
+    decryptSpy.mockRestore();
+    errorSpy.mockRestore();
+  });
+
+  it('toggles API key visibility when clicking the visibility icon', () => {
+    renderWithTheme(<GptSetup />);
+    const apiKeyInput = screen.getByLabelText('API Key', { selector: 'input' }) as HTMLInputElement;
+
+    // starts hidden
+    expect(apiKeyInput.getAttribute('type')).toBe('password');
+
+    // the little icon‐button has no accessible name, so it shows up as a button with name=""
+    const toggleButton = screen.getByRole('button', { name: '' });
+    fireEvent.click(toggleButton);
+
+    // now it should be visible
+    expect(apiKeyInput.getAttribute('type')).toBe('text');
+
+    // click again to hide
+    fireEvent.click(toggleButton);
+    expect(apiKeyInput.getAttribute('type')).toBe('password');
+  });
+
+  it('saves settings to localStorage and alerts on success', async () => {
+    const encryptSpy = vi.spyOn(utility, 'encrypt').mockResolvedValue('encrypted-payload');
+
+    renderWithTheme(<GptSetup />);
+
+    fireEvent.change(screen.getByLabelText('API Key', { selector: 'input' }), {
+      target: { value: 'new-api-key' },
+    });
+    fireEvent.change(
+      screen.getByLabelText('Model (e.g., gpt-4, gpt-3.5-turbo)', {
+        selector: 'input',
+      }),
+      { target: { value: 'new-model' } }
+    );
+    fireEvent.change(screen.getByLabelText('Max Tokens', { selector: 'input' }), {
+      target: { value: '321' },
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /save api settings/i }));
+
+    await waitFor(() =>
+      expect(encryptSpy).toHaveBeenCalledWith(
+        JSON.stringify({
+          apiKey: 'new-api-key',
+          model: 'new-model',
+          max_tokens: 321
+        })
+      )
+    );
+
+    expect(localStorage.getItem('gpt_settings')).toBe('encrypted-payload');
+    expect(window.alert).toHaveBeenCalledWith('Settings saved!');
+
+    encryptSpy.mockRestore();
   });
 });

@@ -17,7 +17,7 @@ import {styled } from "@mui/material/styles";
 import { DeleteForever, Save, Visibility, VisibilityOff } from "@mui/icons-material";
 import HelpTextField from "../../HelpTextField/help-text-field.tsx";
 import { enableTunnel, encrypt, decrypt } from "../../Utilities/utility-functions.ts";
-/* istanbul ignore file -- @preserve */
+
 type DatabaseConfig = {
   databaseHost: string;
   databasePort: string;
@@ -268,9 +268,10 @@ const DatabaseSetup = () => {
   // Remove current profile
   // --------------------------------------------------
   const handleRemove = async() => {
-    if (!selectedProfileKey || selectedProfileKey === "new") {
-      return;
-    }
+    // Redundant and never reached
+    // if (!selectedProfileKey || selectedProfileKey === "new") {
+    //   return;
+    // }
     const allProfiles = await loadAllDatabaseConfigs();
 
     // Remove it
@@ -470,7 +471,8 @@ const DatabaseSetup = () => {
           value={databasePassword}
           onChange={(input) => setDatabasePassword(input.target.value)}
           tooltipText="Enter the database user’s password."
-          inputProps={passwordInputProperties}
+          // inputProps={passwordInputProperties}             deprecated
+          slotProps={{input: passwordInputProperties}}
         />
         <HelpTextField
           label="Database Name"
@@ -518,7 +520,9 @@ const DatabaseSetup = () => {
               value={sshKey}
               onChange={(input) => setSshKey(input.target.value)}
               tooltipText="Paste your SSH private key here, or an SSH password if not using keys."
-              inputProps={{ multiline: true, rows: 4, style: { color: "white" }, passwordInputProperties }}
+              // inputProps={{ multiline: true, rows: 4, style: { color: "white" }, passwordInputProperties }} deprecated, fixed visibility
+              slotProps={{input: passwordInputProperties}}
+              
             />
           </>
         )}
