@@ -19,8 +19,8 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 
 const GptSetup = () => {
     const [apiKey, setApiKey] = useState("");
-    const [model, setModel] = useState("gpt-4o");
-    const [maxTokens, setMaxTokens] = useState("100");
+    const [model, setModel] = useState("gpt-4o-mini");
+    const [maxTokens, setMaxTokens] = useState("1000");
     // const [temperature, setTemperature] = useState("0.7");
     const [showApiKey, setShowApiKey] = useState(false);
 
