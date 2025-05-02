@@ -1,5 +1,5 @@
 
-import { render, screen, fireEvent, waitFor, act, within } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import DatabaseSetup from "../../../components/Settings/DatabaseSetup/database-setup";
 import { vi } from "vitest";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
