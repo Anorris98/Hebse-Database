@@ -66,7 +66,7 @@ describe('GptSetup Component', () => {
   it('applies fallback defaults when fields are missing', async () => {
     const partialSettings = {
       // missing apiKey
-      model: null,
+      model: undefined,
       // missing max_tokens
     };
   
