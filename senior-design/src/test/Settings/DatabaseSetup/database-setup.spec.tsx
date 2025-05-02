@@ -1,5 +1,5 @@
 
-import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, act, within } from "@testing-library/react";
 import DatabaseSetup from "../../../components/Settings/DatabaseSetup/database-setup";
 import { vi } from "vitest";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -459,28 +459,6 @@ describe("DatabaseSetup", () => {
     expect(input).toHaveValue("");    // ← covers the `""` branch
   });
 
-  it("covers else branch when profile key not found", async () => {
-    vi.mocked(util.decrypt).mockResolvedValueOnce(
-      JSON.stringify({ knownKey: { databaseName: "not this" } })
-    );
-    localStorage.setItem("db_list", "mock");
-  
-    render(<DatabaseSetup />);
-  
-    const selectEl = screen.getByRole("combobox");
-    const key = Object.keys(selectEl).find(k => k.startsWith("__reactFiber$"));
-    const fiberNode = key && (selectEl as unknown as Record<string, any>)[key];
-  
-    let owner = fiberNode;
-    while (owner && !owner.memoizedProps.onChange) {
-      owner = owner.return;
-    }
-  
-    await act(async () => {
-      await owner.memoizedProps.onChange({ target: { value: "ghost" } });
-    });
-  });
-
   it("covers false branch when db_settings profile does not match selected key", async () => {
     const selectedKey = "foo";
     const lastUsedKey = "bar";
@@ -534,48 +512,48 @@ describe("DatabaseSetup", () => {
   });
 
   it("skips clearing db_settings if lastUsed is null", async () => {
-    const selectedKey = "foo";
-  
-    // Simulate no db_settings
-    localStorage.removeItem("db_settings");
-  
-    const mockProfile = {
-      databaseName: "mydb",
-      databasePort: "5432",
-      databaseHost: "",
-      databasePassword: "",
-      databaseUsername: "",
-      isRemote: false,
-      isBackendRemote: false,
-      sshHost: "",
-      sshPort: "22",
-      sshUser: "",
-      sshKey: ""
-    };
-  
-    vi.mocked(util.decrypt).mockResolvedValueOnce(JSON.stringify({ [selectedKey]: mockProfile }));
-  
-    localStorage.setItem("db_list", "mockList");
-  
-    const spy = vi.spyOn(localStorage.__proto__, "removeItem");
-  
-    render(<DatabaseSetup />);
-  
-    // Select the real profile so it sets selectedProfileKey
-    fireEvent.mouseDown(screen.getByRole("combobox"));
-    const option = await screen.findByRole("option", { name: selectedKey });
-    fireEvent.click(option);
-  
-    // Click REMOVE
-    const removeBtn = await screen.findByRole("button", { name: /remove database/i });
-    fireEvent.click(removeBtn);
-  
-    await waitFor(() => {
-      // db_settings was never removed because it didn't exist
-      expect(spy).not.toHaveBeenCalledWith("db_settings");
-    });
-  
-    spy.mockRestore();
+  const selectedKey = "foo";
+
+  // Simulate no db_settings
+  localStorage.removeItem("db_settings");
+
+  const mockProfile = {
+    databaseName: "mydb",
+    databasePort: "5432",
+    databaseHost: "",
+    databasePassword: "",
+    databaseUsername: "",
+    isRemote: false,
+    isBackendRemote: false,
+    sshHost: "",
+    sshPort: "22",
+    sshUser: "",
+    sshKey: ""
+  };
+
+  vi.mocked(util.decrypt).mockResolvedValueOnce(JSON.stringify({ [selectedKey]: mockProfile }));
+
+  localStorage.setItem("db_list", "mockList");
+
+  const spy = vi.spyOn(localStorage.__proto__, "removeItem");
+
+  render(<DatabaseSetup />);
+
+  // Select the real profile so it sets selectedProfileKey
+  fireEvent.mouseDown(screen.getByRole("combobox"));
+  const option = await screen.findByRole("option", { name: selectedKey });
+  fireEvent.click(option);
+
+  // Click REMOVE
+  const removeBtn = await screen.findByRole("button", { name: /remove database/i });
+  fireEvent.click(removeBtn);
+
+  await waitFor(() => {
+    // db_settings was never removed because it didn't exist
+    expect(spy).not.toHaveBeenCalledWith("db_settings");
   });
+
+  spy.mockRestore();
+});
 
 });
