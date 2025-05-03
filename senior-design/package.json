@@ -7,6 +7,7 @@
     "dev:decrypt": "uvicorn app.bootstrap:bootstrap --port 9001",
     "dev:backend": "cd ../backend && python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
     "dev:frontend": "concurrently \"node --experimental-strip-types src/tunnel/tunnel-server.ts\" \"vite\"",
+    "prod:frontend": "concurrently \"node --experimental-strip-types src/tunnel/tunnel-server.ts\" \"vite\"",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "build": "tsc -b && vite build",
     "lint": "eslint . --fix",
