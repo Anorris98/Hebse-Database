@@ -2,7 +2,6 @@
 $basePath    = $PSScriptRoot
 $backendDir  = Join-Path $basePath "backend"
 $frontendDir = Join-Path $basePath "senior-design"
-$backendApp  = Join-Path $backendDir "app"
 
 # 1. Install Dependencies
 Write-Host "Installing backend requirements..."
@@ -15,7 +14,7 @@ npm install
 
 # Start the backend server in its own PowerShell window
 Write-Host "Starting backend server..."
-Start-Process powershell.exe -ArgumentList '-NoExit', '-Command', "Set-Location '$backendApp'; fastapi run main.py"
+Start-Process powershell.exe -ArgumentList '-NoExit', '-Command', "Set-Location '$backendDir'; fastapi run app/main.py"
 
 # Start the frontend server in its own PowerShell window
 Write-Host "Starting frontend server..."
