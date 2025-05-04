@@ -1,7 +1,7 @@
-import fs from "fs";
+import fs from "node:fs";
 import { describe, vi, beforeEach, it, expect } from "vitest";
 
-var mockServer = {
+const mockServer = {
     listening: true,
     on: vi.fn((event, callback) => {
         if (event === "error") {
@@ -15,7 +15,7 @@ var mockServer = {
     })
 };
 
-var mockServerNotListening = {
+const mockServerNotListening = {
     listening: false,
     on: vi.fn((event, callback) => {
         if (event === "error") {
@@ -38,13 +38,13 @@ const mockClient = {
 
 vi.mock("tunnel-ssh", () => {
     return {
-        createTunnel: vi.fn((_param1, _param2, param3, _param4) => {
-            if (param3.username === "tunnel") {
+        createTunnel: vi.fn((_parameter1, _parameter2, parameter3) => {
+            if (parameter3.username === "tunnel") {
                 return [mockServerNotListening, mockClient];
-            } else if (param3.username == "activeTunnel") {
+            } else if (parameter3.username == "activeTunnel") {
                 return [mockServer, mockClient]
             } else {
-                console.log("username is", param3.username)
+                console.log("username is", parameter3.username)
                 throw new Error("Invalid username");
             }
         }),
@@ -79,7 +79,7 @@ describe("Tunnel Server", () => {
             },
         });
 
-        let returned_value = await response.json()
+        const returned_value = await response.json()
 
         expect(returned_value.status).toBe("Tunnel started");
         expect(createTunnel).toHaveBeenCalledWith(
@@ -132,7 +132,7 @@ describe("Tunnel Server", () => {
             },
         });
 
-        let returned_value = await response.json()
+        const returned_value = await response.json()
 
         expect(returned_value.status).toBe("Tunnel already active");
 
@@ -150,7 +150,7 @@ describe("Tunnel Server", () => {
             method: "POST"
         })
 
-        let returned_value = await response.json()
+        const returned_value = await response.json()
 
         expect(returned_value.status).toBe("No active tunnel to stop");
     })
@@ -166,7 +166,7 @@ describe("Tunnel Server", () => {
             method: "POST"
         })
 
-        let returned_value = await response.json()
+        const returned_value = await response.json()
 
         expect(returned_value.status).toBe("Tunnel stopped");
     });
@@ -287,7 +287,7 @@ describe("Tunnel Server", () => {
         vi.spyOn(fs, "writeFileSync").mockImplementation(() => {});
         vi.spyOn(fs, "rmSync").mockImplementation(() => {});
         const blackbox = await import("../../../src/tunnel/tunnel-server");
-        vi.spyOn(blackbox.encryptionUtils, "encrypt").mockImplementation(() => {
+        vi.spyOn(blackbox.encryptionUtilities, "encrypt").mockImplementation(() => {
             throw new Error("Mock encryption failure");
         });
       
@@ -307,8 +307,9 @@ describe("Tunnel Server", () => {
         vi.spyOn(fs, "writeFileSync").mockImplementation(() => {});
         vi.spyOn(fs, "rmSync").mockImplementation(() => {});
         const blackbox = await import("../../../src/tunnel/tunnel-server");
-        vi.spyOn(blackbox.encryptionUtils, "encrypt").mockImplementation(() => {
-            throw new Error();
+        vi.spyOn(blackbox.encryptionUtilities, "encrypt").mockImplementation(() => {
+            /* eslint-disable unicorn/error-message */
+            throw new Error();  
         });
       
         const server = blackbox.app.listen(0);

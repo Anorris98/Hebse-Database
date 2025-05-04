@@ -4,7 +4,7 @@ import DatabaseSetup from "../../../components/Settings/DatabaseSetup/database-s
 import { vi } from "vitest";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import "@testing-library/jest-dom";
-import * as util from "../../../components/Utilities/utility-functions";
+import * as utility from "../../../components/Utilities/utility-functions";
 
 const renderWithTheme = (ui: React.ReactElement) =>
   render(<ThemeProvider theme={createTheme()}>{ui}</ThemeProvider>);
@@ -29,18 +29,18 @@ describe("DatabaseSetup", () => {
 
   it("resets to an empty object when db_list decrypts to an array", async () => {
     // Arrange: store a JSON array in localStorage
-    const arrJson = JSON.stringify([{ foo: "bar" }]);
-    localStorage.setItem("db_list", arrJson);
+    const arrayJson = JSON.stringify([{ foo: "bar" }]);
+    localStorage.setItem("db_list", arrayJson);
   
     // Stub decrypt so it returns that same array string
-    vi.mocked(util.decrypt).mockResolvedValueOnce(arrJson);
+    vi.mocked(utility.decrypt).mockResolvedValueOnce(arrayJson);
   
     // Act: render the component
     render(<DatabaseSetup />);
   
     // Assert: wait for decrypt to have been called with the array
     await waitFor(() => {
-      expect(util.decrypt).toHaveBeenCalledWith(arrJson);
+      expect(utility.decrypt).toHaveBeenCalledWith(arrayJson);
     });
   
     // Since loadAllDatabaseConfigs returned {}, your dropdown should
@@ -101,7 +101,7 @@ describe("DatabaseSetup", () => {
     const profileName = "prod";
     localStorage.setItem("db_list", "mockList");
     localStorage.setItem("db_settings", "mockSettings");
-    vi.mocked(util.decrypt).mockImplementation(async (x) => {
+    vi.mocked(utility.decrypt).mockImplementation(async (x) => {
       if (x === "mockList") return JSON.stringify({ [profileName]: { databaseName: "db", databasePort: "5432", databaseHost: "", databasePassword: "", databaseUsername: "", isRemote: false, isBackendRemote: false, sshHost: "", sshPort: "22", sshUser: "", sshKey: "" } });
       if (x === "mockSettings") return JSON.stringify({ profileName });
       return x;
@@ -165,7 +165,7 @@ describe("DatabaseSetup", () => {
   });
 
   it("handles invalid db_list JSON", async () => {
-    vi.mocked(util.decrypt).mockResolvedValueOnce("not-json");
+    vi.mocked(utility.decrypt).mockResolvedValueOnce("not-json");
     const spy = vi.spyOn(console, "error").mockImplementation(() => {});
     localStorage.setItem("db_list", "bad");
     render(<DatabaseSetup />);
@@ -174,7 +174,7 @@ describe("DatabaseSetup", () => {
   });
 
   it("handles invalid db_settings JSON", async () => {
-    vi.mocked(util.decrypt).mockResolvedValueOnce("not-json");
+    vi.mocked(utility.decrypt).mockResolvedValueOnce("not-json");
     const spy = vi.spyOn(console, "error").mockImplementation(() => {});
     localStorage.setItem("db_settings", "bad");
     render(<DatabaseSetup />);
@@ -216,8 +216,8 @@ describe("DatabaseSetup", () => {
   it("loads fields when selecting an existing profile", async () => {
     const profileKey = "test";
   
-    vi.mocked(util.decrypt).mockImplementation(async (val) => {
-      if (val === "mock") {
+    vi.mocked(utility.decrypt).mockImplementation(async (value) => {
+      if (value === "mock") {
         return JSON.stringify({
           [profileKey]: {
             databaseHost: "host",
@@ -271,14 +271,14 @@ describe("DatabaseSetup", () => {
   });
 
   it("clears and deletes 'new' profile when typing 'new' as profile name", async () => {
-    const encryptedDbListKey = "mock";
+    const encryptedDatabaseListKey = "mock";
   
     // 1. Set up a localStorage value for db_list that will trigger decrypt("mock")
-    localStorage.setItem("db_list", encryptedDbListKey);
+    localStorage.setItem("db_list", encryptedDatabaseListKey);
   
     // 2. Make decrypt return a profile with "new"
-    vi.mocked(util.decrypt).mockImplementation(async (val) => {
-      if (val === encryptedDbListKey) {
+    vi.mocked(utility.decrypt).mockImplementation(async (value) => {
+      if (value === encryptedDatabaseListKey) {
         return JSON.stringify({
           new: {
             databaseHost: "localhost",
@@ -300,7 +300,7 @@ describe("DatabaseSetup", () => {
   
     // 3. Spy on encrypt to verify it was called
     const encryptSpy = vi
-      .mocked(util.encrypt)
+      .mocked(utility.encrypt)
       .mockImplementation(async (input) => input); // echo input for inspection
   
     // 4. Stub alert to prevent popup and verify message
@@ -349,12 +349,12 @@ describe("DatabaseSetup", () => {
     localStorage.setItem("db_list", JSON.stringify({ [profileKey]: profile }));
     localStorage.setItem("db_settings", encryptedSettings);
   
-    vi.mocked(util.decrypt).mockImplementation(async (val) => {
-      if (val === encryptedSettings) throw new Error("decryption failed");
+    vi.mocked(utility.decrypt).mockImplementation(async (value) => {
+      if (value === encryptedSettings) throw new Error("decryption failed");
       return JSON.stringify({ [profileKey]: profile });
     });
   
-    vi.mocked(util.encrypt).mockResolvedValue(encryptedList);
+    vi.mocked(utility.encrypt).mockResolvedValue(encryptedList);
   
     const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
   
@@ -370,8 +370,8 @@ describe("DatabaseSetup", () => {
     await screen.findByDisplayValue(profileKey);
   
     // Trigger removal
-    const removeBtn = screen.getByRole("button", { name: /save database settings/i });
-    fireEvent.click(removeBtn); // triggers validation
+    const removeButton = screen.getByRole("button", { name: /save database settings/i });
+    fireEvent.click(removeButton); // triggers validation
     const removeReal = screen.getByRole("button", { name: /remove database/i });
     fireEvent.click(removeReal);
   
@@ -410,7 +410,7 @@ describe("DatabaseSetup", () => {
     const fakeList = { theOne: fakeSettings };
   
     // 3) stub decrypt *twice* in the right order
-    vi.spyOn(util, "decrypt")
+    vi.spyOn(utility, "decrypt")
       .mockResolvedValueOnce(JSON.stringify(fakeList))       // for loadAllDatabaseConfigs()
       .mockResolvedValueOnce(JSON.stringify(fakeSettings));  // for the db_settings IIFE
   
@@ -419,9 +419,9 @@ describe("DatabaseSetup", () => {
   
     // 5) wait for both decrypt calls
     await waitFor(() => {
-      expect(util.decrypt).toHaveBeenCalledWith(LIST_CIPHER);
-      expect(util.decrypt).toHaveBeenCalledWith(SETTINGS_CIPHER);
-      expect(util.decrypt).toHaveBeenCalledTimes(2);
+      expect(utility.decrypt).toHaveBeenCalledWith(LIST_CIPHER);
+      expect(utility.decrypt).toHaveBeenCalledWith(SETTINGS_CIPHER);
+      expect(utility.decrypt).toHaveBeenCalledTimes(2);
     });
   
     // 6) now the second IIFE is definitely past the `parsed.profileName || ""` line,
@@ -442,7 +442,7 @@ describe("DatabaseSetup", () => {
     localStorage.setItem("db_list",     "CIPHER_LIST");
     localStorage.setItem("db_settings", "CIPHER_SETTINGS");
     // first call (list) → empty object, second call (settings) → object *without* profileName
-    vi.spyOn(util, "decrypt")
+    vi.spyOn(utility, "decrypt")
       .mockResolvedValueOnce(JSON.stringify({}))                        // loadAllDatabaseConfigs()
       .mockResolvedValueOnce(JSON.stringify({
         /* no profileName here! */
@@ -478,14 +478,14 @@ describe("DatabaseSetup", () => {
     };
   
     // Setup decrypt to return matching list but mismatched settings
-    vi.mocked(util.decrypt).mockImplementation(async (val) => {
-      if (val === "mockList") {
+    vi.mocked(utility.decrypt).mockImplementation(async (value) => {
+      if (value === "mockList") {
         return JSON.stringify({ [selectedKey]: mockProfile });
       }
-      if (val === "mockSettings") {
+      if (value === "mockSettings") {
         return JSON.stringify({ profileName: lastUsedKey }); // ← mismatch
       }
-      return val;
+      return value;
     });
   
     localStorage.setItem("db_list", "mockList");
@@ -501,8 +501,8 @@ describe("DatabaseSetup", () => {
     fireEvent.click(option);
   
     // Fire the remove button
-    const removeBtn = await screen.findByRole("button", { name: /remove database/i });
-    fireEvent.click(removeBtn);
+    const removeButton = await screen.findByRole("button", { name: /remove database/i });
+    fireEvent.click(removeButton);
   
     await waitFor(() => {
       expect(spy).not.toHaveBeenCalledWith("db_settings");
@@ -531,7 +531,7 @@ describe("DatabaseSetup", () => {
     sshKey: ""
   };
 
-  vi.mocked(util.decrypt).mockResolvedValueOnce(JSON.stringify({ [selectedKey]: mockProfile }));
+  vi.mocked(utility.decrypt).mockResolvedValueOnce(JSON.stringify({ [selectedKey]: mockProfile }));
 
   localStorage.setItem("db_list", "mockList");
 
@@ -545,8 +545,8 @@ describe("DatabaseSetup", () => {
   fireEvent.click(option);
 
   // Click REMOVE
-  const removeBtn = await screen.findByRole("button", { name: /remove database/i });
-  fireEvent.click(removeBtn);
+  const removeButton = await screen.findByRole("button", { name: /remove database/i });
+  fireEvent.click(removeButton);
 
   await waitFor(() => {
     // db_settings was never removed because it didn't exist

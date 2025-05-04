@@ -62,7 +62,7 @@ app.post("/start-tunnel", async (request, result): Promise<any> => {
 
 app.post("/stop-tunnel", async (_request, result): Promise<any> => {
   if (!server || !(server.listening)) {
-    console.log("is the server listening? ", server.listening)
+    console.log("is the server listening?", server.listening)
     return result.json({ status: "No active tunnel to stop" });
   }
 
@@ -81,7 +81,7 @@ app.post("/encrypt", async (request, result): Promise<any> => {
   }
 
   try {
-    const ciphertext = await encryptionUtils.encrypt(plaintext);
+    const ciphertext = await encryptionUtilities.encrypt(plaintext);
     return result.json({ ciphertext });
   } catch (error: any) {
     console.error("Encryption error:", error);
@@ -98,7 +98,7 @@ app.post("/decrypt", async (request, result): Promise<any> => {
   }
 
   try {
-    const plaintext = await encryptionUtils.decrypt(ciphertext);
+    const plaintext = await encryptionUtilities.decrypt(ciphertext);
     return result.json({ plaintext });
   } 
   catch {
@@ -114,7 +114,7 @@ const GLOBAL_AES_KEY: Buffer = (() => {
   return ensureSecureStorageKey();
 })();
 
-export const encryptionUtils = {
+export const encryptionUtilities = {
   async encrypt(plaintext: string): Promise<string> {
     const key = GLOBAL_AES_KEY;
     const iv  = crypto.randomBytes(12);

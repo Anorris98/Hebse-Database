@@ -6,7 +6,7 @@ import GptSetup from '../../../components/Settings/GPTSetup/gpt-setup.tsx';
 import * as utility from '../../../components/Utilities/utility-functions';
 
 // stub out window.alert
-window.alert = vi.fn();
+globalThis.alert = vi.fn();
 
 const renderWithTheme = (ui: React.ReactElement) =>
   render(<ThemeProvider theme={createTheme()}>{ui}</ThemeProvider>);
@@ -115,14 +115,14 @@ describe('GptSetup Component', () => {
 
   it('logs decryption errors and leaves defaults when decrypt rejects', async () => {
     localStorage.setItem('gpt_settings', 'enc');
-    const err = new Error('fail');
-    const decryptSpy = vi.spyOn(utility, 'decrypt').mockRejectedValue(err);
+    const error = new Error('fail');
+    const decryptSpy = vi.spyOn(utility, 'decrypt').mockRejectedValue(error);
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     renderWithTheme(<GptSetup />);
 
     await waitFor(() =>
-      expect(errorSpy).toHaveBeenCalledWith('Failed to decrypt GPT settings:', err)
+      expect(errorSpy).toHaveBeenCalledWith('Failed to decrypt GPT settings:', error)
     );
 
     const apiKeyInput = screen.getByLabelText('API Key', { selector: 'input' }) as HTMLInputElement;
@@ -182,7 +182,7 @@ describe('GptSetup Component', () => {
     );
 
     expect(localStorage.getItem('gpt_settings')).toBe('encrypted-payload');
-    expect(window.alert).toHaveBeenCalledWith('Settings saved!');
+    expect(globalThis.alert).toHaveBeenCalledWith('Settings saved!');
 
     encryptSpy.mockRestore();
   });
