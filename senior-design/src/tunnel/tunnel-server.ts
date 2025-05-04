@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import { createTunnel } from "tunnel-ssh";
 import { Server } from "node:net";
 import { Client } from "ssh2";
-/* istanbul ignore file -- @preserve */
+
 const app = express();
 app.use(json());
 app.use(cors())
@@ -41,7 +41,7 @@ app.post("/start-tunnel", async (request, result): Promise<any> => {
 
   try {
     [server, client] = await createTunnel(tunnelOptions, {port: 8000}, sshOptions, forwardOptions);
-  
+
     client.on("error", (error) => {
       console.log("SSH Client Error:", error.message);
     });
@@ -80,7 +80,7 @@ app.post("/encrypt", async (request, result): Promise<any> => {
   }
 
   try {
-    const ciphertext = await encrypt(plaintext);
+    const ciphertext = await encryptionUtilities.encrypt(plaintext);
     return result.json({ ciphertext });
   } catch (error: any) {
     console.error("Encryption error:", error);
@@ -97,7 +97,7 @@ app.post("/decrypt", async (request, result): Promise<any> => {
   }
 
   try {
-    const plaintext = await decrypt(ciphertext);
+    const plaintext = await encryptionUtilities.decrypt(ciphertext);
     return result.json({ plaintext });
   } 
   catch {
@@ -113,19 +113,41 @@ const GLOBAL_AES_KEY: Buffer = (() => {
   return ensureSecureStorageKey();
 })();
 
-async function encrypt(plaintext: string): Promise<string> {
-  const key = GLOBAL_AES_KEY;
-  const iv  = crypto.randomBytes(12);
+export const encryptionUtilities = {
+  async encrypt(plaintext: string): Promise<string> {
+    const key = GLOBAL_AES_KEY;
+    const iv  = crypto.randomBytes(12);
 
-  const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
-  const ct     = Buffer.concat([
-    cipher.update(plaintext, "utf8"),
-    cipher.final(),
-  ]);
-  const tag = cipher.getAuthTag();
+    const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
+    const ct     = Buffer.concat([
+      cipher.update(plaintext, "utf8"),
+      cipher.final(),
+    ]);
+    const tag = cipher.getAuthTag();
 
-  const payload = Buffer.concat([iv, ct, tag]);
-  return payload.toString("base64");
+    const payload = Buffer.concat([iv, ct, tag]);
+    return payload.toString("base64");
+  },
+
+  async decrypt(ciphertextB64: string): Promise<string> {
+    const data = Buffer.from(ciphertextB64, "base64");
+    if (data.length < 12 + 16) {
+      throw new Error("Ciphertext too short");
+    }
+  
+    const iv      = data.subarray(0, 12);
+    const tag     = data.subarray(- 16);
+    const ct      = data.subarray(12, - 16);
+    const key     = GLOBAL_AES_KEY;
+    const decipher = crypto.createDecipheriv("aes-256-gcm", key, iv);
+    decipher.setAuthTag(tag);
+  
+    const ptBuf = Buffer.concat([
+      decipher.update(ct),
+      decipher.final(),
+    ]);
+    return ptBuf.toString("utf8");
+  }
 }
 
 function ensureSecureStorageKey(): Buffer {
@@ -136,6 +158,7 @@ function ensureSecureStorageKey(): Buffer {
     "Secure_Storage_key.bin"
   );
 
+  /* istanbul ignore next -- @preserve */
   const createNewKey = (): Buffer => {
     const key = crypto.randomBytes(32);
     fs.mkdirSync(path.dirname(keyPath), { recursive: true });
@@ -148,35 +171,18 @@ function ensureSecureStorageKey(): Buffer {
     if (!fs.existsSync(keyPath)) return createNewKey();
 
     const key = fs.readFileSync(keyPath);
+    /* istanbul ignore next -- @preserve */
     if (key.length !== 32) {
       console.warn("Key length incorrect – regenerating");
       return createNewKey();
     }
     return key;
   } catch (error) {
-    console.error("Failed to read/write key:", error);
-    return createNewKey();
+    /* istanbul ignore next -- @preserve */ {
+      console.error("Failed to read/write key:", error);
+      return createNewKey();
+    }
   }
-}
-
-async function decrypt(ciphertextB64: string): Promise<string> {
-  const data = Buffer.from(ciphertextB64, "base64");
-  if (data.length < 12 + 16) {
-    throw new Error("Ciphertext too short");
-  }
-
-  const iv      = data.subarray(0, 12);
-  const tag     = data.subarray(- 16);
-  const ct      = data.subarray(12, - 16);
-  const key     = GLOBAL_AES_KEY;
-  const decipher = crypto.createDecipheriv("aes-256-gcm", key, iv);
-  decipher.setAuthTag(tag);
-
-  const ptBuf = Buffer.concat([
-    decipher.update(ct),
-    decipher.final(),
-  ]);
-  return ptBuf.toString("utf8");
 }
 
 function deleteSecureStorageKeyFile(): void {
@@ -191,6 +197,7 @@ function deleteSecureStorageKeyFile(): void {
     console.info(`Deleted key file at ${keyPath}, please restart the application`);
     ensureSecureStorageKey(); // Recreate the key file
   } catch (error: any) {
+    /* istanbul ignore next -- @preserve */
     console.error(`Failed to delete key file at ${keyPath}:`, error);
   }
 }
@@ -198,3 +205,5 @@ function deleteSecureStorageKeyFile(): void {
 
 const PORT = 3001;
 app.listen(PORT, () => console.log(`Tunnel server running on port ${PORT}`));
+
+export { app };
