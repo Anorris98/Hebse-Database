@@ -324,10 +324,29 @@ describe("Tunnel Server", () => {
         expect(response.status).toBe(500);
     });
 
-    it("should alert if error decrypting", async () => {
+    it("should alert if error decrypting fs does exist", async () => {
         vi.spyOn(fs, "writeFileSync").mockImplementation(() => {});
         vi.spyOn(fs, "rmSync").mockImplementation(() => {});
         vi.spyOn(fs, "existsSync").mockImplementation(() => {return false;});
+        const {app} = await import("../../../src/tunnel/tunnel-server");
+        const server = app.listen(0);
+        const port = (server.address() as { port: number }).port;
+        
+        const badCiphertext = "invalid";
+        
+        const response = await fetch(`http://localhost:${port}/decrypt`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ciphertext: badCiphertext }),
+        });
+        
+        expect(response.status).toBe(400);
+    });
+
+    it("should alert if error decrypting fs does not exist", async () => {
+        vi.spyOn(fs, "writeFileSync").mockImplementation(() => {});
+        vi.spyOn(fs, "rmSync").mockImplementation(() => {});
+        vi.spyOn(fs, "existsSync").mockImplementation(() => {return true;});
         const {app} = await import("../../../src/tunnel/tunnel-server");
         const server = app.listen(0);
         const port = (server.address() as { port: number }).port;
