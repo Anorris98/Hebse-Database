@@ -62,7 +62,6 @@ app.post("/start-tunnel", async (request, result): Promise<any> => {
 
 app.post("/stop-tunnel", async (_request, result): Promise<any> => {
   if (!server || !(server.listening)) {
-    console.log("is the server listening?", server.listening)
     return result.json({ status: "No active tunnel to stop" });
   }
 
