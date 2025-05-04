@@ -10,8 +10,10 @@ export const SavedQueriesComponent = ({savedQueries, setSavedQueries, setInputVa
 }) => {
     const [displaySavedQueries, setDisplaySavedQueries] = useState<boolean>(false);
 
-    function deleteQuery(queryName: string) {
-        const updatedQueries = savedQueries.filter((item: Record<string, string>) => !item[queryName]);
+    function deleteQuery(queryName: string, queryValue: string) {
+        const updatedQueries = savedQueries.filter(
+            (item: Record<string, string>) => !(Object.keys(item)[0] === queryName && Object.values(item)[0] === queryValue)
+        );
         localStorage.saved = JSON.stringify(updatedQueries);
         if (updatedQueries.length === 0) {
             setDisplaySavedQueries(false);
@@ -63,7 +65,7 @@ export const SavedQueriesComponent = ({savedQueries, setSavedQueries, setInputVa
                                 flexDirection: 'row-reverse'
                             }} key={index}>
                             <IconButton sx={{height: "10px", width: "30px", textAlign: "center"}}
-                                        onClick={() => deleteQuery(queryName)}><Clear
+                                        onClick={() => deleteQuery(queryName, queryValue)}><Clear
                                 sx={{color: 'red', backgroundColor: "transparent"}}/></IconButton>
                             <IconButton sx={{marginLeft: "10px", height: "10px", width: "30px", textAlign: "center"}}
                                         onClick={() => setInputValue(queryValue)}><ContentCopyOutlined

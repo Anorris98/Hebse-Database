@@ -6,6 +6,7 @@ import DownloadIcon from "@mui/icons-material/Download";
 import UploadFile from "@mui/icons-material/UploadFile";
 import {useEffect, useState} from 'react';
 import {styled} from "@mui/material/styles";
+import { decrypt } from "../utility-functions";
 
 // Styled components
 const StyledPaper = styled(Paper)(({theme}) => ({
@@ -38,11 +39,15 @@ interface Dataset {
 
 async function createDatabase(filePath: string, fileName: string) {
     try {
-        const databaseSettings = localStorage.getItem("db_settings");
+        const encryptedDatabaseSettings = localStorage.getItem("db_settings");
+        if (!encryptedDatabaseSettings) {
+            return;
+        }
+        const databaseSettings = await decrypt(encryptedDatabaseSettings);
         const data = {
             filePath: filePath,
             fileName: fileName,
-            databaseSettings: databaseSettings ? JSON.parse(databaseSettings) : undefined
+            databaseSettings: JSON.parse(databaseSettings)
         };
         const response = await fetch(`http://localhost:8000/PutDatabase`, {
             method: "PUT",

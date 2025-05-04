@@ -11,6 +11,12 @@ from sqlalchemy import create_engine, exc, text
 import sqlalchemy_utils
 
 
+def fill_missing_values(data):
+    if data.isna().any().any():
+        data.interpolate(method='linear', axis=0, inplace=True, limit_direction='both')
+    return data
+
+
 def convert_hex_to_readable(data):
     if isinstance(data, bytes):
         try:
@@ -86,6 +92,7 @@ def create_database(engine, h5_files):
                 data.columns = columns
 
                 # Fill missing values by averaging surrounding points
+                data = fill_missing_values(data)
 
                 sanitized_table_name = ""
 
