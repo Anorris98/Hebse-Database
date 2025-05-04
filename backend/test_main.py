@@ -31,6 +31,21 @@ def test_get_data_successful_query():
     expected_response = [{"id": 1, "name": "Test"}, {"id": 2, "name": "Test2"}]
     assert response.json()["data"] == expected_response
 
+@patch('app.main.engine', new=engine)
+def test_get_data_empty_query():
+    # Define a sample request body with a valid query
+    request_body = {
+        "query": "SELECT * FROM users where id = 3",
+        "history": True
+    }
+
+    response = client.post("/GetData", json=request_body)
+
+    assert response.status_code == 200
+
+    expected_response = "Query Returned 0 Matches"
+    assert response.json()["message"] == expected_response
+
 def test_get_data_invalid_request():
     # Define a request body without the 'query' key
     request_body = {}

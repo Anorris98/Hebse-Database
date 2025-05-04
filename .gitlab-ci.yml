@@ -19,10 +19,11 @@ deploy-backend:
     - cd backend
     - export DECODED_PASSWORD=$(echo $ENCODED_PASSWORD | base64 --decode)
     - sshpass -p $DECODED_PASSWORD scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ./app vm-user@SDmay25-20.ece.iastate.edu:~/app
+    - sshpass -p $DECODED_PASSWORD scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ./database vm-user@SDmay25-20.ece.iastate.edu:~/database
     - sshpass -p $DECODED_PASSWORD scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ./Dockerfile vm-user@SDmay25-20.ece.iastate.edu:~/Dockerfile
     - sshpass -p $DECODED_PASSWORD scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ./requirements.txt vm-user@SDmay25-20.ece.iastate.edu:~/requirements.txt
-    - sshpass -p $DECODED_PASSWORD ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null vm-user@SDmay25-20.ece.iastate.edu "docker build -t hadesbackend . && docker container stop hadescontainer || true && docker rm hadescontainer"
-    - sshpass -p $DECODED_PASSWORD ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null vm-user@SDmay25-20.ece.iastate.edu "docker run -d --name hadescontainer -p 8000:8000 hadesbackend"
+    - sshpass -p $DECODED_PASSWORD ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null vm-user@SDmay25-20.ece.iastate.edu "docker build -t hebsebackend . && docker container stop hebsecontainer || true && docker rm hebsecontainer"
+    - sshpass -p $DECODED_PASSWORD ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null vm-user@SDmay25-20.ece.iastate.edu "docker run -d --name hebsecontainer -p 8000:8000 hebsebackend"
 
 eslint:
   stage: frontend

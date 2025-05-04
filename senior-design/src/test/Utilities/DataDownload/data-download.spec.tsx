@@ -5,6 +5,10 @@ import '@testing-library/jest-dom';
 
 /* eslint-disable  unicorn/no-null */
 
+vi.mock("../../../components/Utilities/utility-functions.ts", () => ({
+    decrypt: vi.fn(() => Promise.resolve("{\"settings\": \"test settings\"}")),
+}));
+
 vi.spyOn(globalThis, 'open').mockImplementation(() => null);
 
 beforeEach(() => {
@@ -135,6 +139,15 @@ describe('DatasetList', () => {
             }
         }));
 
+        vi.stubGlobal('localStorage', {
+            getItem: vi.fn(() => '{"settings": "test settings"}'),
+            removeItem: vi.fn(),
+            setItem: vi.fn(),
+            clear: vi.fn(),
+        });
+
+        vi.stubGlobal('decrypt', vi.fn(() => Promise.resolve("{\"settings\": \"test settings\"}")));
+
         const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
         render(<DatasetList />);
@@ -146,18 +159,21 @@ describe('DatasetList', () => {
         fireEvent.click(screen.getByText('DOWNLOAD'));
         fireEvent.click(screen.getByText('CREATE DATABASE USING DATASET'));
 
-        expect(fetch).toHaveBeenCalledWith(
-            "http://localhost:8000/PutDatabase",
-            expect.objectContaining({
-                method: "PUT",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({
-                    filePath: "http://download/file1",
-                    fileName: "file1.csv",
-                    databaseSettings: undefined
+
+        await waitFor(() => {
+            expect(fetch).toHaveBeenCalledWith(
+                "http://localhost:8000/PutDatabase",
+                expect.objectContaining({
+                    method: "PUT",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({
+                        filePath: "http://download/file1",
+                        fileName: "file1.csv",
+                        databaseSettings: JSON.parse('{"settings": "test settings"}')
+                    })
                 })
-            })
-        );
+            );
+        });
 
         expect(consoleErrorSpy).toHaveBeenCalled();
     });
@@ -181,26 +197,28 @@ describe('DatasetList', () => {
             expect(screen.getByText('DOWNLOAD')).toBeInTheDocument();
         });
 
-        fireEvent.click(screen.getByText('DOWNLOAD'));
         fireEvent.click(screen.getByText('CREATE DATABASE USING DATASET'));
 
-        expect(fetch).toHaveBeenCalledWith(
-            "http://localhost:8000/PutDatabase",
-            expect.objectContaining({
-                method: "PUT",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({
-                    filePath: "http://download/file1",
-                    fileName: "file1.csv",
-                    databaseSettings: JSON.parse('{"settings": "test settings"}')
+        await waitFor(() => {
+            expect(fetch).toHaveBeenCalledWith(
+                "http://localhost:8000/PutDatabase",
+                expect.objectContaining({
+                    method: "PUT",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({
+                        filePath: "http://download/file1",
+                        fileName: "file1.csv",
+                        databaseSettings: JSON.parse('{"settings": "test settings"}')
+                    })
                 })
-            })
-        );
+            );
+        });
     });
 
-    it('should throw error when failed to get dataset', async () => {
+    it('should throw error when no database settings', async () => {
         vi.stubGlobal('fetch', vi.fn(() => Promise.resolve({
             ok: false,
+            status: 500,
             json: () => Promise.resolve(mockDatasets),
         })));
         render(<DatasetList />);
@@ -211,6 +229,28 @@ describe('DatasetList', () => {
 
     });
     
+    it('should throw error when failed to get dataset', async () => {
+        vi.stubGlobal('fetch', vi.fn(() => Promise.resolve({
+            ok: false,
+            status: 500,
+            json: () => Promise.resolve(mockDatasets),
+        })));
+
+        vi.stubGlobal('localStorage', {
+            getItem: vi.fn(() => '{"settings": "test settings"}'),
+            removeItem: vi.fn(),
+            setItem: vi.fn(),
+            clear: vi.fn(),
+        });
+
+        render(<DatasetList />);
+
+        await waitFor(() => {
+            expect(screen.getByText(/Error fetching data/i)).toBeInTheDocument();
+        });
+
+    });
+
     it('should not show description when not in metadata', async () => {
         const mockDatasets = {
             hits: {
@@ -250,5 +290,5 @@ describe('DatasetList', () => {
             expect(screen.getByText(/No description/i)).toBeInTheDocument();
         });
         
-    })
+    });
 });

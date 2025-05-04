@@ -29,14 +29,12 @@ export const QueryInput = ({
         const [isModalOpen, setIsModalOpen] = useState(false);
         const [queryName, setQueryName] = useState("");
 
-        // 1) Load "saved" queries from localStorage
         useEffect(() => {
         if ("saved" in localStorage) {
             setSavedQueries(JSON.parse(localStorage.saved));
         }
         }, [setSavedQueries]);
 
-        // 2) Check DB connection once on mount
         useEffect(() => {
         const testDBConnection = async () => {
             try {
@@ -47,10 +45,7 @@ export const QueryInput = ({
             }
             const decrypted = await decrypt(savedSettings);
             const parsed = JSON.parse(decrypted);
-            
-            // If you do NOT have "/init_db" on your backend, 
-            // this will fail with 404. Make sure the route exists 
-            // or skip this call. 
+
             const result = await fetch("http://localhost:8000/init_db", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -136,6 +131,15 @@ export const QueryInput = ({
         function handleSave() {
             if (!queryName.trim()) {
                 alert("Query name cannot be empty.");
+                return;
+            }
+
+            const isDuplicate = savedQueries.some(
+                (item) => Object.keys(item)[0] === queryName.trim() && Object.values(item)[0] === inputValue
+            );
+        
+            if (isDuplicate) {
+                alert("This query is already saved under this name.");
                 return;
             }
     
@@ -238,10 +242,10 @@ export const QueryInput = ({
         <Box
             sx={{
                 display: "flex",
-                width: "100%", // Make sure buttons stay inside the parent box
+                width: "100%",
                 gap: "10px",
                 marginTop: "10px",
-                padding: "10px", // Ensure buttons don’t touch the edges
+                padding: "10px",
             }}
         >
             <Button

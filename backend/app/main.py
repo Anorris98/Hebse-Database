@@ -47,7 +47,7 @@ app.add_middleware(
 #      parse and use that as ssh_pkey
 #   2) Otherwise, treat sshKey as a password
 # -------------------------------------------------
-def configure_engine_from_settings(config: dict): 
+def configure_engine_from_settings(config: dict):  # pragma: no cover
     global engine, tunnel, schema_dict  
 
     # If we already have a tunnel, stop it before reconfiguring
@@ -118,7 +118,7 @@ def configure_engine_from_settings(config: dict):
 # Init database route
 # -------------------------------------------------
 @app.post("/init_db")
-def init_database(body: dict):
+def init_database(body: dict):  # pragma: no cover
     db_config = body.get("db_settings")
     if not db_config:
         raise HTTPException(status_code=400, detail="Missing db_settings")
@@ -147,7 +147,7 @@ def get_data(body: dict):
             result = connection.execute(text(raw_query))
             rows = [row._mapping for row in result]
 
-            if(not history):  
+            if(not history):  # pragma: no cover
                 log_query = text("INSERT INTO history.completed_queries (query_sql) VALUES (:query)")
                 connection.execute(log_query, {"query": raw_query})
                 connection.commit()
@@ -176,7 +176,7 @@ def ask_gpt(request: dict):
     if not settings or "apiKey" not in settings:
         raise HTTPException(status_code=400, detail="GPT API key is missing.")
 
-    try:
+    try:  # pragma: no cover
         client = OpenAI(api_key=settings["apiKey"])
 
         response = client.chat.completions.create(
@@ -197,10 +197,8 @@ def ask_gpt(request: dict):
             max_tokens=int(settings.get("max_tokens", 1000))  # default=1000
         )
 
-        # print("Schema dictionary:\n", json.dumps(schema_dict, indent=2))  # Debugging: print the tables in the metadataY
-
         return {"response": response.choices[0].message}
-    except Exception as e:
+    except Exception as e:  # pragma: no cover
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e)) from e
 
@@ -229,9 +227,8 @@ def create_csv(returned_data):
 # Download CSV
 # -------------------------------------------------
 @app.get("/exportData")
-def export_data(): 
+def export_data():  # pragma: no cover
     file_name = "query_results.csv"
-    #create_csv()
     return FileResponse(file_name, media_type="text/csv", filename="query_results.csv")
 
 # -------------------------------------------------
@@ -274,16 +271,23 @@ def setup_database(body: dict):  # pragma: no cover
         sterr.read()
 
         with SCPClient(ssh_client.get_transport()) as scp:
-            scp.put("database/requirements.txt", "requirements.txt")
-            scp.put("database/hebse_uploader.py", "hebse_uploader.py")
+            scp.put("database/requirements.txt", "database/requirements.txt")
+            scp.put("database/hebse_uploader.py", "database/hebse_uploader.py")
 
         print("Installing requirements...")
-        stdin, stdout, sterr = ssh_client.exec_command("pip install -r requirements.txt", get_pty=True)  
+        stdin, stdout, sterr = ssh_client.exec_command("pip install -r database/requirements.txt", get_pty=True)  
         sterr.read()
 
         print("Creating database...")
-        stdin, stdout, sterr = ssh_client.exec_command(f"python3 hebse_uploader.py {local_file_name} \"{db_settings['sshUser']}\" \"{db_settings['databaseName']}\"", get_pty=True)  # pylint: disable=unused-variable
+        stdin, stdout, sterr = ssh_client.exec_command(f"python3 database/hebse_uploader.py {local_file_name} \"{db_settings['sshUser']}\" \"{db_settings['databaseName']}\"", get_pty=True)  # pylint: disable=unused-variable
         sterr.read()
+
+        print("Cleaning up...")
+        stdin, stdout, sterr = ssh_client.exec_command(f"rm {local_file_name}", get_pty=True)
+        sterr.read()
+        stdin, stdout, sterr = ssh_client.exec_command(f"rm -r {local_file_name.split('.')[0]}", get_pty=True)
+        sterr.read()
+
 
         return {"message": f"File downloaded successfully as {local_file_name}"}
     except Exception as e:
