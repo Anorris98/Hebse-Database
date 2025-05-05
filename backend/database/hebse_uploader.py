@@ -147,7 +147,7 @@ def create_database(engine, h5_files):
 
 def get_engine():
     # PostgreSQL credentials
-    database = sys.argv[3] if len(sys.argv) > 3 else 'hebse'
+    database = sys.argv[3] if len(sys.argv) > 3 else 'hebseTest'
     username = sys.argv[4] if len(sys.argv) > 4 else 'postgres'
     password = sys.argv[5] if len(sys.argv) > 5 else 'root'
     host     = sys.argv[6] if len(sys.argv) > 6 else 'localhost'
