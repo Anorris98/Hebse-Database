@@ -11,6 +11,31 @@ from sqlalchemy import create_engine, exc, text
 import sqlalchemy_utils
 
 
+# --------------------------------------------------------------------------
+# HOW TO RUN:
+#   python your_script.py [other_args...] <database> <databaseUsername> \
+#                        <databasePassword> <databaseHost> <databasePort>
+#
+# WHAT IT DOES:
+#   • Reads 5 connection parameters from the command line (positions 3–7 in sys.argv)
+#   • Falls back to built-in defaults if you omit any of them
+#   • These values are used to connect to your PostgreSQL database when
+#     building/uploading the database. i.e. 5432 is default 
+#     port for PostgreSQL, and 'postgres' is the default username.
+#      
+#
+# DEFAULTS (if you don’t supply that argument):
+#   sys.argv[3] → database           = 'hebse'
+#   sys.argv[4] → databaseUsername   = 'postgres'
+#   sys.argv[5] → databasePassword   = 'root'
+#   sys.argv[6] → databaseHost       = 'localhost'
+#   sys.argv[7] → databasePort       = '5432'
+#
+# NOTE:
+#   You can also set these values in the Hebse application UI by saving
+#   your configuration before you trigger the build/upload process.
+
+
 def fill_missing_values(data):
     if data.isna().any().any():
         data.interpolate(method='linear', axis=0, inplace=True, limit_direction='both')
@@ -122,11 +147,11 @@ def create_database(engine, h5_files):
 
 def get_engine():
     # PostgreSQL credentials
-    username = 'postgres'
-    password = 'root'
-    host = 'localhost'
-    port = '5432'
-    database = sys.argv[3]
+    database = sys.argv[3] if len(sys.argv) > 3 else 'hebseTest'
+    username = sys.argv[4] if len(sys.argv) > 4 else 'postgres'
+    password = sys.argv[5] if len(sys.argv) > 5 else 'root'
+    host     = sys.argv[6] if len(sys.argv) > 6 else 'localhost'
+    port     = sys.argv[7] if len(sys.argv) > 7 else '5432'
 
     # Connect to PostgreSQL
     engine = create_engine(f'postgresql+psycopg2://{username}:{password}@{host}:{port}/{database}')
