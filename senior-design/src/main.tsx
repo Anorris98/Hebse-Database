@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter as Router } from 'react-router-dom'; // Import Router only once
-import App from './app/routes';
+import App from './app/routes'; // Ensure this matches your actual file path
 import { NavBar } from './components/NavigationBar/nav-bar.tsx'; // Import NavBar
 import './index.css';
 import { enableTunnel, decrypt } from './components/Utilities/utility-functions.ts'; // Import enableTunnel function
