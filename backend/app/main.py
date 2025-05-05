@@ -170,6 +170,8 @@ def ask_gpt(request: dict):
     
     user_query = request.get("query")
     settings = request.get("settings")
+    default_gpt_model = "gpt-4o"  # default model if no model is provided.
+    default_tokens = 1000  # default max tokens if no max_tokens is provided.
 
     if not user_query:
         raise HTTPException(status_code=400, detail="Query is required.")
@@ -178,9 +180,8 @@ def ask_gpt(request: dict):
 
     try:  # pragma: no cover
         client = OpenAI(api_key=settings["apiKey"])
-
         response = client.chat.completions.create(
-            model=settings.get("model", "gpt-4o-mini"),
+            model=settings.get("model", default_gpt_model),
             messages=[
                 {
                     "role": "system",
@@ -189,18 +190,46 @@ def ask_gpt(request: dict):
                                 "1) Output ONLY the SQL query on the first line (no code fences). "
                                 "2) Use \"table\".\"column\" for references, never \"table.column\". "
                                 "3) Only use the columns in the schema. Never make up columns. "
-                                "The json of the schema is as follows: ") + json.dumps(schema_dict)
-,
-                },
-                {"role": "user", "content": user_query},
-            ],
-            max_tokens=int(settings.get("max_tokens", 1000))  # default=1000
+                                "The json of the schema is as follows: ") + json.dumps(schema_dict),},
+
+                {"role": "user", "content": user_query},],
+            max_completion_tokens=int(settings.get("max_tokens", default_tokens))  # default=1000
         )
 
         return {"response": response.choices[0].message}
     except Exception as e:  # pragma: no cover
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e)) from e
+# -------------------------------------------------
+# TEST GPT
+# -------------------------------------------------
+@app.post("/test_gpt")
+def test_gpt(request: dict): #pragma: no cover
+
+    settings = request.get("settings")
+    default_gpt_model = "gpt-4o" 
+    default_tokens = 100  
+
+    if not settings or "apiKey" not in settings:
+        raise HTTPException(status_code=400, detail="GPT API key is missing.")
+
+    try:
+        client = OpenAI(api_key=settings["apiKey"])
+        response = client.chat.completions.create(
+            model=settings.get("model", default_gpt_model),
+            messages=[
+                {
+                    "role": "system",
+                    "content": ("This is a test, Send anything to aknowledge"),},],
+
+            max_completion_tokens=int(settings.get("max_tokens", default_tokens))  # default=1000
+        )
+
+        return {"response": response.choices[0].message}
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e)) from e
+
 
 # -------------------------------------------------
 # Config Engine Endpoint, used for setting up the engine to be tested in tox

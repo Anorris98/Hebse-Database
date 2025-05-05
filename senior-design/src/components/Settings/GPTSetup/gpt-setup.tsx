@@ -53,7 +53,7 @@ const GptSetup = () => {
         };
       
         //encrypts the settings and saves them to localStorage
-        encrypt(JSON.stringify(settings)).then(enc => {
+        encrypt(JSON.stringify(settings)).then(enc => {            
           localStorage.setItem("gpt_settings", enc);
           alert("Settings saved!");  
         });
@@ -90,7 +90,7 @@ return (
 
             {/* Model Selection Field */}
             <HelpTextField
-                label="Model (e.g., gpt-4, gpt-3.5-turbo)"
+                label="Model (e.g., gpt-4, gpt-o4-mini)"
                 value={model}
                 onChange={(input) => setModel(input.target.value)}
                 tooltipText="Specify which GPT model you want to use. Example: 'gpt-4' or 'gpt-3.5-turbo'. A full list of models can be found on the OpenAI API documentation, or at https://platform.openai.com/docs/models."

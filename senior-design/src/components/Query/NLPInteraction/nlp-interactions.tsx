@@ -19,6 +19,7 @@ export const NlpInteractions = () => {
   // -----------------------------------------------------------------
   useEffect(() => {
     const testGPTConnection = async () => {
+        setCheckingConnection(true);
       try {
         // Grab GPT settings from localStorage
         const savedSettings = localStorage.getItem("gpt_settings");
@@ -26,14 +27,15 @@ export const NlpInteractions = () => {
           setGptConnected(false);
           return;
         }
+
         const decrypted = await decrypt(savedSettings);
         const parsedSettings = JSON.parse(decrypted);
         const payload = {
-          query: "Hello GPT, are you there?", // Minimal test query
+          query: "TEST", 
           settings: parsedSettings,
         };
 
-        const result = await fetch("http://localhost:8000/ask_gpt", {
+        const result = await fetch("http://localhost:8000/test_gpt", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -45,6 +47,7 @@ export const NlpInteractions = () => {
 
         const data = await result.json();
         // If response exists, assume success
+ 
         if (data?.response) {
           setGptConnected(true);
         }
