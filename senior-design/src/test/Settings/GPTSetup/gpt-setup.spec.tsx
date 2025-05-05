@@ -24,7 +24,7 @@ describe('GptSetup Component', () => {
     expect(apiKeyInput.getAttribute('type')).toBe('password');
 
     const modelInput = screen.getByLabelText(
-      'Model (e.g., gpt-4, gpt-3.5-turbo)',
+      'Model (e.g., gpt-4, gpt-o4-mini)',
       { selector: 'input' }
     ) as HTMLInputElement;
     expect(modelInput.value).toBe('gpt-4o-mini');
@@ -51,7 +51,7 @@ describe('GptSetup Component', () => {
     // This waitFor ensures React finishes state updates AND Istanbul sees them
     await waitFor(() => {
       const apiKeyInput = screen.getByLabelText('API Key', { selector: 'input' }) as HTMLInputElement;
-      const modelInput = screen.getByLabelText('Model (e.g., gpt-4, gpt-3.5-turbo)', { selector: 'input' }) as HTMLInputElement;
+      const modelInput = screen.getByLabelText('Model (e.g., gpt-4, gpt-o4-mini)', { selector: 'input' }) as HTMLInputElement;
       const maxTokensInput = screen.getByLabelText('Max Tokens', { selector: 'input' }) as HTMLInputElement;
   
       // These reads from updated state force Istanbul to mark the lines
@@ -80,7 +80,7 @@ describe('GptSetup Component', () => {
   
     await waitFor(() => {
       const apiKeyInput = screen.getByLabelText('API Key', { selector: 'input' }) as HTMLInputElement;
-      const modelInput = screen.getByLabelText('Model (e.g., gpt-4, gpt-3.5-turbo)', { selector: 'input' }) as HTMLInputElement;
+      const modelInput = screen.getByLabelText('Model (e.g., gpt-4, gpt-o4-mini)', { selector: 'input' }) as HTMLInputElement;
       const maxTokensInput = screen.getByLabelText('Max Tokens', { selector: 'input' }) as HTMLInputElement;
   
       expect(apiKeyInput.value).to.equal('');          // fallback ""
@@ -160,7 +160,7 @@ describe('GptSetup Component', () => {
       target: { value: 'new-api-key' },
     });
     fireEvent.change(
-      screen.getByLabelText('Model (e.g., gpt-4, gpt-3.5-turbo)', {
+      screen.getByLabelText('Model (e.g., gpt-4, gpt-o4-mini)', {
         selector: 'input',
       }),
       { target: { value: 'new-model' } }

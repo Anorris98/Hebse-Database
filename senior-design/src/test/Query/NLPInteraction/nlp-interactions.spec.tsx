@@ -8,6 +8,7 @@ import * as UtilityFunctions from "../../../components/Utilities/utility-functio
 
 describe("NlpInteractions component", () => {
     beforeEach(() => {
+        
         // Mock localStorage for gpt_settings
         vi.spyOn(Storage.prototype, "getItem").mockImplementation((key: string) => {
             if (key === "gpt_settings") {
@@ -23,9 +24,17 @@ describe("NlpInteractions component", () => {
                 model: "gpt-4",
             })
         );
-
+        
         // Mock fetch for GPT response
         vi.stubGlobal("fetch", vi.fn((url) => {
+            if (url === "http://localhost:8000/test_gpt") {
+                return Promise.resolve({
+                  ok: true,
+                  json: () =>
+                    Promise.resolve({ response: { content: "pong" } }),
+                });
+              }
+
             if (url === "http://localhost:8000/ask_gpt") {
                 return Promise.resolve({
                     ok: true,
@@ -40,7 +49,28 @@ describe("NlpInteractions component", () => {
             }
             return Promise.reject(new Error("Unknown fetch URL"));
         }));
+        
     });
+
+    it("keeps GPT disconnected when /test_gpt returns OK but no response", async () => {
+        const fetchMock = vi.mocked(globalThis.fetch, true);
+      
+        fetchMock.mockImplementationOnce((url: URL | RequestInfo) => {
+          if (url === "http://localhost:8000/test_gpt") {
+            return Promise.resolve({
+              ok: true,
+              json: () => Promise.resolve({}),   
+            } as Response);
+          }
+          return Promise.reject(new Error(`Unknown fetch URL ${url}`));
+        });
+
+        render(<NlpInteractions />);
+      
+        await screen.findByText(
+          /GPT Model is not connected\. Check Settings -> GPT API Settings\./i
+        );
+      });
 
     it("renders Query Assistance title", () => {
         render(<NlpInteractions />);
@@ -89,6 +119,15 @@ describe("NlpInteractions component", () => {
     it("should throw error when ask gpt status bad", async () => {
 
         vi.stubGlobal("fetch", vi.fn((url) => {
+
+            //must assert that the test_gpt endpoint is called first, then the ask_gpt endpoint. 
+            if (url === "http://localhost:8000/test_gpt") {
+                return Promise.resolve({
+                  ok: false,
+                  status: 500,                      
+                });
+              }
+
             if (url === "http://localhost:8000/ask_gpt") {
                 return Promise.resolve({
                     ok: false,
@@ -222,4 +261,5 @@ describe("NlpInteractions component", () => {
             expect(screen.getByText(/GPT Model is not connected. Check Settings -> GPT API Settings./)).toBeInTheDocument();
         });
     });
+    
 });

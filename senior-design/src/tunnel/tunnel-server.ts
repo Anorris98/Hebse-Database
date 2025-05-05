@@ -50,6 +50,14 @@ app.post("/start-tunnel", async (request, result): Promise<any> => {
       console.error("Server Error:", error.message);
     });
 
+    // ignore resets (Must keep running locally because encrypytion is handled by it, if we close, we break storage.)
+    server.on("connection", (socket) => {
+      socket.on("error", (error: NodeJS.ErrnoException) => {
+        if (error.code === "ECONNRESET") return;         
+        console.error("Socket Error:", error.message);    // log everything else
+      });
+    });
+
     server.on("close", () => {
       console.log("Server connection closed.");
     });

@@ -3,17 +3,31 @@ import { describe, vi, beforeEach, it, expect } from "vitest";
 
 const mockServer = {
     listening: true,
+    // our "on" stub now also handles "connection"
     on: vi.fn((event, callback) => {
-        if (event === "error") {
-            setTimeout(() => callback(new Error("Mock server error")), 10);
-        } else if (event === "close") {
-            setTimeout(() => callback(), 20);
-        }
+      if (event === "connection") {
+        // fire immediately with a fake socket
+        const fakeSocket = {
+          on: vi.fn((evt, sockCb) => {
+            if (evt === "error") {
+              // first, ECONNRESET → should be ignored
+              sockCb({ code: "ECONNRESET", message: "reset by peer" });
+              // then a real error → should be logged
+              sockCb({ code: "EOTHER",    message: "other error occurred" });
+            }
+          }),
+        };
+        callback(fakeSocket);
+      } else if (event === "error") {
+        setTimeout(() => callback(new Error("Mock server error")), 10);
+      } else if (event === "close") {
+        setTimeout(() => callback(), 20);
+      }
     }),
     close: vi.fn(() => {
-        mockServer.listening = false;
-    })
-};
+      mockServer.listening = false;
+    }),
+  };
 
 const mockServerNotListening = {
     listening: false,
@@ -102,6 +116,35 @@ describe("Tunnel Server", () => {
             })
         );
     });
+    it("should ignore ECONNRESET but log other socket errors", async () => {
+        const errorSpy = vi.spyOn(console, "error");
+      
+        const { app } = await import("../../../src/tunnel/tunnel-server");
+        const listener = app.listen(0);
+        const port = (listener.address() as { port: number }).port;
+      
+        await fetch(`http://localhost:${port}/start-tunnel`, {
+          method: "POST",
+          body: JSON.stringify({
+            databaseHost: "dbhost",
+            sshHost:      "sshhost",
+            sshPort:      22,
+            sshUser:      "activeTunnel",
+            sshKey:       "sshkey",
+          }),
+          headers: { "Content-Type": "application/json" },
+        });
+      
+        await new Promise((r) => setTimeout(r, 0));
+      
+        const socketErrorCalls = errorSpy.mock.calls.filter(
+            ([label]) => label === "Socket Error:"
+          );
+        
+          // should only have logged the non-ECONNRESET socket error
+          expect(socketErrorCalls).toHaveLength(1);
+          expect(socketErrorCalls[0]).toEqual(["Socket Error:", "other error occurred"]);
+      });
 
     it("should alert when there is already an active tunnel", async () => {
         const { app } = await import("../../../src/tunnel/tunnel-server");
